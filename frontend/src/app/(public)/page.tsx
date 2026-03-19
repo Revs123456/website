@@ -145,7 +145,7 @@ export default async function Home() {
                 { icon: Zap,    c: '#2563eb', bg: '#eff6ff', t: '48hr Delivery',     d: 'Optimised resume within 2 business days.' },
                 { icon: Shield, c: '#7c3aed', bg: '#f5f3ff', t: 'ATS Guaranteed',    d: 'Every resume scores 90%+ on major ATS.' },
                 { icon: Globe,  c: '#0891b2', bg: '#ecfeff', t: 'Remote-First Jobs', d: 'Curated remote roles from global companies.' },
-                { icon: Users,  c: '#059669', bg: '#ecfdf5', t: 'Expert Coaches',    d: 'Senior engineers with 10+ years experience.' },
+                { icon: TrendingUp, c: '#059669', bg: '#ecfdf5', t: 'Hiring Insights', d: 'Real data on what recruiters look for and which skills land offers.' },
               ].map(({ icon: Icon, c, bg, t, d }) => (
                 <div key={t} className="card" style={{ padding: 20 }}>
                   <div style={{ width: 36, height: 36, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
