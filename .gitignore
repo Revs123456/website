@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js
+frontend/.next/
+frontend/out/
+
+# Build
+backend/dist/
+
+# Env files
+.env
+.env.local
+.env.*.local
+
+# DB
+backend/*.sqlite
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude local settings
+.claude/settings.local.json
+
+# Debug output files
+backend/format_out.txt
+backend/prisma_error.txt
+backend/validate.txt

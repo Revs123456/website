@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: #f8fafc;
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* ── Typography ── */
+.text-display {
+  font-size: clamp(1.9rem, 3vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #0f172a;
+}
+.text-display-sm {
+  font-size: clamp(1.5rem, 2.2vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: #0f172a;
+}
+.text-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+/* ── Gradient text ── */
+.grad-blue {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.grad-indigo {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Cards ── */
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+.card:hover {
+  border-color: #cbd5e1;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(15,23,42,.08);
+}
+.card-blue:hover {
+  border-color: #bfdbfe;
+  box-shadow: 0 0 0 1px #eff6ff, 0 12px 40px rgba(37,99,235,.08);
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 9px;
+  transition: all .2s;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+.btn-primary {
+  padding: 10px 22px;
+  background: #0f172a;
+  color: #fff;
+}
+.btn-primary:hover {
+  background: #1e293b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(15,23,42,.2);
+}
+.btn-blue {
+  padding: 10px 22px;
+  background: #2563eb;
+  color: #fff;
+}
+.btn-blue:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37,99,235,.3);
+}
+.btn-outline {
+  padding: 10px 22px;
+  background: transparent;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+.btn-outline:hover {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+.btn-ghost {
+  padding: 8px 14px;
+  background: transparent;
+  color: #64748b;
+  font-size: 13px;
+}
+.btn-ghost:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+.btn-sm  { padding: 7px 14px;  font-size: 12px; border-radius: 8px; }
+.btn-lg  { padding: 13px 30px; font-size: 15px; border-radius: 11px; }
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.badge-blue   { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.badge-violet { background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; }
+.badge-cyan   { background: #ecfeff; color: #0e7490; border: 1px solid #a5f3fc; }
+.badge-green  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+.badge-amber  { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+.badge-red    { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+.badge-slate  { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+.badge-indigo { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+
+/* ── Tags ── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+}
+
+/* ── Inputs ── */
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  color: #0f172a;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.input:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+}
+.input::placeholder { color: #94a3b8; }
+.input-icon { position: relative; }
+.input-icon .icon {
+  position: absolute; left: 12px; top: 50%;
+  transform: translateY(-50%); color: #94a3b8; pointer-events: none;
+}
+.input-icon .input { padding-left: 38px; }
+select.input option { background: #fff; color: #0f172a; }
+
+/* ── Dividers ── */
+.divider { height: 1px; background: #e2e8f0; }
+.divider-soft { height: 1px; background: #f1f5f9; }
+
+/* ── Backgrounds ── */
+.bg-dots {
+  background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+.bg-grid {
+  background-image:
+    linear-gradient(#f1f5f9 1px, transparent 1px),
+    linear-gradient(90deg, #f1f5f9 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Stat ── */
+.stat-num {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #0f172a;
+}
+
+/* ── Table ── */
+.trow { border-bottom: 1px solid #f1f5f9; transition: background .12s; }
+.trow:hover { background: #f8fafc; }
+
+/* ── Animations ── */
+@keyframes fadeUp  { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
+@keyframes scaleIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+@keyframes float   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes spin    { to { transform:rotate(360deg); } }
+
+.anim-fade-up  { animation: fadeUp  .5s ease both; }
+.anim-fade-in  { animation: fadeIn  .5s ease both; }
+.anim-scale-in { animation: scaleIn .35s ease both; }
+
+.d-1{animation-delay:.05s} .d-2{animation-delay:.1s} .d-3{animation-delay:.15s}
+.d-4{animation-delay:.2s}  .d-5{animation-delay:.25s} .d-6{animation-delay:.3s}
+
+/* ── Line clamp ── */
+.line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.line-clamp-3 { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }

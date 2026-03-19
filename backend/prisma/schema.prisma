@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:password@localhost:5432/tech_career_hub?schema=public"
+}
+
+model Job {
+  id          String   @id @default(uuid())
+  title       String
+  company     String
+  location    String
+  experience  String
+  description String
+  apply_link  String
+  created_at  DateTime @default(now())
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  title       String
+  platform    String
+  category    String
+  duration    String
+  level       String
+  course_link String
+  created_at  DateTime @default(now())
+}
+
+model Order {
+  id           String   @id @default(uuid())
+  name         String
+  email        String
+  service_type String
+  message      String?
+  resume_file  String?
+  created_at   DateTime @default(now())
+}
+
+model Admin {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+}

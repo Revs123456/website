@@ -1,0 +1,74 @@
+import { Globe, Server, Cloud, Check } from 'lucide-react';
+
+const MAPS = [
+  { id:'frontend', title:'Frontend Developer', color:'#2563eb', bg:'#eff6ff', border:'#bfdbfe', icon:Globe,
+    desc:'Go from zero to a job-ready frontend developer.',
+    steps:[{s:'Internet Basics',d:'DNS, HTTP, browsers'},{s:'HTML & CSS',d:'Semantics, Flexbox, Grid'},{s:'JavaScript ES6+',d:'DOM, async/await, modules'},{s:'React / Next.js',d:'Components, hooks, App Router'},{s:'State Management',d:'Zustand, Redux Toolkit'},{s:'Tailwind CSS',d:'Utility-first styling'},{s:'API Integration',d:'REST, GraphQL, React Query'},{s:'Testing & Deploy',d:'Jest, Cypress, Vercel'}],
+  },
+  { id:'backend', title:'Backend Developer', color:'#059669', bg:'#ecfdf5', border:'#bbf7d0', icon:Server,
+    desc:'Build scalable APIs and master server-side systems.',
+    steps:[{s:'OS & Networking',d:'Linux, TCP/IP, HTTP'},{s:'Node.js / Python',d:'Server runtimes, async'},{s:'SQL Databases',d:'PostgreSQL, MySQL, ORM'},{s:'NoSQL Databases',d:'MongoDB, Redis'},{s:'REST & GraphQL',d:'Express, NestJS, Fastify'},{s:'Authentication',d:'JWT, OAuth 2.0'},{s:'Caching & Queues',d:'Redis, BullMQ'},{s:'Docker & CI/CD',d:'Containers, GitHub Actions'}],
+  },
+  { id:'devops', title:'DevOps Engineer', color:'#7c3aed', bg:'#f5f3ff', border:'#ddd6fe', icon:Cloud,
+    desc:'Bridge dev and ops — master cloud and automation.',
+    steps:[{s:'Linux Fundamentals',d:'Shell, permissions'},{s:'Networking',d:'TCP/IP, DNS, proxies'},{s:'Git & VCS',d:'Branching, GitHub Flow'},{s:'Docker',d:'Dockerfiles, Compose'},{s:'CI/CD Pipelines',d:'GitHub Actions, GitLab CI'},{s:'Infra as Code',d:'Terraform, Ansible'},{s:'Kubernetes',d:'Pods, services, Helm'},{s:'Cloud Provider',d:'AWS / GCP / Azure'}],
+  },
+];
+
+const wrap = { maxWidth: 1152, margin: '0 auto', padding: '0 24px' } as const;
+
+export default function RoadmapsPage() {
+  return (
+    <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
+      {/* Header */}
+      <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', paddingTop: 80, paddingBottom: 40, textAlign: 'center' }}>
+        <div style={{ ...wrap, maxWidth: 640 }}>
+          <span className="badge badge-cyan" style={{ marginBottom: 12, display: 'inline-flex' }}>Learning Paths</span>
+          <h1 className="text-display-sm">Developer <span className="grad-blue">Roadmaps</span></h1>
+          <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>Follow the steps, build projects, and get hired. Zero guesswork.</p>
+        </div>
+      </div>
+
+      <div style={{ ...wrap, paddingTop: 40, paddingBottom: 80 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 20 }}>
+          {MAPS.map(({ id, title, color, bg, border, icon: Icon, desc, steps }) => (
+            <div key={id} className="card" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              {/* Header */}
+              <div style={{ padding: 28, background: bg, borderBottom: `1px solid ${border}` }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: '#fff', border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                  <Icon size={20} style={{ color }} />
+                </div>
+                <h2 style={{ fontWeight: 700, color: '#0f172a', marginBottom: 4, fontSize: 16 }}>{title}</h2>
+                <p style={{ fontSize: 13, color: '#64748b' }}>{desc}</p>
+              </div>
+
+              {/* Steps */}
+              <div style={{ flex: 1, padding: 28 }}>
+                <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 20 }}>Learning Path</p>
+                <ol style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {steps.map(({ s, d }, i) => (
+                    <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                      <span style={{ width: 20, height: 20, borderRadius: '50%', background: bg, color, border: `1px solid ${border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0, marginTop: 2 }}>{i + 1}</span>
+                      <div>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: '#0f172a' }}>{s}</p>
+                        <p style={{ fontSize: 11, color: '#94a3b8' }}>{d}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+
+              {/* Footer */}
+              <div style={{ padding: 20, borderTop: '1px solid #f1f5f9' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#94a3b8', marginBottom: 12 }}>
+                  <Check size={11} style={{ color }} />{steps.length} milestones · Beginner to job-ready
+                </div>
+                <button className="btn btn-outline btn-sm" style={{ width: '100%', justifyContent: 'center' }}>View Full Roadmap</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
