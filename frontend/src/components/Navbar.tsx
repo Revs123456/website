@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, Zap, ChevronRight } from 'lucide-react';
+import { Menu, X, Zap, ChevronRight, Sparkles } from 'lucide-react';
 
 const links = [
   { href: '/',                label: 'Home'      },
@@ -62,7 +62,7 @@ export default function Navbar() {
 
           {/* Desktop right */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }} className="hidden-mobile">
-            <Link href="/services" className="btn btn-primary btn-sm">Services</Link>
+            <Link href="/services" className="btn btn-primary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><Sparkles size={13} />Services</Link>
           </div>
 
           {/* Mobile hamburger */}
@@ -94,7 +94,7 @@ export default function Navbar() {
               ))}
             </div>
             <div style={{ padding: 16, borderTop: '1px solid #f1f5f9' }}>
-              <Link href="/services" className="btn btn-blue" style={{ textAlign: 'center', justifyContent: 'center', display: 'flex' }}>Services</Link>
+              <Link href="/services" className="btn btn-blue" style={{ textAlign: 'center', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: 6 }}><Sparkles size={13} />Services</Link>
             </div>
           </div>
         </div>
