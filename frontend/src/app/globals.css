@@ -215,18 +215,48 @@ select.input option { background: #fff; color: #0f172a; }
 .trow:hover { background: #f8fafc; }
 
 /* ── Animations ── */
-@keyframes fadeUp  { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
-@keyframes fadeIn  { from { opacity:0; } to { opacity:1; } }
-@keyframes scaleIn { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
-@keyframes float   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-@keyframes spin    { to { transform:rotate(360deg); } }
+@keyframes fadeUp       { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn       { from { opacity:0; } to { opacity:1; } }
+@keyframes scaleIn      { from { opacity:0; transform:scale(.96); } to { opacity:1; transform:scale(1); } }
+@keyframes float        { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+@keyframes spin         { to { transform:rotate(360deg); } }
+@keyframes pulseDot     { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.5)} }
+@keyframes gradShift    { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+@keyframes shimmer      { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
 
-.anim-fade-up  { animation: fadeUp  .5s ease both; }
-.anim-fade-in  { animation: fadeIn  .5s ease both; }
-.anim-scale-in { animation: scaleIn .35s ease both; }
+.anim-fade-up  { animation: fadeUp  .6s cubic-bezier(.16,1,.3,1) both; }
+.anim-fade-in  { animation: fadeIn  .6s ease both; }
+.anim-scale-in { animation: scaleIn .4s cubic-bezier(.16,1,.3,1) both; }
+.anim-float    { animation: float 4s ease-in-out infinite; }
+.pulse-dot     { animation: pulseDot 2s ease infinite; }
 
-.d-1{animation-delay:.05s} .d-2{animation-delay:.1s} .d-3{animation-delay:.15s}
-.d-4{animation-delay:.2s}  .d-5{animation-delay:.25s} .d-6{animation-delay:.3s}
+.d-1{animation-delay:.08s} .d-2{animation-delay:.16s} .d-3{animation-delay:.24s}
+.d-4{animation-delay:.32s} .d-5{animation-delay:.40s} .d-6{animation-delay:.48s}
+.d-7{animation-delay:.56s} .d-8{animation-delay:.64s}
+
+/* Animated gradient text */
+.grad-blue {
+  background: linear-gradient(135deg, #2563eb, #7c3aed, #2563eb);
+  background-size: 200% 200%;
+  animation: gradShift 5s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1);
+}
+.reveal.in-view { opacity: 1; transform: translateY(0); }
+.reveal-scale {
+  opacity: 0;
+  transform: scale(.97);
+  transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1);
+}
+.reveal-scale.in-view { opacity: 1; transform: scale(1); }
 
 /* ── Line clamp ── */
 .line-clamp-2 { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
