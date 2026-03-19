@@ -45,11 +45,14 @@ export default async function Home() {
             Browse curated jobs, master skills with top courses, follow expert roadmaps, and get your resume ATS-optimized — all in one place.
           </p>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginBottom: 52 }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginBottom: 52, alignItems: 'flex-end' }}>
             <Link href="/jobs" className="btn btn-primary btn-lg">Browse Jobs <ArrowRight size={16} /></Link>
-            <Link href="/services" className="btn btn-outline btn-lg" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-              <Sparkles size={16} /> Checkout our Services
-            </Link>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+              <Sparkles size={20} style={{ color: '#7c3aed' }} />
+              <Link href="/services" className="btn btn-outline btn-lg" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                <Sparkles size={16} /> Checkout our Services
+              </Link>
+            </div>
           </div>
 
           {/* Stats */}
