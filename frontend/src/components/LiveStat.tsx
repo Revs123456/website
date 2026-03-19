@@ -17,8 +17,18 @@ function fetchStats() {
 
 export default function LiveStat({ statKey, fallback }: { statKey: string; fallback: string }) {
   const [value, setValue] = useState(fallback);
-  useEffect(() => {
+
+  function refresh() {
+    _promise = null; // bust the cache so we get fresh data
     fetchStats().then(data => { if (data[statKey]) setValue(data[statKey]); });
+  }
+
+  useEffect(() => {
+    refresh();
+    const channel = new BroadcastChannel('admin-update');
+    channel.onmessage = () => refresh();
+    return () => channel.close();
   }, [statKey]);
+
   return <>{value}</>;
 }
