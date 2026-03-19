@@ -7,7 +7,11 @@ async function req<T>(path: string, opts?: RequestInit): Promise<T> {
     cache: 'no-store',
   });
   if (!res.ok) throw new Error(`API error ${res.status}`);
-  return res.json();
+  const data = await res.json();
+  if (typeof window !== 'undefined' && opts?.method && ['POST', 'PATCH', 'DELETE'].includes(opts.method)) {
+    new BroadcastChannel('admin-update').postMessage('refresh');
+  }
+  return data;
 }
 
 export const api = {
