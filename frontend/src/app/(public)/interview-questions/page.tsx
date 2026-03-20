@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import BackButton from '@/components/BackButton';
 import { ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
+import { useAdminSync } from '@/hooks/useAdminSync';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 
@@ -115,13 +116,16 @@ export default function InterviewQuestionsPage() {
   const [loading, setLoading]     = useState(true);
   const [cat, setCat]             = useState('All');
 
-  useEffect(() => {
+  const load = () => {
     fetch(`${BASE}/interview-questions/published`, { cache: 'no-store' })
       .then(r => r.ok ? r.json() : [])
       .then(setQuestions)
       .catch(() => setQuestions([]))
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { load(); }, []);
+  useAdminSync(load);
 
   const list = cat === 'All' ? questions : questions.filter(q => q.category === cat);
 

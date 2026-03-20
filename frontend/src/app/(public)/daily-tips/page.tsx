@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import BackButton from '@/components/BackButton';
 import { Lightbulb, RefreshCw } from 'lucide-react';
+import { useAdminSync } from '@/hooks/useAdminSync';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 
@@ -39,6 +40,7 @@ export default function DailyTipsPage() {
   };
 
   useEffect(() => { load(); }, []);
+  useAdminSync(load);
 
   const categories = ['All', ...Array.from(new Set(tips.map(t => t.category).filter(Boolean)))];
   const filtered   = cat === 'All' ? tips : tips.filter(t => t.category === cat);

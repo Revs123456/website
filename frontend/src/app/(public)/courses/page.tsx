@@ -4,6 +4,7 @@ import BackButton from '@/components/BackButton';
 import { useEffect, useState } from 'react';
 import { Search, BookOpen, Star, Clock, ArrowRight, CheckCircle, Sparkles, Lock } from 'lucide-react';
 import { api } from '@/lib/api';
+import { useAdminSync } from '@/hooks/useAdminSync';
 
 const CAT_COLOR: Record<string, { c: string; bg: string }> = {
   Frontend:     { c: '#2563eb', bg: '#eff6ff' },
@@ -117,9 +118,12 @@ export default function CoursesPage() {
   const [cat, setCat] = useState('All');
   const [lvl, setLvl] = useState('All');
 
-  useEffect(() => {
+  const load = () => {
     api.courses.list().then(d => setCourses(d.filter((c: any) => c.published !== false))).catch(console.error).finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { load(); }, []);
+  useAdminSync(load);
 
   const filtered = courses.filter(c =>
     (!q || c.title?.toLowerCase().includes(q.toLowerCase()) || c.platform?.toLowerCase().includes(q.toLowerCase()) || c.instructor?.toLowerCase().includes(q.toLowerCase())) &&

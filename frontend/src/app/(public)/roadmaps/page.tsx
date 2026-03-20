@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import BackButton from '@/components/BackButton';
 import { Globe, Server, Cloud, Code, Database, Cpu, Shield, Smartphone, Check, Map, type LucideProps } from 'lucide-react';
+import { useAdminSync } from '@/hooks/useAdminSync';
 
 const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   Globe, Server, Cloud, Code, Database, Cpu, Shield, Smartphone,
@@ -29,7 +30,7 @@ export default function RoadmapsPage() {
   const [roadmaps, setRoadmaps] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = () => {
     const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
     fetch(`${BASE}/roadmaps`, { cache: 'no-store' })
       .then(r => r.json())
@@ -39,7 +40,10 @@ export default function RoadmapsPage() {
       })
       .catch(() => setRoadmaps(FALLBACK))
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { load(); }, []);
+  useAdminSync(load);
 
   const maps = loading ? FALLBACK : roadmaps;
 

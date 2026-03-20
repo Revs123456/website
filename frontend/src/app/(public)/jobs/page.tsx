@@ -4,6 +4,7 @@ import BackButton from '@/components/BackButton';
 import { useEffect, useState } from 'react';
 import { Search, MapPin, Briefcase, ExternalLink } from 'lucide-react';
 import { api } from '@/lib/api';
+import { useAdminSync } from '@/hooks/useAdminSync';
 
 const CAT_COLOR: Record<string, { c: string; bg: string }> = {
   Frontend:     { c: '#2563eb', bg: '#eff6ff' },
@@ -44,7 +45,7 @@ export default function JobsPage() {
   const [loc, setLoc] = useState('All');
   const [cat, setCat] = useState('All');
 
-  useEffect(() => {
+  const load = () => {
     api.jobs.list().then(d => setJobs(d.filter((j: any) => {
       if (j.published === false) return false;
       const now = new Date();
@@ -57,7 +58,10 @@ export default function JobsPage() {
       }
       return true;
     }))).catch(console.error).finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { load(); }, []);
+  useAdminSync(load);
 
   const list = jobs.filter(j => {
     const sq = q.toLowerCase();

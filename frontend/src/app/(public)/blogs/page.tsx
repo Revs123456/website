@@ -4,6 +4,7 @@ import BackButton from '@/components/BackButton';
 import { useEffect, useState } from 'react';
 import { Search, FileText, Clock, User, ArrowRight } from 'lucide-react';
 import { api } from '@/lib/api';
+import { useAdminSync } from '@/hooks/useAdminSync';
 
 const CAT_COLOR: Record<string, { c: string; bg: string }> = {
   'Career Advice':  { c: '#2563eb', bg: '#eff6ff' },
@@ -38,12 +39,15 @@ export default function BlogsPage() {
   const [q, setQ] = useState('');
   const [cat, setCat] = useState('All');
 
-  useEffect(() => {
+  const load = () => {
     api.blogs.list()
       .then(data => setBlogs(data.filter((b: any) => b.published !== false)))
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
+  };
+
+  useEffect(() => { load(); }, []);
+  useAdminSync(load);
 
   const categories = ['All', ...Array.from(new Set(blogs.map(b => b.category).filter(Boolean)))];
 
