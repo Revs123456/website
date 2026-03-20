@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Zap } from 'lucide-react';
 
 const cols = [
   { title: 'Platform', links: [{ l: 'Browse Jobs', h: '/jobs' }, { l: 'Courses', h: '/courses' }, { l: 'Roadmaps', h: '/roadmaps' }] },
@@ -16,10 +15,8 @@ export default function Footer() {
           {/* Brand */}
           <div style={{ gridColumn: 'span 1' }}>
             <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 16, textDecoration: 'none' }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: 'linear-gradient(135deg,#2563eb,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Zap size={14} style={{ color: '#fff' }} />
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 13, color: '#0f172a' }}>TechCareerHub</span>
+              <img src="/TC.png" alt="TechChampsByRev logo" style={{ width: 28, height: 28, borderRadius: 8, objectFit: 'cover' }} />
+              <span style={{ fontWeight: 700, fontSize: 13, color: '#0f172a' }}>TechChamps<span style={{ color: '#2563eb' }}>ByRev</span></span>
             </Link>
             <p style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>Helping developers and students launch their tech careers.</p>
           </div>
@@ -44,7 +41,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <p style={{ fontSize: 12, color: '#94a3b8' }}>© {new Date().getFullYear()} Tech Career Hub. All rights reserved.</p>
+          <p style={{ fontSize: 12, color: '#94a3b8' }}>© {new Date().getFullYear()} TechChampsByRev. All rights reserved.</p>
           <div style={{ display: 'flex', gap: 20 }}>
             {['Privacy', 'Terms', 'Cookies'].map(t => (
               <a key={t} href="#" style={{ fontSize: 12, color: '#94a3b8', textDecoration: 'none' }}>{t}</a>

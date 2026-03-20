@@ -150,7 +150,7 @@ export default function TestimonialsSection({ testimonials }: { testimonials: an
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 4 }}>Your review</label>
                   <textarea
                     value={form.quote} onChange={e => setForm(f => ({ ...f, quote: e.target.value }))}
-                    placeholder="Tell others how Tech Career Hub helped you..." required rows={4}
+                    placeholder="Tell others how TechChampsByRev helped you..." required rows={4}
                     style={{ width: '100%', padding: '8px 12px', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 13, boxSizing: 'border-box', resize: 'vertical', outline: 'none' }}
                   />
                 </div>

@@ -269,7 +269,7 @@ export default async function Home() {
       <section style={{ background: 'linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%)', borderTop: '1px solid #e2e8f0', padding: '80px 0' }}>
         <ScrollReveal><div style={{ ...wrap, maxWidth: 680, textAlign: 'center' }}>
           <h2 className="text-display-sm" style={{ marginBottom: 16 }}>Ready to get hired?</h2>
-          <p style={{ fontSize: 16, color: '#64748b', marginBottom: 36 }}>Join <LiveStat statKey="stat_hired" fallback={stats.stat_hired || '500+'} /> developers who landed their dream jobs through Tech Career Hub.</p>
+          <p style={{ fontSize: 16, color: '#64748b', marginBottom: 36 }}>Join <LiveStat statKey="stat_hired" fallback={stats.stat_hired || '500+'} /> developers who landed their dream jobs through TechChampsByRev.</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginBottom: 36 }}>
             <Link href="/services" className="btn btn-primary btn-lg">Start Today <ArrowRight size={16} /></Link>
             <Link href="/jobs" className="btn btn-outline btn-lg">Browse Jobs</Link>
