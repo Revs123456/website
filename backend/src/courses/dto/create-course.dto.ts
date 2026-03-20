@@ -11,4 +11,5 @@ export class CreateCourseDto {
   description: string;
   modules: string;
   course_link: string;
+  published: boolean;
 }

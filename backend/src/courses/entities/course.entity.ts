@@ -15,5 +15,6 @@ export class Course {
   @Column('text', { nullable: true }) description: string;
   @Column('text', { nullable: true }) modules: string;
   @Column({ nullable: true }) course_link: string;
+  @Column({ type: 'boolean', default: true }) published: boolean;
   @CreateDateColumn() created_at: Date;
 }

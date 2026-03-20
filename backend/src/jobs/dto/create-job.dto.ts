@@ -11,4 +11,6 @@ export class CreateJobDto {
   benefits: string;
   tech_stack: string;
   apply_link: string;
+  published: boolean;
+  expires_at: string;
 }
