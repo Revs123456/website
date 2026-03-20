@@ -32,7 +32,7 @@ export default function ServicesPage() {
       <div style={{ ...wrap, paddingTop: 48, paddingBottom: 80 }}>
 
         {/* ── Two big option cards ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, marginBottom: 64 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 20, marginBottom: 64 }}>
 
           {/* Free card */}
           <div style={{ borderRadius: 20, border: '2px solid #bbf7d0', background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)', padding: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -88,7 +88,7 @@ export default function ServicesPage() {
         </div>
 
         {/* ── Proof strip ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 64 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: 16, marginBottom: 64 }}>
           {[
             { icon: Award, val: '1,200+', label: 'Resumes delivered', c: '#2563eb' },
             { icon: Star,  val: '98%',    label: 'Satisfied clients',  c: '#f59e0b' },

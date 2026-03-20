@@ -148,7 +148,7 @@ export default function Navbar() {
       {mobileOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 40 }}>
           <div style={{ position: 'absolute', inset: 0, background: 'rgba(15,23,42,0.35)', backdropFilter: 'blur(4px)' }} onClick={() => setMobileOpen(false)} />
-          <div style={{ position: 'absolute', right: 0, top: 0, height: '100%', width: 272, display: 'flex', flexDirection: 'column', background: '#fff', boxShadow: '-4px 0 32px rgba(0,0,0,.12)' }}>
+          <div className="mobile-menu-panel" style={{ position: 'absolute', right: 0, top: 0, height: '100%', width: 272, display: 'flex', flexDirection: 'column', background: '#fff', boxShadow: '-4px 0 32px rgba(0,0,0,.12)' }}>
             <div style={{ height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 18px', borderBottom: '1px solid #f1f5f9' }}>
               <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Menu</span>
               <button onClick={() => setMobileOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4 }}>

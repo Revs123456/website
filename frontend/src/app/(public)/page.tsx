@@ -42,7 +42,7 @@ export default async function Home() {
         <div style={{ position: 'absolute', inset: 0, filter: 'url(#hero-noise)', opacity: 0.032, pointerEvents: 'none', zIndex: 2 }} />
         <HeroBubbles videoSrc="/hero-video.mp4" />
 
-        <div style={{ ...wrap, position: 'relative', zIndex: 10, paddingTop: 168, paddingBottom: 200, textAlign: 'center' }}>
+        <div className="hero-content" style={{ ...wrap, position: 'relative', zIndex: 10, textAlign: 'center' }}>
 
           {/* Trust badge with avatars */}
           <div className="anim-fade-up d-1" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 28, padding: '8px 18px 8px 10px', borderRadius: 99, background: 'rgba(255,255,255,0.82)', border: '1px solid rgba(196,210,255,0.6)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 16px rgba(99,102,241,0.08)' }}>
@@ -80,7 +80,7 @@ export default async function Home() {
           </div>
 
           {/* Stats */}
-          <div className="anim-fade-up d-5" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 44, paddingTop: 32, borderTop: '1px solid rgba(226,232,240,0.6)' }}>
+          <div className="anim-fade-up d-5 hero-stats" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 44, paddingTop: 32, borderTop: '1px solid rgba(226,232,240,0.6)' }}>
             {[
               { statKey: 'stat_community',    fallback: stats.stat_community    || '60K+',   l: 'Users',         icon: Users,      c: '#2563eb', bg: '#eff6ff' },
               { statKey: 'stat_resumes',      fallback: stats.stat_resumes      || '1,200+', l: 'Resumes Built', icon: FileCheck,  c: '#7c3aed', bg: '#f5f3ff' },
@@ -109,7 +109,7 @@ export default async function Home() {
             <h2 className="text-display-sm" style={{ marginBottom: 10 }}>Everything you need to grow</h2>
             <p style={{ fontSize: 15, color: '#64748b', maxWidth: 400, margin: '0 auto' }}>One platform covering every step of your tech career journey.</p>
           </div></ScrollReveal>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))', gap: 16 }}>
+          <div className="feature-grid">
             {[
               { icon: Briefcase, c: '#2563eb', bg: '#eff6ff', border: '#bfdbfe', title: 'Tech Job Board',   desc: 'Fresh remote & onsite opportunities from top companies, filtered for developers at every level.', href: '/jobs',     tags: ['Remote', 'Fresher-friendly', 'Daily updates'], delay: 0 },
               { icon: BookOpen,  c: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe', title: 'Curated Courses', desc: 'Hand-picked from Udemy, Coursera, and Pluralsight — rated and organised by skill level.',          href: '/courses',  tags: ['Frontend', 'Backend', 'AI/ML'], delay: 100 },
@@ -149,7 +149,7 @@ export default async function Home() {
             <p style={{ fontSize: 15, color: '#64748b', maxWidth: 420, margin: '0 auto' }}>A structured path that takes you from learner to hired professional.</p>
           </div></ScrollReveal>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 8, position: 'relative' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: 8, position: 'relative' }}>
             {[
               { step: '01', icon: Map,       c: '#2563eb', bg: '#eff6ff', border: '#bfdbfe', title: 'Choose your career path',                    desc: 'Select from Frontend, Backend, DevOps, AI/ML, or any tech track that matches your goals and timeline.' },
               { step: '02', icon: BookOpen,  c: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe', title: 'Follow roadmaps & build skills',              desc: 'Access curated courses, practice projects, and expert-designed roadmaps to go from zero to job-ready.' },
@@ -178,7 +178,7 @@ export default async function Home() {
       {/* ── STATS STRIP ── */}
       <section style={{ background: '#fff', borderTop: '1px solid #e2e8f0', borderBottom: '1px solid #e2e8f0', padding: '64px 0' }}>
         <div style={wrap}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 32 }}>
+          <div className="stats-grid" style={{ gap: 32 }}>
             {[
               { icon: Users,      statKey: 'stat_community',    fallback: stats.stat_community    || '60K+',   label: 'Instagram community', c: '#2563eb', bg: '#eff6ff' },
               { icon: FileCheck,  statKey: 'stat_resumes',      fallback: stats.stat_resumes      || '1,200+', label: 'Resumes optimised',   c: '#7c3aed', bg: '#f5f3ff' },
@@ -202,7 +202,7 @@ export default async function Home() {
       {/* ── WHY US ── */}
       <section style={{ background: '#f8fafc', padding: '80px 0' }}>
         <div style={wrap}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 64, alignItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 48, alignItems: 'center' }}>
             <ScrollReveal><div>
               <span className="badge badge-violet" style={{ marginBottom: 16, display: 'inline-flex' }}>Why Us</span>
               <h2 className="text-display-sm" style={{ marginBottom: 16 }}>Built for devs,<br />by devs</h2>
@@ -211,7 +211,7 @@ export default async function Home() {
               </p>
               <Link href="/services" className="btn btn-blue">View Career Services <ArrowRight size={15} /></Link>
             </div></ScrollReveal>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className="grid-2col">
               {[
                 { icon: Zap,    c: '#2563eb', bg: '#eff6ff', t: '48hr Delivery',     d: 'Optimised resume within 2 business days.' },
                 { icon: Shield, c: '#7c3aed', bg: '#f5f3ff', t: 'ATS Guaranteed',    d: 'Every resume scores 90%+ on major ATS.' },
@@ -241,7 +241,7 @@ export default async function Home() {
             <h2 className="text-display-sm" style={{ marginBottom: 10 }}>Tools to accelerate your career</h2>
             <p style={{ fontSize: 15, color: '#64748b' }}>Everything you need to prepare, apply, and succeed — completely free.</p>
           </div></ScrollReveal>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))', gap: 16 }}>
             {[
               { icon: FileCheck,   c: '#2563eb', bg: '#eff6ff', title: 'ATS Score Checker',      desc: 'Instantly check how well your resume passes ATS filters.',             href: '/ats-checker'          },
               { icon: HelpCircle,  c: '#7c3aed', bg: '#f5f3ff', title: 'Interview Question Bank', desc: 'Real questions from Google, Amazon, Flipkart and more.',               href: '/interview-questions'  },

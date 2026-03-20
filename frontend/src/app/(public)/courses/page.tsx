@@ -147,7 +147,7 @@ export default function CoursesPage() {
 
       <div style={{ ...wrap, paddingTop: 32, paddingBottom: 80 }}>
         {/* Filters */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
+        <div className="filter-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 32 }}>
           <div className="input-icon" style={{ flex: 1, minWidth: 200 }}>
             <Search size={15} className="icon" />
             <input className="input" placeholder="Search courses, instructors, platforms…" value={q} onChange={e => setQ(e.target.value)} />
@@ -185,7 +185,7 @@ export default function CoursesPage() {
                   <p>No free courses match your filters.</p>
                 </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 16 }}>
                   {freeCourses.map(course => <CourseCard key={course.id} course={course} />)}
                 </div>
               )}
@@ -207,7 +207,7 @@ export default function CoursesPage() {
                   <p>No paid courses match your filters.</p>
                 </div>
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 16 }}>
                   {paidCourses.map(course => <CourseCard key={course.id} course={course} />)}
                 </div>
               )}

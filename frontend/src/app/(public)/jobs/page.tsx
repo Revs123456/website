@@ -84,8 +84,8 @@ export default function JobsPage() {
       </div>
 
       <div style={{ ...wrap, paddingTop: 32, paddingBottom: 80 }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
-          <div className="input-icon" style={{ flex: 1, minWidth: 200 }}>
+        <div className="filter-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
+          <div className="input-icon" style={{ flex: 1, minWidth: 160 }}>
             <Search size={15} className="icon" />
             <input
               className="input"

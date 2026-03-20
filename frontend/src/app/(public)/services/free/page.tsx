@@ -138,7 +138,7 @@ export default function FreeServicesPage() {
       </div>
 
       <div style={{ ...wrap, paddingTop: 40, paddingBottom: 80 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
           {FREE_SERVICES.map(({ icon: Icon, color, bg, border, title, caption, desc, cta, href, highlights }) => (
             <div key={title} className="card" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
               {/* Top */}

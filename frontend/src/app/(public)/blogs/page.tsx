@@ -112,7 +112,7 @@ export default function BlogsPage() {
             <p>No articles found.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 16 }}>
             {list.map(blog => {
               const { c, bg } = CAT_COLOR[blog.category] || { c: '#64748b', bg: '#f8fafc' };
               return (

@@ -53,7 +53,7 @@ export default async function PaidServicesPage() {
             <p style={{ fontSize: 15 }}>Paid plans coming soon. Check back shortly.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 20, alignItems: 'start' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 280px), 1fr))', gap: 20, alignItems: 'start' }}>
             {plans.map((plan, idx) => {
               const color    = PLAN_COLORS[idx % PLAN_COLORS.length];
               const features = safeJson(plan.included_features);

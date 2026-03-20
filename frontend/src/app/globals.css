@@ -351,6 +351,114 @@ select.input option { background: #fff; color: #0f172a; }
   .bubble-side { display: none !important; }
 }
 
+/* ════════════════════════════════════════════════
+   MOBILE RESPONSIVE UTILITIES & OVERRIDES
+   ════════════════════════════════════════════════ */
+
+/* Responsive grid helpers */
+.grid-auto-sm  { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 16px; }
+.grid-auto-md  { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 20px; }
+.grid-auto-lg  { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 20px; }
+.grid-2col     { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+@media (max-width: 640px) {
+  .grid-2col   { grid-template-columns: 1fr; }
+}
+
+/* Mobile padding helpers */
+.section-pad   { padding: clamp(48px, 8vw, 88px) 0; }
+.page-header   { padding-top: clamp(68px, 12vw, 120px); padding-bottom: clamp(24px, 5vw, 40px); }
+
+/* ── Mobile-specific global overrides ── */
+@media (max-width: 768px) {
+
+  /* Typography scale down */
+  .text-display    { font-size: clamp(1.6rem, 6vw, 2.4rem); }
+  .text-display-sm { font-size: clamp(1.3rem, 5vw, 1.8rem); }
+
+  /* Buttons full-width on very small screens */
+  .btn-hero-primary,
+  .btn-hero-secondary { padding: 13px 24px; font-size: 14px; }
+
+  /* Card hover effect removed on touch */
+  .card:hover { transform: none; box-shadow: none; }
+
+  /* Touch-friendly tap targets */
+  .btn, button, a.btn { min-height: 44px; }
+
+  /* Input font size prevents iOS zoom */
+  .input, input, select, textarea { font-size: 16px !important; }
+
+  /* Stat numbers smaller */
+  .stat-num { font-size: 1.5rem; }
+}
+
+@media (max-width: 480px) {
+  .text-display    { font-size: clamp(1.4rem, 7vw, 2rem); }
+  .text-display-sm { font-size: clamp(1.2rem, 5.5vw, 1.6rem); }
+
+  /* Stack any flex row on very small screens */
+  .flex-mobile-col { flex-direction: column !important; align-items: stretch !important; }
+
+  /* Full-width buttons */
+  .btn-lg { padding: 12px 20px; font-size: 14px; }
+}
+
+/* ── Landing page feature grid fix ── */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 16px;
+}
+
+/* ── Hero section responsive ── */
+.hero-content {
+  padding-top:    clamp(100px, 14vw, 168px);
+  padding-bottom: clamp(80px,  14vw, 200px);
+}
+
+/* ── Proof/stats strip ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 24px;
+}
+
+/* ── Page header filter row (search + selects) ── */
+@media (max-width: 640px) {
+  .filter-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  .filter-row > * { width: 100% !important; }
+}
+
+/* ── Navbar mobile menu full-width safety ── */
+.mobile-menu-panel {
+  width: min(85vw, 300px) !important;
+}
+
+/* ── Table horizontal scroll ── */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Hero stat strip on mobile ── */
+@media (max-width: 560px) {
+  .hero-stats { gap: 24px !important; }
+  .hero-stats > div { min-width: 80px; }
+}
+
+/* ── Services free/paid cards ── */
+@media (max-width: 500px) {
+  .service-card-body { padding: 16px !important; }
+}
+
+/* ── Prevent horizontal overflow site-wide ── */
+html, body { overflow-x: hidden; max-width: 100vw; }
+
 /* ── Hero stats icons ── */
 .hero-stat-icon {
   width: 32px; height: 32px;
