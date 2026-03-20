@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import BackButton from '@/components/BackButton';
-import { Globe, Server, Cloud, Code, Database, Cpu, Shield, Smartphone, Check, Map } from 'lucide-react';
+import { Globe, Server, Cloud, Code, Database, Cpu, Shield, Smartphone, Check, Map, type LucideProps } from 'lucide-react';
 
-const ICON_MAP: Record<string, React.ElementType> = {
+const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   Globe, Server, Cloud, Code, Database, Cpu, Shield, Smartphone,
 };
 
@@ -65,7 +65,7 @@ export default function RoadmapsPage() {
               const color = rm.color || '#2563eb';
               const bg = colorBg(color);
               const border = colorBorder(color);
-              const Icon = ICON_MAP[rm.icon || 'Globe'] || Globe;
+              const Icon: React.ComponentType<LucideProps> = ICON_MAP[rm.icon || 'Globe'] || Globe;
               const steps: { s: string; d: string }[] = rm.steps || [];
               return (
                 <div key={rm.id} className="card" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
