@@ -7,7 +7,6 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import NewsletterSection from '@/components/NewsletterSection';
 import LiveStat from '@/components/LiveStat';
 import ScrollReveal from '@/components/ScrollReveal';
-import HeroBubbles from '@/components/hero/HeroBubbles';
 
 const wrap = { maxWidth: 1152, margin: '0 auto', padding: '0 24px' } as const;
 
@@ -27,20 +26,15 @@ export default async function Home() {
     <div style={{ background: '#f8fafc' }}>
 
       {/* ── HERO ── */}
-      <section className="hero-section" style={{ background: 'linear-gradient(160deg, #edf0ff 0%, #f8f9ff 45%, #f0edff 100%)', borderBottom: '1px solid #e8eaf6', position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
+      <section className="hero-section" style={{ background: 'linear-gradient(160deg, #edf0ff 0%, #f8f9ff 45%, #f0edff 100%)', borderBottom: '1px solid #e8eaf6', position: 'relative', overflow: 'hidden' }}>
         {/* Dot grid */}
-        <div className="bg-dots" style={{ position: 'absolute', inset: 0, opacity: 0.45 }} />
-        {/* Ambient radial glow — blue/violet behind hero text */}
-        <div className="hero-glow" />
-        {/* Noise / grain — premium texture */}
-        <svg style={{ position: 'absolute', width: 0, height: 0 }}>
-          <filter id="hero-noise">
-            <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" stitchTiles="stitch"/>
-            <feColorMatrix type="saturate" values="0"/>
-          </filter>
-        </svg>
-        <div style={{ position: 'absolute', inset: 0, filter: 'url(#hero-noise)', opacity: 0.032, pointerEvents: 'none', zIndex: 2 }} />
-        <HeroBubbles videoSrc="/hero-video.mp4" />
+        <div className="bg-dots" style={{ position: 'absolute', inset: 0, opacity: 0.45, pointerEvents: 'none' }} />
+        {/* Ambient glow */}
+        <div className="hero-glow" style={{ pointerEvents: 'none' }} />
+        {/* Decorative blobs — strictly at corners, never overlap center text */}
+        <div style={{ position: 'absolute', top: -80, left: -80, width: 340, height: 340, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.13), transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: -60, right: -60, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.10), transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: '30%', right: -40, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.09), transparent 70%)', pointerEvents: 'none' }} />
 
         <div className="hero-content" style={{ ...wrap, position: 'relative', zIndex: 10, textAlign: 'center' }}>
 

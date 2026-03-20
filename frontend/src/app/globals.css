@@ -413,15 +413,13 @@ select.input option { background: #fff; color: #0f172a; }
 
 /* ── Hero section responsive ── */
 .hero-content {
-  padding-top:    clamp(96px, 12vw, 168px);
-  padding-bottom: clamp(80px, 12vw, 180px);
+  padding-top:    clamp(96px, 11vw, 160px);
+  padding-bottom: clamp(72px, 10vw, 140px);
 }
 
-/* Hide all hero bubbles on mobile — too cluttered, blocks content */
+/* Bubbles are removed; this rule is kept as safety */
 @media (max-width: 900px) {
   .hero-bubbles-wrap { display: none !important; }
-  /* Hero section should not stretch full viewport on mobile */
-  .hero-section { min-height: unset !important; }
 }
 
 /* ── Proof/stats strip ── */
