@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
-import { ArrowRight, Briefcase, BookOpen, Map, Star, Check, Users, FileCheck, TrendingUp, Zap, Shield, Globe, HelpCircle, DollarSign, FileText, Trophy, Sparkles } from 'lucide-react';
+import { ArrowRight, Briefcase, BookOpen, Map, Star, Check, Users, FileCheck, TrendingUp, Zap, Shield, Globe, HelpCircle, DollarSign, FileText, Trophy, Sparkles, CheckCircle, Clock } from 'lucide-react';
 import { api } from '@/lib/api';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import NewsletterSection from '@/components/NewsletterSection';
@@ -31,10 +31,16 @@ export default async function Home() {
         <div className="bg-dots" style={{ position: 'absolute', inset: 0, opacity: 0.45, pointerEvents: 'none' }} />
         {/* Ambient glow */}
         <div className="hero-glow" style={{ pointerEvents: 'none' }} />
-        {/* Decorative blobs — strictly at corners, never overlap center text */}
+        {/* Decorative blobs — corners only, never overlap center text */}
         <div style={{ position: 'absolute', top: -80, left: -80, width: 340, height: 340, borderRadius: '50%', background: 'radial-gradient(circle, rgba(99,102,241,0.13), transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: -60, right: -60, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.10), transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', top: '30%', right: -40, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.09), transparent 70%)', pointerEvents: 'none' }} />
+
+        {/* Floating feature cards — desktop ≥1280px only, in the margin zone outside 1152px content */}
+        <div className="hero-float-card hfc-1"><div className="dot" style={{ background: '#059669' }} /><CheckCircle size={12} style={{ color: '#059669' }} /> ATS Score 95%+</div>
+        <div className="hero-float-card hfc-2"><div className="dot" style={{ background: '#2563eb' }} /><FileCheck size={12} style={{ color: '#2563eb' }} /> 1,200+ Resumes Built</div>
+        <div className="hero-float-card hfc-3"><div className="dot" style={{ background: '#7c3aed' }} /><Briefcase size={12} style={{ color: '#7c3aed' }} /> 500+ Jobs Landed</div>
+        <div className="hero-float-card hfc-4"><div className="dot" style={{ background: '#d97706' }} /><Clock size={12} style={{ color: '#d97706' }} /> 48hr Delivery</div>
 
         <div className="hero-content" style={{ ...wrap, position: 'relative', zIndex: 10, textAlign: 'center' }}>
 
@@ -67,7 +73,7 @@ export default async function Home() {
 
           {/* CTAs — matching reference image */}
           <div className="anim-fade-up d-4 hero-ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center', marginBottom: 60 }}>
-            <Link href="/jobs" className="btn btn-primary btn-lg">Browse Jobs <ArrowRight size={16} /></Link>
+            <Link href="/jobs" className="btn btn-primary btn-lg btn-pulse">Browse Jobs <ArrowRight size={16} /></Link>
             <Link href="/services" className="btn btn-outline btn-lg" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
               <Sparkles size={16} /> Checkout our Services
             </Link>
@@ -111,7 +117,7 @@ export default async function Home() {
               { icon: Star,      c: '#d97706', bg: '#fffbeb', border: '#fde68a', title: 'Resume Services', desc: 'Expert ATS-optimised resumes, LinkedIn profiles, and 1-on-1 career coaching.',                     href: '/services', tags: ['From ₹499', 'ATS >90%', '48hr delivery'], delay: 300 },
             ].map(({ icon: Icon, c, bg, border, title, desc, href, tags, delay }) => (
               <ScrollReveal key={title} delay={delay}>
-              <Link href={href} className="card card-blue" style={{ display: 'block', padding: 24, textDecoration: 'none' }}>
+              <Link href={href} className="card card-blue hover-bounce-arrow" style={{ display: 'block', padding: 24, textDecoration: 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
                   <div style={{ width: 44, height: 44, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, background: bg, border: `1px solid ${border}` }}>
                     <Icon size={20} style={{ color: c }} />
@@ -245,7 +251,7 @@ export default async function Home() {
               { icon: Users,       c: '#dc2626', bg: '#fef2f2', title: 'Community Q&A',            desc: 'Ask questions, share knowledge, and help others in the community.',    href: '/community'            },
             ].map(({ icon: Icon, c, bg, title, desc, href }, i) => (
               <ScrollReveal key={title} delay={i * 60}>
-              <Link href={href} className="card card-blue" style={{ display: 'block', padding: 20, textDecoration: 'none' }}>
+              <Link href={href} className="card card-blue hover-bounce-arrow" style={{ display: 'block', padding: 20, textDecoration: 'none' }}>
                 <div style={{ width: 40, height: 40, borderRadius: 10, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
                   <Icon size={18} style={{ color: c }} />
                 </div>
