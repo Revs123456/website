@@ -413,8 +413,15 @@ select.input option { background: #fff; color: #0f172a; }
 
 /* ── Hero section responsive ── */
 .hero-content {
-  padding-top:    clamp(100px, 14vw, 168px);
-  padding-bottom: clamp(80px,  14vw, 200px);
+  padding-top:    clamp(96px, 12vw, 168px);
+  padding-bottom: clamp(80px, 12vw, 180px);
+}
+
+/* Hide all hero bubbles on mobile — too cluttered, blocks content */
+@media (max-width: 900px) {
+  .hero-bubbles-wrap { display: none !important; }
+  /* Hero section should not stretch full viewport on mobile */
+  .hero-section { min-height: unset !important; }
 }
 
 /* ── Proof/stats strip ── */
@@ -454,6 +461,12 @@ select.input option { background: #fff; color: #0f172a; }
 /* ── Services free/paid cards ── */
 @media (max-width: 500px) {
   .service-card-body { padding: 16px !important; }
+}
+
+/* ── Hero CTAs on mobile ── */
+@media (max-width: 480px) {
+  .hero-ctas { flex-direction: column !important; align-items: center !important; }
+  .hero-ctas a, .hero-ctas button { width: 100%; max-width: 300px; justify-content: center; }
 }
 
 /* ── Prevent horizontal overflow site-wide ── */

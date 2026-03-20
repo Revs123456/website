@@ -50,7 +50,7 @@ export default function HeroBubbles({ videoSrc }: { videoSrc?: string }) {
 
   return (
     <>
-      <div ref={wrapRef} style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
+      <div ref={wrapRef} className="hero-bubbles-wrap" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1 }}>
 
         {/* ── Orbital path ── */}
         <svg
@@ -113,7 +113,7 @@ export default function HeroBubbles({ videoSrc }: { videoSrc?: string }) {
               transform: 'translate(-50%, -50%)',
               transition: 'transform 0.48s cubic-bezier(0.16,1,0.3,1)',
               willChange: 'transform',
-              pointerEvents: 'all',
+              pointerEvents: 'none',
               filter: b.depth < 0.8 ? 'blur(0.8px)' : 'none',
               opacity: b.depth < 0.8 ? 0.88 : 1,
             }}

@@ -27,7 +27,7 @@ export default async function Home() {
     <div style={{ background: '#f8fafc' }}>
 
       {/* ── HERO ── */}
-      <section style={{ background: 'linear-gradient(160deg, #edf0ff 0%, #f8f9ff 45%, #f0edff 100%)', borderBottom: '1px solid #e8eaf6', position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
+      <section className="hero-section" style={{ background: 'linear-gradient(160deg, #edf0ff 0%, #f8f9ff 45%, #f0edff 100%)', borderBottom: '1px solid #e8eaf6', position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
         {/* Dot grid */}
         <div className="bg-dots" style={{ position: 'absolute', inset: 0, opacity: 0.45 }} />
         {/* Ambient radial glow — blue/violet behind hero text */}
@@ -72,7 +72,7 @@ export default async function Home() {
           </p>
 
           {/* CTAs — matching reference image */}
-          <div className="anim-fade-up d-4" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center', marginBottom: 60 }}>
+          <div className="anim-fade-up d-4 hero-ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center', marginBottom: 60 }}>
             <Link href="/jobs" className="btn btn-primary btn-lg">Browse Jobs <ArrowRight size={16} /></Link>
             <Link href="/services" className="btn btn-outline btn-lg" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
               <Sparkles size={16} /> Checkout our Services
