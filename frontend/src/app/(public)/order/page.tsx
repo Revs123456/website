@@ -44,10 +44,14 @@ function Form() {
     setLoading(true);
     setError('');
     try {
+      const selectedSvc = services.find((s: any) => String(s.id) === data.service_id);
       await api.orders.create({
         customer_name: data.name,
         customer_email: data.email,
-        service_id: Number(data.service_id),
+        name: data.name,
+        email: data.email,
+        service_id: data.service_id,
+        service_type: selectedSvc?.name || data.service_id,
         experience_level: data.level,
         message: data.message,
       });

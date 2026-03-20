@@ -129,10 +129,11 @@ export default async function TemplatesPage() {
                     <div className="divider" style={{ marginBottom: 16 }} />
 
                     {free ? (
-                      t.download_url ? (
+                      t.download_link ? (
                         <a
-                          href={t.download_url}
-                          download
+                          href={t.download_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="btn btn-blue"
                           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}
                         >

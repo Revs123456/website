@@ -29,7 +29,7 @@ export default function AdminTemplatesPage() {
   async function load() {
     setLoading(true);
     try {
-      const res = await fetch(`${BASE}/templates`);
+      const res = await fetch(`${BASE}/resume-templates`);
       const data = await res.json();
       setItems(Array.isArray(data) ? data : data.data ?? []);
     } catch (e) {
@@ -82,7 +82,7 @@ export default function AdminTemplatesPage() {
           body: JSON.stringify(form),
         });
       } else {
-        await fetch(`${BASE}/templates`, {
+        await fetch(`${BASE}/resume-templates`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(form),

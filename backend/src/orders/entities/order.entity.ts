@@ -5,20 +5,35 @@ export class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ nullable: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
+  customer_name: string;
+
+  @Column({ nullable: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
+  customer_email: string;
+
+  @Column({ nullable: true })
   service_type: string;
+
+  @Column({ nullable: true })
+  service_id: string;
+
+  @Column({ nullable: true })
+  experience_level: string;
 
   @Column({ type: 'text', nullable: true })
   message: string;
 
   @Column({ nullable: true })
   resume_file: string;
+
+  @Column({ default: 'pending' })
+  status: string;
 
   @CreateDateColumn()
   created_at: Date;
