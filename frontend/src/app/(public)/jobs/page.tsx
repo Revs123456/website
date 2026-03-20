@@ -47,7 +47,14 @@ export default function JobsPage() {
   useEffect(() => {
     api.jobs.list().then(d => setJobs(d.filter((j: any) => {
       if (j.published === false) return false;
-      if (j.expires_at && new Date(j.expires_at) < new Date()) return false;
+      const now = new Date();
+      if (j.expires_at) {
+        if (new Date(j.expires_at) < now) return false;
+      } else if (j.created_at) {
+        const autoExpiry = new Date(j.created_at);
+        autoExpiry.setDate(autoExpiry.getDate() + 10);
+        if (autoExpiry < now) return false;
+      }
       return true;
     }))).catch(console.error).finally(() => setLoading(false));
   }, []);

@@ -262,8 +262,24 @@ export default function AdminJobsPage() {
                     <td style={{ padding: '14px 16px' }}><span className="badge badge-green">{job.type}</span></td>
                     <td style={{ padding: '14px 16px' }}><span className="badge badge-blue">{job.category}</span></td>
                     <td style={{ padding: '14px 16px', color: '#475569', fontWeight: 600 }}>{job.salary}</td>
-                    <td style={{ padding: '14px 16px', color: job.expires_at && new Date(job.expires_at) < new Date() ? '#ef4444' : '#94a3b8', fontSize: 12 }}>
-                      {job.expires_at ? new Date(job.expires_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                    <td style={{ padding: '14px 16px', fontSize: 12 }}>
+                      {(() => {
+                        const now = new Date();
+                        const expiry = job.expires_at
+                          ? new Date(job.expires_at)
+                          : job.created_at
+                            ? (() => { const d = new Date(job.created_at); d.setDate(d.getDate() + 10); return d; })()
+                            : null;
+                        if (!expiry) return <span style={{ color: '#94a3b8' }}>—</span>;
+                        const expired = expiry < now;
+                        const label = expiry.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+                        const auto = !job.expires_at;
+                        return (
+                          <span style={{ color: expired ? '#ef4444' : '#94a3b8' }}>
+                            {label}{auto && <span style={{ fontSize: 10, marginLeft: 4, color: '#cbd5e1' }}>(auto)</span>}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td style={{ padding: '14px 16px' }}>
                       <button
