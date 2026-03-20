@@ -45,7 +45,11 @@ export default function JobsPage() {
   const [cat, setCat] = useState('All');
 
   useEffect(() => {
-    api.jobs.list().then(d => setJobs(d.filter((j: any) => j.published !== false))).catch(console.error).finally(() => setLoading(false));
+    api.jobs.list().then(d => setJobs(d.filter((j: any) => {
+      if (j.published === false) return false;
+      if (j.expires_at && new Date(j.expires_at) < new Date()) return false;
+      return true;
+    }))).catch(console.error).finally(() => setLoading(false));
   }, []);
 
   const list = jobs.filter(j => {

@@ -9,7 +9,7 @@ const TYPES = ['Full-time', 'Contract', 'Internship', 'Part-time'];
 const EMPTY = {
   title: '', company: '', location: '', experience: '', type: 'Full-time',
   category: 'Frontend', salary: '', description: '', tech_stack: '',
-  requirements: '', benefits: '', apply_link: '', published: true,
+  requirements: '', benefits: '', apply_link: '', published: true, expires_at: '',
 };
 
 function arrToText(val: any): string {
@@ -76,6 +76,7 @@ export default function AdminJobsPage() {
       benefits:     arrToText(job.benefits),
       apply_link:   job.apply_link || '',
       published:    job.published !== false,
+      expires_at:   job.expires_at ? job.expires_at.slice(0, 10) : '',
     });
     setError('');
     setShowForm(true);
@@ -101,6 +102,7 @@ export default function AdminJobsPage() {
         tech_stack:   commaSplitToJson(form.tech_stack),
         requirements: textToJson(form.requirements),
         benefits:     textToJson(form.benefits),
+        expires_at:   (form as any).expires_at || null,
       };
       if (editing) {
         await api.jobs.update(editing.id, payload);
@@ -206,9 +208,16 @@ export default function AdminJobsPage() {
                 <label style={lbl}>Benefits (one per line)</label>
                 <textarea name="benefits" value={form.benefits} onChange={change} rows={3} className="input" style={{ resize: 'vertical' }} placeholder="Remote-first&#10;Health insurance&#10;Stock options" />
               </div>
-              <div>
-                <label style={lbl}>Apply Link</label>
-                <input name="apply_link" value={form.apply_link} onChange={change} className="input" placeholder="https://..." type="url" />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                <div>
+                  <label style={lbl}>Apply Link</label>
+                  <input name="apply_link" value={form.apply_link} onChange={change} className="input" placeholder="https://..." type="url" />
+                </div>
+                <div>
+                  <label style={lbl}>Expiry Date</label>
+                  <input name="expires_at" value={(form as any).expires_at} onChange={change} className="input" type="date" />
+                  <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>Job auto-hides after this date. Leave blank for no expiry.</p>
+                </div>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 8, background: '#f8fafc', border: '1px solid #e2e8f0' }}>
                 <input type="checkbox" id="job-published" checked={(form as any).published} onChange={e => setForm(f => ({ ...f, published: e.target.checked }))} style={{ width: 16, height: 16, cursor: 'pointer' }} />
@@ -239,7 +248,7 @@ export default function AdminJobsPage() {
             <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['Title', 'Company', 'Location', 'Type', 'Category', 'Salary', 'Status', ''].map(h => (
+                  {['Title', 'Company', 'Location', 'Type', 'Category', 'Salary', 'Expires', 'Status', ''].map(h => (
                     <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
@@ -253,6 +262,9 @@ export default function AdminJobsPage() {
                     <td style={{ padding: '14px 16px' }}><span className="badge badge-green">{job.type}</span></td>
                     <td style={{ padding: '14px 16px' }}><span className="badge badge-blue">{job.category}</span></td>
                     <td style={{ padding: '14px 16px', color: '#475569', fontWeight: 600 }}>{job.salary}</td>
+                    <td style={{ padding: '14px 16px', color: job.expires_at && new Date(job.expires_at) < new Date() ? '#ef4444' : '#94a3b8', fontSize: 12 }}>
+                      {job.expires_at ? new Date(job.expires_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                    </td>
                     <td style={{ padding: '14px 16px' }}>
                       <button
                         onClick={() => togglePublished(job)}

@@ -15,5 +15,7 @@ export class Job {
   @Column('text', { nullable: true }) benefits: string;
   @Column('text', { nullable: true }) tech_stack: string;
   @Column({ nullable: true }) apply_link: string;
+  @Column({ type: 'boolean', default: true }) published: boolean;
+  @Column({ type: 'date', nullable: true }) expires_at: string | null;
   @CreateDateColumn() created_at: Date;
 }
