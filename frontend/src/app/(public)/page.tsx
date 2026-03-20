@@ -36,7 +36,7 @@ export default async function Home() {
         <div style={{ position: 'absolute', bottom: -60, right: -60, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.10), transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', top: '30%', right: -40, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.09), transparent 70%)', pointerEvents: 'none' }} />
 
-        <div className="hero-content" style={{ ...wrap, position: 'relative', zIndex: 10, textAlign: 'center' }}>
+        <div className="hero-content" style={{ ...wrap, position: 'relative', zIndex: 10, textAlign: 'center', paddingTop: 'clamp(100px, 12vw, 168px)', paddingBottom: 'clamp(80px, 10vw, 140px)' }}>
 
           {/* Trust badge with avatars */}
           <div className="anim-fade-up d-1" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 28, padding: '8px 18px 8px 10px', borderRadius: 99, background: 'rgba(255,255,255,0.82)', border: '1px solid rgba(196,210,255,0.6)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 16px rgba(99,102,241,0.08)' }}>
