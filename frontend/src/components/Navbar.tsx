@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
-import { Menu, X, Zap, ChevronRight, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronRight, ChevronDown } from 'lucide-react';
 import GetInTouchBtn from './GetInTouchBtn';
 
 const NAV_LINKS = [
@@ -63,11 +63,9 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', flexShrink: 0 }}>
-            <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg,#2563eb,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Zap size={17} style={{ color: '#fff' }} />
-            </div>
+            <img src="/TC.png" alt="TechChampsByRev logo" style={{ width: 34, height: 34, borderRadius: 10, objectFit: 'cover' }} />
             <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.02em', color: '#0f172a' }}>
-              Tech<span style={{ color: '#2563eb' }}>Career</span>Hub
+              TechChamps<span style={{ color: '#2563eb' }}>ByRev</span>
             </span>
           </Link>
 
