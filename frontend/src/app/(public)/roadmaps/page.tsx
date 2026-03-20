@@ -98,14 +98,13 @@ export default function RoadmapsPage() {
                     </div>
                   )}
 
-                  <div style={{ padding: 20, borderTop: '1px solid #f1f5f9' }}>
-                    {steps.length > 0 && (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#94a3b8', marginBottom: 12 }}>
+                  {steps.length > 0 && (
+                    <div style={{ padding: '12px 20px', borderTop: '1px solid #f1f5f9' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#94a3b8' }}>
                         <Check size={11} style={{ color }} />{steps.length} milestones · Beginner to job-ready
                       </div>
-                    )}
-                    <button className="btn btn-outline btn-sm" style={{ width: '100%', justifyContent: 'center' }}>View Full Roadmap</button>
-                  </div>
+                    </div>
+                  )}
                 </div>
               );
             })}

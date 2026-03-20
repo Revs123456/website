@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
 const cols = [
-  { title: 'Platform', links: [{ l: 'Browse Jobs', h: '/jobs' }, { l: 'Courses', h: '/courses' }, { l: 'Roadmaps', h: '/roadmaps' }] },
+  { title: 'Platform', links: [{ l: 'Browse Jobs', h: '/jobs' }, { l: 'Courses', h: '/courses' }, { l: 'Roadmaps', h: '/roadmaps' }, { l: 'Blogs', h: '/blogs' }] },
   { title: 'Services', links: [{ l: 'Resume Writing', h: '/services' }, { l: 'ATS Optimization', h: '/services' }, { l: 'Book a Session', h: '/order' }] },
-  { title: 'Company',  links: [{ l: 'About', h: '#' }, { l: 'Blog', h: '#' }, { l: 'Contact', h: '#' }] },
+  { title: 'More',     links: [{ l: 'Success Stories', h: '/success-stories' }, { l: 'Community', h: '/community' }, { l: 'Interview Prep', h: '/interview-questions' }, { l: 'Daily Tips', h: '/daily-tips' }] },
 ];
 
 export default function Footer() {
@@ -42,11 +42,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <p style={{ fontSize: 12, color: '#94a3b8' }}>© {new Date().getFullYear()} TechChampsByRev. All rights reserved.</p>
-          <div style={{ display: 'flex', gap: 20 }}>
-            {['Privacy', 'Terms', 'Cookies'].map(t => (
-              <a key={t} href="#" style={{ fontSize: 12, color: '#94a3b8', textDecoration: 'none' }}>{t}</a>
-            ))}
-          </div>
+          <p style={{ fontSize: 12, color: '#94a3b8' }}>Made with ❤️ for developers & students in India</p>
         </div>
       </div>
     </footer>

@@ -81,15 +81,21 @@ export default async function CourseDetail({ params }: { params: Promise<{ id: s
               </>
             )}
           </div>
-          <a
-            href={course.course_link || '#'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-blue"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
-          >
-            Enroll on {course.platform} <ExternalLink size={13} />
-          </a>
+          {course.course_link ? (
+            <a
+              href={course.course_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-blue"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+            >
+              Enroll on {course.platform} <ExternalLink size={13} />
+            </a>
+          ) : (
+            <button disabled className="btn btn-blue" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, opacity: 0.45, cursor: 'not-allowed' }}>
+              Link Coming Soon
+            </button>
+          )}
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,2fr) minmax(0,1fr)', gap: 16, alignItems: 'start' }}>

@@ -58,15 +58,21 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
             </div>
-            <a
-              href={job.apply_link || '#'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-blue btn-sm"
-              style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 6 }}
-            >
-              Apply Now <ExternalLink size={13} />
-            </a>
+            {job.apply_link ? (
+              <a
+                href={job.apply_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-blue btn-sm"
+                style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+              >
+                Apply Now <ExternalLink size={13} />
+              </a>
+            ) : (
+              <button disabled className="btn btn-blue btn-sm" style={{ flexShrink: 0, display: 'inline-flex', alignItems: 'center', gap: 6, opacity: 0.45, cursor: 'not-allowed' }}>
+                Apply Link Coming Soon
+              </button>
+            )}
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
             {[
