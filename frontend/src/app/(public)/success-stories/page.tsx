@@ -1,4 +1,5 @@
 import SuccessStoriesClient from './SuccessStoriesClient';
+import BackButton from '@/components/BackButton';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 

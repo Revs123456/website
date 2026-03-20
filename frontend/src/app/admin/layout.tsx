@@ -2,13 +2,14 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Briefcase, GraduationCap, ShoppingBag, LogOut, Zap, FileText, Star, Settings, ShieldCheck, MessageSquare, HelpCircle, DollarSign, Lightbulb, Trophy, Users, Calendar, Layout, Bell } from 'lucide-react';
+import { Home, Briefcase, GraduationCap, ShoppingBag, LogOut, Zap, FileText, Star, Settings, ShieldCheck, MessageSquare, HelpCircle, DollarSign, Lightbulb, Trophy, Users, Calendar, Layout, Bell, Map } from 'lucide-react';
 
 const NAV = [
   { href: '/admin',                      label: 'Dashboard',        icon: Home          },
   { href: '/admin/jobs',                 label: 'Jobs',             icon: Briefcase     },
   { href: '/admin/courses',              label: 'Courses',          icon: GraduationCap },
   { href: '/admin/blogs',                label: 'Blogs',            icon: FileText      },
+  { href: '/admin/roadmaps',             label: 'Roadmaps',         icon: Map           },
   { href: '/admin/orders',               label: 'Orders',           icon: ShoppingBag   },
   { href: '/admin/services',             label: 'Services',         icon: Star          },
   { href: '/admin/testimonials',         label: 'Testimonials',     icon: MessageSquare },

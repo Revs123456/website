@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 import { ArrowLeft, MapPin, Briefcase, Clock, Check, ExternalLink, DollarSign } from 'lucide-react';
 import { api } from '@/lib/api';
 
@@ -36,12 +37,7 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
       <div style={{ ...wrap, paddingTop: 96, paddingBottom: 80 }}>
-        <Link
-          href="/jobs"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#94a3b8', textDecoration: 'none', marginBottom: 32 }}
-        >
-          <ArrowLeft size={15} /> Back to Jobs
-        </Link>
+        <BackButton />
 
         <div className="card" style={{ padding: 28, marginBottom: 16 }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, marginBottom: 24 }}>

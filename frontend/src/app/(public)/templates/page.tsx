@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 import { Download, FileText, Lock } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
@@ -40,6 +41,7 @@ export default async function TemplatesPage() {
       {/* Header */}
       <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', paddingTop: 80, paddingBottom: 40 }}>
         <div style={wrap}>
+          <BackButton />
           <span className="badge badge-green" style={{ marginBottom: 12, display: 'inline-flex' }}>
             {freeCount} Free Templates
           </span>

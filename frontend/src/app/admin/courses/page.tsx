@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Plus, Pencil, Trash2, X, GraduationCap } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, GraduationCap, Eye, EyeOff } from 'lucide-react';
 import { api } from '@/lib/api';
 
 const CATEGORIES = ['Frontend', 'Backend', 'DevOps', 'Full-Stack', 'AI/ML'];
@@ -9,7 +9,7 @@ const LEVELS = ['Beginner', 'Intermediate', 'Advanced'];
 const EMPTY = {
   title: '', platform: '', category: 'Frontend', duration: '', level: 'Beginner',
   instructor: '', rating: '', students: '', price: '', description: '',
-  modules: '', course_link: '',
+  modules: '', course_link: '', published: true,
 };
 
 function arrToText(val: any): string {
@@ -70,6 +70,7 @@ export default function AdminCoursesPage() {
       description: course.description || '',
       modules:     arrToText(course.modules),
       course_link: course.course_link || '',
+      published:   course.published !== false,
     });
     setError('');
     setShowForm(true);
@@ -77,6 +78,13 @@ export default function AdminCoursesPage() {
 
   const change = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm(f => ({ ...f, [e.target.name]: e.target.value }));
+
+  const togglePublished = async (course: any) => {
+    try {
+      await api.courses.update(course.id, { published: !course.published });
+      load();
+    } catch { alert('Failed to update status.'); }
+  };
 
   const save = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,6 +199,12 @@ export default function AdminCoursesPage() {
                 <label style={lbl}>Course Link</label>
                 <input name="course_link" value={form.course_link} onChange={change} className="input" placeholder="https://..." type="url" />
               </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 8, background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <input type="checkbox" id="course-published" checked={(form as any).published} onChange={e => setForm(f => ({ ...f, published: e.target.checked }))} style={{ width: 16, height: 16, cursor: 'pointer' }} />
+                <label htmlFor="course-published" style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', cursor: 'pointer', userSelect: 'none' }}>
+                  Published — visible to users
+                </label>
+              </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', paddingTop: 8 }}>
                 <button type="button" onClick={() => setShowForm(false)} className="btn btn-outline btn-sm">Cancel</button>
                 <button type="submit" disabled={saving} className="btn btn-blue btn-sm" style={{ opacity: saving ? 0.7 : 1 }}>
@@ -213,7 +227,7 @@ export default function AdminCoursesPage() {
             <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['Title', 'Platform', 'Category', 'Level', 'Rating', 'Price', ''].map(h => (
+                  {['Title', 'Platform', 'Category', 'Level', 'Rating', 'Price', 'Status', ''].map(h => (
                     <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
@@ -229,6 +243,16 @@ export default function AdminCoursesPage() {
                     <td style={{ padding: '14px 16px' }}><span className="badge badge-amber">{course.level}</span></td>
                     <td style={{ padding: '14px 16px', color: '#f59e0b', fontWeight: 700 }}>{course.rating}</td>
                     <td style={{ padding: '14px 16px', color: '#475569', fontWeight: 600 }}>{course.price}</td>
+                    <td style={{ padding: '14px 16px' }}>
+                      <button
+                        onClick={() => togglePublished(course)}
+                        title={course.published !== false ? 'Click to unpublish' : 'Click to publish'}
+                        style={{ ...iconBtn, gap: 5, color: course.published !== false ? '#059669' : '#94a3b8', background: course.published !== false ? '#f0fdf4' : '#f8fafc', border: `1px solid ${course.published !== false ? '#bbf7d0' : '#e2e8f0'}` }}
+                      >
+                        {course.published !== false ? <Eye size={13} /> : <EyeOff size={13} />}
+                        <span style={{ fontSize: 11, fontWeight: 600 }}>{course.published !== false ? 'Live' : 'Draft'}</span>
+                      </button>
+                    </td>
                     <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => openEdit(course)} style={iconBtn} title="Edit"><Pencil size={13} /></button>

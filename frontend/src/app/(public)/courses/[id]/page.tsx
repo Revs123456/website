@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 import { ArrowLeft, Clock, Star, Users, Check, ExternalLink, BookOpen } from 'lucide-react';
 import { api } from '@/lib/api';
 
@@ -34,12 +35,7 @@ export default async function CourseDetail({ params }: { params: Promise<{ id: s
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
       <div style={{ ...wrap, paddingTop: 96, paddingBottom: 80 }}>
-        <Link
-          href="/courses"
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: '#94a3b8', textDecoration: 'none', marginBottom: 32 }}
-        >
-          <ArrowLeft size={15} /> Back to Courses
-        </Link>
+        <BackButton />
 
         {/* Hero banner */}
         <div style={{ borderRadius: 20, overflow: 'hidden', marginBottom: 16, background: bg, border: `1px solid ${c}30` }}>

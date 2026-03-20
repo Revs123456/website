@@ -1,40 +1,94 @@
 import Link from 'next/link';
-import { Check, X, Star, Clock, Users, Award, ArrowRight } from 'lucide-react';
-import { api } from '@/lib/api';
-
-function safeJson(s: any): string[] {
-  if (Array.isArray(s)) return s;
-  try { return JSON.parse(s || '[]'); } catch { return []; }
-}
+import BackButton from '@/components/BackButton';
+import { Check, Star, Clock, Users, Award, ArrowRight, CheckCircle, Sparkles } from 'lucide-react';
 
 const FAQS = [
   { q: 'How long does delivery take?',  a: 'Basic: 3 days · ATS Pro: 2 days · Premium: 24 hours. Rush available on request.' },
   { q: "What if I'm not satisfied?",   a: "We offer free revisions within your plan's rounds. Still not happy? Full refund, no questions asked." },
   { q: 'Do you work with freshers?',    a: 'Absolutely. We specialize in crafting standout resumes for candidates with 0–1 years of experience.' },
-  { q: "How do I submit my info?",      a: "After ordering you'll receive a detailed questionnaire. Our experts build your resume based on your inputs." },
+  { q: 'How do I submit my info?',      a: "After ordering you'll receive a detailed questionnaire. Our experts build your resume based on your inputs." },
 ];
 
 const wrap = { maxWidth: 1152, margin: '0 auto', padding: '0 24px' } as const;
 
-const PLAN_COLORS = ['#64748b', '#2563eb', '#7c3aed'];
-
-export default async function ServicesPage() {
-  let plans: any[] = [];
-  try { plans = await api.services.list(); } catch {}
-
+export default function ServicesPage() {
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
-      <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', paddingTop: 80, paddingBottom: 40, textAlign: 'center' }}>
+      {/* Back button strip */}
+      <div style={{ background: '#fff', paddingTop: 80 }}>
+        <div style={{ ...wrap }}><BackButton /></div>
+      </div>
+      {/* Page header */}
+      <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', paddingBottom: 40, textAlign: 'center' }}>
         <div style={{ ...wrap, maxWidth: 600 }}>
           <span className="badge badge-green" style={{ marginBottom: 12, display: 'inline-flex' }}>Career Services</span>
-          <h1 className="text-display-sm">Resumes that get you <span className="grad-blue">hired</span></h1>
-          <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>Expert-crafted, ATS-optimized. Trusted by 1,200+ developers.</p>
+          <h1 className="text-display-sm">Everything you need to <span className="grad-blue">get hired</span></h1>
+          <p style={{ fontSize: 15, color: '#64748b', marginTop: 8 }}>
+            Powerful free tools for everyone. Expert-crafted paid plans when you want to stand out.
+          </p>
         </div>
       </div>
 
-      <div style={{ ...wrap, paddingTop: 40, paddingBottom: 80 }}>
-        {/* Proof strip */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 56 }}>
+      <div style={{ ...wrap, paddingTop: 48, paddingBottom: 80 }}>
+
+        {/* ── Two big option cards ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20, marginBottom: 64 }}>
+
+          {/* Free card */}
+          <div style={{ borderRadius: 20, border: '2px solid #bbf7d0', background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)', padding: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: '#059669', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CheckCircle size={24} style={{ color: '#fff' }} />
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: '#059669', marginBottom: 2 }}>No credit card needed</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>Free Tools</div>
+              </div>
+            </div>
+            <p style={{ fontSize: 14, color: '#374151', lineHeight: 1.6 }}>
+              Five battle-tested tools used by <strong>60,000+ developers</strong> — completely free, forever. Check your ATS score, explore roadmaps, prep for interviews, and find your next role.
+            </p>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {['Job Recommendations', 'Course Recommendations', 'Internship Listings', 'Developer Roadmaps', 'Interview Q&A Bank', 'Salary Insights', 'Resume Templates', 'ATS Resume Checker', 'Blog & Career Guides'].map(f => (
+                <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#374151' }}>
+                  <Check size={14} style={{ color: '#059669', flexShrink: 0 }} />{f}
+                </li>
+              ))}
+            </ul>
+            <Link href="/services/free" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '11px 22px', borderRadius: 10, background: '#059669', color: '#fff', fontWeight: 700, fontSize: 14, textDecoration: 'none', alignSelf: 'flex-start', marginTop: 4 }}>
+              Explore Free Tools <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          {/* Paid card */}
+          <div style={{ borderRadius: 20, border: '2px solid #bfdbfe', background: 'linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%)', padding: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: 'linear-gradient(135deg,#2563eb,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Sparkles size={22} style={{ color: '#fff' }} />
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: '#2563eb', marginBottom: 2 }}>Expert-crafted · One-time payment</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em' }}>Premium Services</div>
+              </div>
+            </div>
+            <p style={{ fontSize: 14, color: '#374151', lineHeight: 1.6 }}>
+              Human-written, keyword-optimized resumes that pass ATS filters and impress hiring managers. Trusted by <strong>1,200+ developers</strong> who landed jobs at top companies.
+            </p>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {['Profile Optimization (Naukri / LinkedIn / Indeed)', 'Job Search Assistance', 'Recruiter-Level Interview Q&A', 'Mock Interview (Live 1:1)', 'One-on-One Career Call', 'ATS Resume — India Format', 'ATS Resume — International Format', 'SAP Guidance'].map(f => (
+                <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#374151' }}>
+                  <Check size={14} style={{ color: '#2563eb', flexShrink: 0 }} />{f}
+                </li>
+              ))}
+            </ul>
+            <Link href="/services/paid" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '11px 22px', borderRadius: 10, background: 'linear-gradient(135deg,#2563eb,#7c3aed)', color: '#fff', fontWeight: 700, fontSize: 14, textDecoration: 'none', alignSelf: 'flex-start', marginTop: 4 }}>
+              See Pricing Plans <ArrowRight size={14} />
+            </Link>
+          </div>
+        </div>
+
+        {/* ── Proof strip ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16, marginBottom: 64 }}>
           {[
             { icon: Award, val: '1,200+', label: 'Resumes delivered', c: '#2563eb' },
             { icon: Star,  val: '98%',    label: 'Satisfied clients',  c: '#f59e0b' },
@@ -48,70 +102,6 @@ export default async function ServicesPage() {
             </div>
           ))}
         </div>
-
-        {/* Pricing cards from API */}
-        {plans.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 0', color: '#94a3b8' }}>
-            <p>No service plans available at the moment.</p>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20, marginBottom: 64, alignItems: 'start' }}>
-            {plans.map((plan, idx) => {
-              const color = PLAN_COLORS[idx % PLAN_COLORS.length];
-              const features = safeJson(plan.included_features);
-              const popular = idx === 1;
-              return (
-                <div
-                  key={plan.id}
-                  className="card"
-                  style={{
-                    display: 'flex', flexDirection: 'column', overflow: 'hidden',
-                    border: popular ? `2px solid ${color}` : '1px solid #e2e8f0',
-                  }}
-                >
-                  {popular && (
-                    <div style={{
-                      textAlign: 'center', padding: '8px 0', fontSize: 11, fontWeight: 700,
-                      color, background: `${color}10`, borderBottom: `1px solid ${color}20`,
-                      letterSpacing: '0.05em', textTransform: 'uppercase' as const,
-                    }}>
-                      ✦ Most Popular
-                    </div>
-                  )}
-                  <div style={{ padding: 28, flex: 1 }}>
-                    <div style={{ fontSize: 28, fontWeight: 800, color, marginBottom: 4 }}>
-                      {plan.price}
-                    </div>
-                    <div style={{ fontWeight: 700, color: '#0f172a', marginBottom: 8, fontSize: 15 }}>{plan.name}</div>
-                    {plan.description && (
-                      <p style={{ fontSize: 13, color: '#64748b', marginBottom: 24 }}>{plan.description}</p>
-                    )}
-                    <div className="divider" style={{ marginBottom: 24 }} />
-                    {features.length > 0 && (
-                      <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                        {features.map((f: string) => (
-                          <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: '#475569' }}>
-                            <Check size={13} style={{ color, flexShrink: 0 }} />
-                            {f}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                  <div style={{ padding: '0 28px 28px' }}>
-                    <Link
-                      href={`/order?service=${plan.id}`}
-                      className={`btn ${popular ? 'btn-blue' : 'btn-outline'}`}
-                      style={{ width: '100%', justifyContent: 'center', display: 'flex', alignItems: 'center', gap: 6 }}
-                    >
-                      Get Started <ArrowRight size={14} />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
 
         {/* FAQ */}
         <div style={{ maxWidth: 640, margin: '0 auto' }}>

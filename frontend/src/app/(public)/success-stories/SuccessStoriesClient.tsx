@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import BackButton from '@/components/BackButton';
 import { ArrowRight, Users, X } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
@@ -74,6 +75,7 @@ export default function SuccessStoriesClient({ stories }: { stories: any[] }) {
       {/* Header */}
       <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', paddingTop: 80, paddingBottom: 40 }}>
         <div style={wrap}>
+          <BackButton />
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
             <div>
               <span className="badge badge-green" style={{ marginBottom: 12, display: 'inline-flex' }}>

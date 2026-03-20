@@ -47,7 +47,15 @@ export const api = {
     list: () => req<any[]>('/orders'),
     get: (id: string) => req<any>(`/orders/${id}`),
     create: (data: any) => req<any>('/orders', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: any) => req<any>(`/orders/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     delete: (id: string) => req<any>(`/orders/${id}`, { method: 'DELETE' }),
+  },
+  roadmaps: {
+    list: () => req<any[]>('/roadmaps'),
+    get: (id: string) => req<any>(`/roadmaps/${id}`),
+    create: (data: any) => req<any>('/roadmaps', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: any) => req<any>(`/roadmaps/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    delete: (id: string) => req<any>(`/roadmaps/${id}`, { method: 'DELETE' }),
   },
   settings: {
     list: () => req<any[]>('/settings'),

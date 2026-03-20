@@ -40,11 +40,11 @@ import { ResumeTemplate } from './resume-templates/entities/resume-template.enti
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'aws-1-ap-south-1.pooler.supabase.com',
-      port: 5432,
-      username: 'postgres.ytmmuncusugyaniztlom',
-      password: 'CGYeGtQ53%wv$?2',
-      database: 'postgres',
+      host: process.env.DB_HOST || 'aws-1-ap-south-1.pooler.supabase.com',
+      port: parseInt(process.env.DB_PORT || '5432'),
+      username: process.env.DB_USER || 'postgres.ytmmuncusugyaniztlom',
+      password: process.env.DB_PASS || 'CGYeGtQ53%wv$?2',
+      database: process.env.DB_NAME || 'postgres',
       entities: [Job, Course, Order, Service, Admin, Blog, Setting, Testimonial, Subscriber, InterviewQuestion, SalaryInsight, DailyTip, SuccessStory, CommunityQuestion, Booking, ResumeTemplate],
       synchronize: true,
       ssl: { rejectUnauthorized: false },

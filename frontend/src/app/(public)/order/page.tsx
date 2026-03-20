@@ -1,5 +1,6 @@
 'use client';
 import { Suspense, useState, useEffect } from 'react';
+import BackButton from '@/components/BackButton';
 import { useSearchParams } from 'next/navigation';
 import { Check, Upload, User, Mail, Briefcase, MessageSquare, Zap, Shield, Star } from 'lucide-react';
 import Link from 'next/link';
@@ -234,6 +235,7 @@ function Form() {
 export default function OrderPage() {
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
+      <div style={{ maxWidth: 1152, margin: '0 auto', padding: '80px 24px 0' }}><BackButton /></div>
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '96px 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <span className="badge badge-blue" style={{ marginBottom: 16, display: 'inline-flex' }}>Secure Checkout</span>

@@ -1,4 +1,5 @@
 import { TrendingUp, MapPin, Briefcase, Building2 } from 'lucide-react';
+import BackButton from '@/components/BackButton';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 
@@ -50,6 +51,7 @@ export default async function SalaryInsightsPage() {
       {/* Header */}
       <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', paddingTop: 80, paddingBottom: 40 }}>
         <div style={wrap}>
+          <BackButton />
           <span className="badge badge-green" style={{ marginBottom: 12, display: 'inline-flex' }}>
             {insights.length} Data Points
           </span>

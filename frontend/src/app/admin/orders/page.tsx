@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Trash2, ShoppingBag, RefreshCw } from 'lucide-react';
+import { Trash2, ShoppingBag, RefreshCw, ChevronDown } from 'lucide-react';
 import { api } from '@/lib/api';
 
 const STATUS_BADGE: Record<string, string> = {
@@ -35,6 +35,11 @@ export default function AdminOrdersPage() {
     if (!confirm('Delete this order?')) return;
     try { await api.orders.delete(id); load(); }
     catch { alert('Failed to delete order.'); }
+  };
+
+  const updateStatus = async (id: string, status: string) => {
+    try { await api.orders.update(id, { status }); load(); }
+    catch { alert('Failed to update status.'); }
   };
 
   return (
@@ -79,7 +84,7 @@ export default function AdminOrdersPage() {
             <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['#', 'Customer', 'Email', 'Service', 'Experience', 'Date', 'Status', ''].map(h => (
+                  {['#', 'Customer', 'Email', 'Service', 'Experience', 'Date', 'Status', 'Actions'].map(h => (
                     <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
@@ -104,9 +109,16 @@ export default function AdminOrdersPage() {
                       {o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' }) : '—'}
                     </td>
                     <td style={{ padding: '14px 16px' }}>
-                      <span className={`badge ${STATUS_BADGE[o.status] || 'badge-amber'}`}>
-                        {o.status || 'Pending'}
-                      </span>
+                      <select
+                        value={o.status || 'pending'}
+                        onChange={e => updateStatus(o.id, e.target.value)}
+                        className="input"
+                        style={{ padding: '4px 8px', fontSize: 11, fontWeight: 600, borderRadius: 6, width: 'auto', minWidth: 110 }}
+                      >
+                        <option value="pending">Pending</option>
+                        <option value="in_progress">In Progress</option>
+                        <option value="completed">Completed</option>
+                      </select>
                     </td>
                     <td style={{ padding: '14px 16px' }}>
                       <button

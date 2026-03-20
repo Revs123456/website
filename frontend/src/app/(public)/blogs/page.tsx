@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import BackButton from '@/components/BackButton';
 import { useEffect, useState } from 'react';
 import { Search, FileText, Clock, User, ArrowRight } from 'lucide-react';
 import { api } from '@/lib/api';
@@ -55,6 +56,7 @@ export default function BlogsPage() {
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
       <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', paddingTop: 80, paddingBottom: 40 }}>
         <div style={wrap}>
+          <BackButton />
           <span className="badge badge-blue" style={{ marginBottom: 12, display: 'inline-flex' }}>
             {blogs.length} Articles
           </span>

@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import BackButton from '@/components/BackButton';
 import { FileText, CheckCircle, AlertCircle, Info, Upload } from 'lucide-react';
 
 const SKILLS_DB = [

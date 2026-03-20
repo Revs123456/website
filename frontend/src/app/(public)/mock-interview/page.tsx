@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import BackButton from '@/components/BackButton';
 import { CheckCircle2, Calendar, Video, Mic, Lightbulb } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
@@ -60,6 +61,7 @@ export default function MockInterviewPage() {
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
       {/* Header */}
       <div style={{ background: '#fff', borderBottom: '1px solid #e2e8f0', paddingTop: 80, paddingBottom: 40 }}>
+        <div style={wrap}><BackButton /></div>
         <div style={{ ...wrap, maxWidth: 640 }}>
           <span className="badge badge-blue" style={{ marginBottom: 12, display: 'inline-flex' }}>
             Free First Session
