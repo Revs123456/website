@@ -2,14 +2,6 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-@media (pointer: fine) {
-  *, *::before, *::after {
-    cursor: url("/tc-cursor.png") 12 12, auto !important;
-  }
-  a, button, [role="button"] {
-    cursor: url("/tc-cursor.png") 24 24, pointer !important;
-  }
-}
 body {
   background: #f8fafc;
   color: #0f172a;

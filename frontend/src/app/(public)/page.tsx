@@ -7,6 +7,7 @@ import TestimonialsSection from '@/components/TestimonialsSection';
 import NewsletterSection from '@/components/NewsletterSection';
 import LiveStat from '@/components/LiveStat';
 import ScrollReveal from '@/components/ScrollReveal';
+import TypingHeadline from '@/components/TypingHeadline';
 
 const wrap = { maxWidth: 1152, margin: '0 auto', padding: '0 24px' } as const;
 
@@ -36,61 +37,83 @@ export default async function Home() {
         <div style={{ position: 'absolute', bottom: -60, right: -60, width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(124,58,237,0.10), transparent 70%)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', top: '30%', right: -40, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(14,165,233,0.09), transparent 70%)', pointerEvents: 'none' }} />
 
-        <div className="hero-content" style={{ ...wrap, position: 'relative', zIndex: 10, textAlign: 'center', paddingTop: 'clamp(100px, 12vw, 168px)', paddingBottom: 'clamp(80px, 10vw, 140px)' }}>
+        <div className="hero-content" style={{ ...wrap, position: 'relative', zIndex: 10, paddingTop: 'clamp(80px, 10vw, 120px)', paddingBottom: 'clamp(60px, 8vw, 100px)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(32px, 6vw, 60px)', flexWrap: 'wrap' }}>
 
-          {/* Trust badge with avatars */}
-          <div className="anim-fade-up d-1" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, marginBottom: 28, padding: '8px 18px 8px 10px', borderRadius: 99, background: 'rgba(255,255,255,0.82)', border: '1px solid rgba(196,210,255,0.6)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 16px rgba(99,102,241,0.08)' }}>
-            {/* Stacked avatars */}
-            <div style={{ display: 'flex', marginRight: 2 }}>
-              {[
-                'https://i.pravatar.cc/32?img=32',
-                'https://i.pravatar.cc/32?img=47',
-                'https://i.pravatar.cc/32?img=56',
-              ].map((src, i) => (
-                <img key={i} src={src} alt="user avatar" width={26} height={26} style={{ width: 26, height: 26, borderRadius: '50%', border: '2px solid #fff', marginLeft: i > 0 ? -8 : 0, objectFit: 'cover', display: 'block' }} />
-              ))}
-            </div>
-            <span style={{ fontSize: 12, fontWeight: 600, color: '#4338ca' }}>
-              Trusted by <LiveStat statKey="stat_community" fallback={stats.stat_community || '60K+'} /> developers &amp; students
-            </span>
-          </div>
-
-          {/* Headline */}
-          <h1 className="text-display anim-fade-up d-2" style={{ marginBottom: 22, fontSize: 'clamp(2.2rem, 4.5vw, 3.7rem)' }}>
-            Land your first <span className="grad-blue">tech job</span><br />faster with a proven roadmap
-          </h1>
-
-          {/* Subheading */}
-          <p className="anim-fade-up d-3" style={{ fontSize: 17, color: '#6b7280', lineHeight: 1.8, maxWidth: 520, margin: '0 auto 44px', padding: '0 8px' }}>
-            All-in-one platform to learn skills, build your resume, and get hired faster.
-          </p>
-
-          {/* CTAs — matching reference image */}
-          <div className="anim-fade-up d-4 hero-ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, justifyContent: 'center', marginBottom: 60 }}>
-            <Link href="/jobs" className="btn btn-primary btn-lg">Browse Jobs <ArrowRight size={16} /></Link>
-            <Link href="/services" className="btn btn-outline btn-lg" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-              <Sparkles size={16} /> Checkout our Services
-            </Link>
-          </div>
-
-          {/* Stats */}
-          <div className="anim-fade-up d-5 hero-stats" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 44, paddingTop: 32, borderTop: '1px solid rgba(226,232,240,0.6)' }}>
-            {[
-              { statKey: 'stat_community',    fallback: stats.stat_community    || '60K+',   l: 'Users',         icon: Users,      c: '#2563eb', bg: '#eff6ff' },
-              { statKey: 'stat_resumes',      fallback: stats.stat_resumes      || '1,200+', l: 'Resumes Built', icon: FileCheck,  c: '#7c3aed', bg: '#f5f3ff' },
-              { statKey: 'stat_hired',        fallback: stats.stat_hired        || '500+',   l: 'Jobs Secured',  icon: Briefcase,  c: '#059669', bg: '#ecfdf5' },
-              { statKey: 'stat_satisfaction', fallback: stats.stat_satisfaction || '98%',    l: 'Satisfaction',  icon: Star,       c: '#d97706', bg: '#fffbeb' },
-            ].map(({ statKey, fallback, l, icon: Icon, c, bg }) => (
-              <div key={l} style={{ textAlign: 'center' }}>
-                <div className="hero-stat-icon" style={{ background: bg }}>
-                  <Icon size={14} style={{ color: c }} />
+            {/* Left: text content */}
+            <div style={{ flex: '1 1 340px', minWidth: 0 }}>
+              {/* Trust badge with avatars */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
+              <div className="anim-fade-up d-1" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 18px 8px 10px', borderRadius: 99, background: 'rgba(255,255,255,0.82)', border: '1px solid rgba(196,210,255,0.6)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 16px rgba(99,102,241,0.08)' }}>
+                <div style={{ display: 'flex', marginRight: 2 }}>
+                  {[
+                    'https://i.pravatar.cc/32?img=32',
+                    'https://i.pravatar.cc/32?img=47',
+                    'https://i.pravatar.cc/32?img=56',
+                  ].map((src, i) => (
+                    <img key={i} src={src} alt="user avatar" width={26} height={26} style={{ width: 26, height: 26, borderRadius: '50%', border: '2px solid #fff', marginLeft: i > 0 ? -8 : 0, objectFit: 'cover', display: 'block' }} />
+                  ))}
                 </div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', letterSpacing: '-0.03em', lineHeight: 1 }}>
-                  <LiveStat statKey={statKey} fallback={fallback} countUp />
-                </div>
-                <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>{l}</div>
+                <span style={{ fontSize: 12, fontWeight: 600, color: '#4338ca' }}>
+                  Trusted by <LiveStat statKey="stat_community" fallback={stats.stat_community || '60K+'} /> developers &amp; students
+                </span>
               </div>
-            ))}
+              </div>
+
+              {/* Headline */}
+              <TypingHeadline />
+
+              {/* Subheading */}
+              <p className="anim-fade-up d-3" style={{ fontSize: 17, color: '#6b7280', lineHeight: 1.8, maxWidth: 480, marginBottom: 44 }}>
+                All-in-one platform to learn skills, build your resume, and get hired faster.
+              </p>
+
+              {/* CTAs */}
+              <div className="anim-fade-up d-4 hero-ctas" style={{ display: 'flex', flexWrap: 'wrap', gap: 14, marginBottom: 48 }}>
+                <Link href="/jobs" className="btn btn-primary btn-lg">Browse Jobs <ArrowRight size={16} /></Link>
+                <Link href="/services" className="btn btn-outline btn-lg" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                  <Sparkles size={16} /> Checkout our Services
+                </Link>
+              </div>
+
+              {/* Stats */}
+              <div className="anim-fade-up d-5 hero-stats" style={{ display: 'flex', flexWrap: 'wrap', gap: 32, paddingTop: 32, borderTop: '1px solid rgba(226,232,240,0.6)', justifyContent: 'center' }}>
+                {[
+                  { statKey: 'stat_community',    fallback: stats.stat_community    || '60K+',   l: 'Users',         icon: Users,      c: '#2563eb', bg: '#eff6ff' },
+                  { statKey: 'stat_resumes',      fallback: stats.stat_resumes      || '1,200+', l: 'Resumes Built', icon: FileCheck,  c: '#7c3aed', bg: '#f5f3ff' },
+                  { statKey: 'stat_hired',        fallback: stats.stat_hired        || '500+',   l: 'Jobs Secured',  icon: Briefcase,  c: '#059669', bg: '#ecfdf5' },
+                  { statKey: 'stat_satisfaction', fallback: stats.stat_satisfaction || '98%',    l: 'Satisfaction',  icon: Star,       c: '#d97706', bg: '#fffbeb' },
+                ].map(({ statKey, fallback, l, icon: Icon, c, bg }) => (
+                  <div key={l} style={{ textAlign: 'center' }}>
+                    <div className="hero-stat-icon" style={{ background: bg }}>
+                      <Icon size={14} style={{ color: c }} />
+                    </div>
+                    <div style={{ fontSize: 22, fontWeight: 800, color: '#0f172a', letterSpacing: '-0.03em', lineHeight: 1 }}>
+                      <LiveStat statKey={statKey} fallback={fallback} countUp />
+                    </div>
+                    <div style={{ fontSize: 12, color: '#94a3b8', marginTop: 4 }}>{l}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right: hero image */}
+            <div className="anim-fade-up d-3" style={{ flex: '0 0 auto', display: 'flex', alignSelf: 'flex-start', marginTop: 24 }}>
+              <img
+                src="/hero-main.jpeg"
+                alt="Tech Career Hub"
+                style={{
+                  width: 300,
+                  height: 380,
+                  borderRadius: 20,
+                  boxShadow: '0 24px 64px rgba(99,102,241,0.18)',
+                  objectFit: 'cover',
+                  objectPosition: 'top',
+                  display: 'block',
+                }}
+              />
+            </div>
+
           </div>
         </div>
       </section>
