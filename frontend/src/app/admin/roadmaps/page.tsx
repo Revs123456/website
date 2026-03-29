@@ -2,8 +2,25 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, Map } from 'lucide-react';
 import { api } from '@/lib/api';
+import DeleteModal from '@/components/DeleteModal';
 
-const EMPTY = { title: '', description: '', color: '#2563eb', icon: 'Globe', published: true };
+const EMPTY = { title: '', description: '', color: '#2563eb', icon: 'Globe', steps: '', published: true };
+
+function stepsToText(steps: any): string {
+  if (!steps) return '';
+  try {
+    const arr = typeof steps === 'string' ? JSON.parse(steps) : steps;
+    if (Array.isArray(arr)) return arr.map((s: any) => `${s.s} | ${s.d}`).join('\n');
+  } catch {}
+  return '';
+}
+
+function textToSteps(text: string): any[] {
+  return text.split('\n').map(l => l.trim()).filter(Boolean).map(l => {
+    const [s, ...rest] = l.split('|');
+    return { s: s.trim(), d: rest.join('|').trim() };
+  });
+}
 
 function LoadingSpinner() {
   return (
@@ -24,6 +41,8 @@ export default function AdminRoadmapsPage() {
   const [form, setForm] = useState<any>(EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -46,6 +65,7 @@ export default function AdminRoadmapsPage() {
       description: item.description || '',
       color: item.color || '#2563eb',
       icon: item.icon || 'Globe',
+      steps: stepsToText(item.steps),
       published: item.published !== false,
     });
     setError('');
@@ -63,10 +83,11 @@ export default function AdminRoadmapsPage() {
     setSaving(true);
     setError('');
     try {
+      const payload = { ...form, steps: textToSteps(form.steps) };
       if (editing) {
-        await api.roadmaps.update(editing.id, form);
+        await api.roadmaps.update(editing.id, payload);
       } else {
-        await api.roadmaps.create(form);
+        await api.roadmaps.create(payload);
       }
       setShowForm(false);
       load();
@@ -77,14 +98,25 @@ export default function AdminRoadmapsPage() {
     }
   };
 
-  const del = async (id: string) => {
-    if (!confirm('Delete this roadmap?')) return;
-    try { await api.roadmaps.delete(id); load(); }
-    catch { alert('Failed to delete roadmap.'); }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await api.roadmaps.delete(deleteTarget.id); setDeleteTarget(null); load(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
   };
 
   return (
     <div>
+      {deleteTarget && (
+        <DeleteModal
+          title="Delete Roadmap?"
+          name={deleteTarget.title}
+          deleting={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>Roadmaps</h1>
@@ -115,6 +147,11 @@ export default function AdminRoadmapsPage() {
               <div>
                 <label style={lbl}>Description</label>
                 <textarea name="description" value={form.description} onChange={change} rows={3} className="input" style={{ resize: 'vertical' }} placeholder="Brief description of this roadmap…" />
+              </div>
+              <div>
+                <label style={lbl}>Steps (one per line — format: Step Name | Short description)</label>
+                <textarea name="steps" value={form.steps} onChange={change} rows={8} className="input" style={{ resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }} placeholder={'HTML & CSS | Semantics, Flexbox, Grid\nJavaScript | DOM, async/await\nReact | Components, hooks'} />
+                <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>Each line = one step. Use <code>|</code> to separate the name from the description.</p>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
@@ -179,7 +216,7 @@ export default function AdminRoadmapsPage() {
                     <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => openEdit(item)} style={iconBtn} title="Edit"><Pencil size={13} /></button>
-                        <button onClick={() => del(item.id)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
+                        <button onClick={() => setDeleteTarget(item)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
                       </div>
                     </td>
                   </tr>

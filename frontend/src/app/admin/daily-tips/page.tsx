@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, Lightbulb, ToggleLeft, ToggleRight } from 'lucide-react';
+import DeleteModal from '@/components/DeleteModal';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
@@ -35,6 +36,8 @@ export default function AdminDailyTipsPage() {
   const [form, setForm] = useState<any>(EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -102,14 +105,12 @@ export default function AdminDailyTipsPage() {
     }
   };
 
-  const del = async (id: string) => {
-    if (!confirm('Delete this tip?')) return;
-    try {
-      await fetch(`${BASE}/daily-tips/${id}`, { method: 'DELETE' });
-      load();
-    } catch {
-      alert('Failed to delete tip.');
-    }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await fetch(`${BASE}/daily-tips/${deleteTarget.id}`, { method: 'DELETE' }); setDeleteTarget(null); load(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
   };
 
   const toggleActive = async (item: any) => {
@@ -127,6 +128,15 @@ export default function AdminDailyTipsPage() {
 
   return (
     <div>
+      {deleteTarget && (
+        <DeleteModal
+          title="Delete Tip?"
+          name={deleteTarget.tip || deleteTarget.title || ''}
+          deleting={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>Daily Tips</h1>
@@ -216,7 +226,7 @@ export default function AdminDailyTipsPage() {
                     <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => openEdit(item)} style={iconBtn} title="Edit"><Pencil size={13} /></button>
-                        <button onClick={() => del(item.id)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
+                        <button onClick={() => setDeleteTarget(item)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
                       </div>
                     </td>
                   </tr>

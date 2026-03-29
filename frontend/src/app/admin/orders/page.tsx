@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Trash2, ShoppingBag, RefreshCw, ChevronDown } from 'lucide-react';
 import { api } from '@/lib/api';
+import DeleteModal from '@/components/DeleteModal';
 
 const STATUS_BADGE: Record<string, string> = {
   Completed:     'badge-green',
@@ -23,6 +24,8 @@ function LoadingSpinner() {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -31,10 +34,12 @@ export default function AdminOrdersPage() {
 
   useEffect(() => { load(); }, []);
 
-  const del = async (id: string) => {
-    if (!confirm('Delete this order?')) return;
-    try { await api.orders.delete(id); load(); }
-    catch { alert('Failed to delete order.'); }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await api.orders.delete(deleteTarget.id); setDeleteTarget(null); load(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
   };
 
   const updateStatus = async (id: string, status: string) => {
@@ -44,6 +49,15 @@ export default function AdminOrdersPage() {
 
   return (
     <div>
+      {deleteTarget && (
+        <DeleteModal
+          title="Delete Order?"
+          name={deleteTarget.customer_name || deleteTarget.name || ''}
+          deleting={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>Orders</h1>
@@ -122,7 +136,7 @@ export default function AdminOrdersPage() {
                     </td>
                     <td style={{ padding: '14px 16px' }}>
                       <button
-                        onClick={() => del(o.id)}
+                        onClick={() => setDeleteTarget(o)}
                         style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '5px 8px', cursor: 'pointer', color: '#ef4444', display: 'inline-flex', alignItems: 'center' }}
                         title="Delete order"
                       >

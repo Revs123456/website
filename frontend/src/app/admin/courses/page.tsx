@@ -40,6 +40,8 @@ export default function AdminCoursesPage() {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -110,10 +112,12 @@ export default function AdminCoursesPage() {
     }
   };
 
-  const del = async (id: string) => {
-    if (!confirm('Delete this course?')) return;
-    try { await api.courses.delete(id); load(); }
-    catch { alert('Failed to delete course.'); }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await api.courses.delete(deleteTarget.id); setDeleteTarget(null); load(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
   };
 
   return (
@@ -127,6 +131,30 @@ export default function AdminCoursesPage() {
           <Plus size={14} /> Add Course
         </button>
       </div>
+
+      {deleteTarget && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(15,23,42,0.5)', padding: 24 }}>
+          <div className="card" style={{ width: '100%', maxWidth: 400, padding: 28, textAlign: 'center' }}>
+            <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#fef2f2', border: '1px solid #fecaca', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <Trash2 size={20} style={{ color: '#ef4444' }} />
+            </div>
+            <h3 style={{ fontWeight: 700, color: '#0f172a', fontSize: 16, marginBottom: 8 }}>Delete Course?</h3>
+            <p style={{ fontSize: 13, color: '#64748b', marginBottom: 24 }}>
+              <strong style={{ color: '#0f172a' }}>{deleteTarget.title}</strong> will be permanently removed.
+            </p>
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
+              <button onClick={() => setDeleteTarget(null)} className="btn btn-outline btn-sm" style={{ minWidth: 90 }}>Cancel</button>
+              <button
+                onClick={confirmDelete}
+                disabled={deleting}
+                style={{ minWidth: 90, padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, background: '#ef4444', color: '#fff', border: 'none', cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1 }}
+              >
+                {deleting ? 'Deleting…' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showForm && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', background: 'rgba(15,23,42,0.4)', overflowY: 'auto', padding: '40px 16px' }}>
@@ -256,7 +284,7 @@ export default function AdminCoursesPage() {
                     <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => openEdit(course)} style={iconBtn} title="Edit"><Pencil size={13} /></button>
-                        <button onClick={() => del(course.id)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
+                        <button onClick={() => setDeleteTarget(course)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
                       </div>
                     </td>
                   </tr>

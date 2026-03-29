@@ -11,9 +11,10 @@ import { Testimonial } from '../testimonials/entities/testimonial.entity';
 import { InterviewQuestion } from '../interview-questions/entities/interview-question.entity';
 import { SalaryInsight } from '../salary-insights/entities/salary-insight.entity';
 import { DailyTip } from '../daily-tips/entities/daily-tip.entity';
+import { Roadmap } from '../roadmaps/entities/roadmap.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Job, Course, Blog, Service, Setting, Admin, Testimonial, InterviewQuestion, SalaryInsight, DailyTip])],
+  imports: [TypeOrmModule.forFeature([Job, Course, Blog, Service, Setting, Admin, Testimonial, InterviewQuestion, SalaryInsight, DailyTip, Roadmap])],
   providers: [SeedService],
 })
 export class SeedModule {}

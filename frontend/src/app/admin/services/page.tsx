@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, Star } from 'lucide-react';
 import { api } from '@/lib/api';
+import DeleteModal from '@/components/DeleteModal';
 
 const EMPTY = {
   name: '', description: '', price: '', included_features: '',
@@ -35,6 +36,8 @@ export default function AdminServicesPage() {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -88,14 +91,25 @@ export default function AdminServicesPage() {
     }
   };
 
-  const del = async (id: string) => {
-    if (!confirm('Delete this service plan?')) return;
-    try { await api.services.delete(id); load(); }
-    catch { alert('Failed to delete service.'); }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await api.services.delete(deleteTarget.id); setDeleteTarget(null); load(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
   };
 
   return (
     <div>
+      {deleteTarget && (
+        <DeleteModal
+          title="Delete Service?"
+          name={deleteTarget.name}
+          deleting={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>Service Plans</h1>
@@ -183,7 +197,7 @@ export default function AdminServicesPage() {
                     </div>
                     <div style={{ display: 'flex', gap: 6 }}>
                       <button onClick={() => openEdit(svc)} style={iconBtn} title="Edit"><Pencil size={13} /></button>
-                      <button onClick={() => del(svc.id)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
+                      <button onClick={() => setDeleteTarget(svc)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
                     </div>
                   </div>
                   {svc.description && (
@@ -236,7 +250,7 @@ export default function AdminServicesPage() {
                         <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
                           <div style={{ display: 'flex', gap: 6 }}>
                             <button onClick={() => openEdit(svc)} style={iconBtn} title="Edit"><Pencil size={13} /></button>
-                            <button onClick={() => del(svc.id)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
+                            <button onClick={() => setDeleteTarget(svc)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
                           </div>
                         </td>
                       </tr>

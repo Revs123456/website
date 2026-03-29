@@ -28,13 +28,14 @@ async function req<T>(path: string, opts?: RequestInit): Promise<T> {
     ...opts,
     headers: {
       'Content-Type': 'application/json',
-      ...(isWrite && token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(opts?.headers || {}),
     },
     cache: 'no-store',
   });
   if (!res.ok) throw new Error(`API error ${res.status}`);
-  const data = await res.json();
+  const text = await res.text();
+  const data = text ? JSON.parse(text) : null;
   if (typeof window !== 'undefined' && isWrite) {
     new BroadcastChannel('admin-update').postMessage('refresh');
   }
@@ -147,6 +148,17 @@ export const api = {
     create: (data: any) => req<any>('/bookings', { method: 'POST', body: JSON.stringify(data) }),
     update: (id: string, data: any) => req<any>(`/bookings/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     delete: (id: string) => req<any>(`/bookings/${id}`, { method: 'DELETE' }),
+  },
+  slots: {
+    listAll: () => req<any[]>('/slots'),
+    listAvailable: () => req<any[]>('/slots/available'),
+    create: (data: any) => req<any>('/slots', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id: string, data: any) => req<any>(`/slots/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    remove: (id: string) => req<any>(`/slots/${id}`, { method: 'DELETE' }),
+    toggle: (id: string) => req<any>(`/slots/${id}/toggle`, { method: 'PATCH' }),
+    book: (id: string, data: { name: string; email: string; order_id?: string }) =>
+      req<any>(`/slots/${id}/book`, { method: 'POST', body: JSON.stringify(data) }),
+    unbook: (id: string) => req<any>(`/slots/${id}/unbook`, { method: 'POST' }),
   },
   resumeTemplates: {
     list: () => req<any[]>('/resume-templates'),

@@ -21,6 +21,9 @@ import { BookingsModule } from './bookings/bookings.module';
 import { ResumeTemplatesModule } from './resume-templates/resume-templates.module';
 import { RoadmapsModule } from './roadmaps/roadmaps.module';
 import { PaymentsModule } from './payments/payments.module';
+import { SlotsModule } from './slots/slots.module';
+import { MailModule } from './mail/mail.module';
+import { Slot } from './slots/entities/slot.entity';
 import { Job } from './jobs/entities/job.entity';
 import { Course } from './courses/entities/course.entity';
 import { Order } from './orders/entities/order.entity';
@@ -48,12 +51,13 @@ import { Roadmap } from './roadmaps/entities/roadmap.entity';
       username: process.env.DB_USER || 'postgres.ytmmuncusugyaniztlom',
       password: process.env.DB_PASS || 'CGYeGtQ53%wv$?2',
       database: process.env.DB_NAME || 'postgres',
-      entities: [Job, Course, Order, Service, Admin, Blog, Setting, Testimonial, Subscriber, InterviewQuestion, SalaryInsight, DailyTip, SuccessStory, CommunityQuestion, Booking, ResumeTemplate, Roadmap],
+      entities: [Job, Course, Order, Service, Admin, Blog, Setting, Testimonial, Subscriber, InterviewQuestion, SalaryInsight, DailyTip, SuccessStory, CommunityQuestion, Booking, ResumeTemplate, Roadmap, Slot],
       synchronize: true,
       ssl: { rejectUnauthorized: false },
     }),
+    MailModule,
     JobsModule, CoursesModule, OrdersModule, ServicesModule, AuthModule, BlogsModule, SeedModule, SettingsModule, TestimonialsModule,
-    SubscribersModule, InterviewQuestionsModule, SalaryInsightsModule, DailyTipsModule, SuccessStoriesModule, CommunityModule, BookingsModule, ResumeTemplatesModule, RoadmapsModule, PaymentsModule,
+    SubscribersModule, InterviewQuestionsModule, SalaryInsightsModule, DailyTipsModule, SuccessStoriesModule, CommunityModule, BookingsModule, ResumeTemplatesModule, RoadmapsModule, PaymentsModule, SlotsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

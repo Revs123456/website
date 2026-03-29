@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 
 type Phase = 'idle' | 'flyOut' | 'reset' | 'flyIn';
 
-export default function GetInTouchBtn({ href = '/services' }: { href?: string }) {
+export default function GetInTouchBtn({ href = '/contact' }: { href?: string }) {
   const [phase, setPhase] = useState<Phase>('idle');
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 

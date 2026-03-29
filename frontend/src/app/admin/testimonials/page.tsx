@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, Eye, EyeOff, Star } from 'lucide-react';
+import DeleteModal from '@/components/DeleteModal';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
@@ -15,6 +16,8 @@ export default function AdminTestimonialsPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function load() {
     const res = await fetch(`${BASE}/testimonials`);
@@ -38,11 +41,13 @@ export default function AdminTestimonialsPage() {
     load();
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm('Delete this testimonial?')) return;
-    await fetch(`${BASE}/testimonials/${id}`, { method: 'DELETE' });
-    load();
-  }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await fetch(`${BASE}/testimonials/${deleteTarget.id}`, { method: 'DELETE' }); setDeleteTarget(null); load(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
+  };
 
   async function togglePublished(t: any) {
     await fetch(`${BASE}/testimonials/${t.id}`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ published: !t.published }) });
@@ -51,6 +56,15 @@ export default function AdminTestimonialsPage() {
 
   return (
     <>
+      {deleteTarget && (
+        <DeleteModal
+          title="Delete Testimonial?"
+          name={deleteTarget.name || deleteTarget.email || ''}
+          deleting={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
         <div>
           <h1 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a' }}>Testimonials</h1>
@@ -163,7 +177,7 @@ export default function AdminTestimonialsPage() {
                   <td style={{ padding: '14px 20px' }}>
                     <div style={{ display: 'flex', gap: 6 }}>
                       <button onClick={() => openEdit(t)} style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Pencil size={13} /></button>
-                      <button onClick={() => handleDelete(t.id)} style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid #fee2e2', background: '#fef2f2', cursor: 'pointer', color: '#dc2626' }}><Trash2 size={13} /></button>
+                      <button onClick={() => setDeleteTarget(t)} style={{ padding: '5px 8px', borderRadius: 6, border: '1px solid #fee2e2', background: '#fef2f2', cursor: 'pointer', color: '#dc2626' }}><Trash2 size={13} /></button>
                     </div>
                   </td>
                 </tr>

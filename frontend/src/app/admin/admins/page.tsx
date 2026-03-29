@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { UserPlus, Trash2, Shield, Eye, EyeOff } from 'lucide-react';
+import DeleteModal from '@/components/DeleteModal';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
@@ -15,6 +16,8 @@ export default function AdminUsersPage() {
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function fetchAdmins() {
     try {
@@ -49,19 +52,34 @@ export default function AdminUsersPage() {
     setAdding(false);
   }
 
-  async function handleDelete(id: string, adminEmail: string) {
+  function handleDelete(admin: { id: string; email: string }) {
     const current = localStorage.getItem('tch_auth');
     if (current) {
       const { email: me } = JSON.parse(current);
-      if (me === adminEmail) { setError("You can't remove your own account."); return; }
+      if (me === admin.email) { setError("You can't remove your own account."); return; }
     }
-    if (!confirm(`Remove admin "${adminEmail}"?`)) return;
-    await fetch(`${BASE}/auth/admins/${id}`, { method: 'DELETE' });
-    fetchAdmins();
+    setDeleteTarget(admin);
   }
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await fetch(`${BASE}/auth/admins/${deleteTarget.id}`, { method: 'DELETE' }); setDeleteTarget(null); fetchAdmins(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
+  };
 
   return (
     <>
+      {deleteTarget && (
+        <DeleteModal
+          title="Delete Admin?"
+          name={deleteTarget.email || deleteTarget.name || ''}
+          deleting={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
       <div style={{ marginBottom: 32 }}>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a' }}>Admin Users</h1>
         <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>Manage who has access to this admin panel.</p>
@@ -139,7 +157,7 @@ export default function AdminUsersPage() {
                     <p style={{ fontSize: 11, color: '#94a3b8' }}>Administrator</p>
                   </div>
                   <button
-                    onClick={() => handleDelete(admin.id, admin.email)}
+                    onClick={() => handleDelete(admin)}
                     style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid #fee2e2', background: '#fef2f2', color: '#dc2626', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
                     title="Remove admin"
                   >

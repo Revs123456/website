@@ -11,6 +11,7 @@ import { Testimonial } from '../testimonials/entities/testimonial.entity';
 import { InterviewQuestion } from '../interview-questions/entities/interview-question.entity';
 import { SalaryInsight } from '../salary-insights/entities/salary-insight.entity';
 import { DailyTip } from '../daily-tips/entities/daily-tip.entity';
+import { Roadmap } from '../roadmaps/entities/roadmap.entity';
 
 @Injectable()
 export class SeedService implements OnModuleInit {
@@ -25,6 +26,7 @@ export class SeedService implements OnModuleInit {
     @InjectRepository(InterviewQuestion) private interviewQuestionRepo: Repository<InterviewQuestion>,
     @InjectRepository(SalaryInsight) private salaryInsightRepo: Repository<SalaryInsight>,
     @InjectRepository(DailyTip) private dailyTipRepo: Repository<DailyTip>,
+    @InjectRepository(Roadmap) private roadmapRepo: Repository<Roadmap>,
   ) {}
 
   async onModuleInit() {
@@ -38,6 +40,7 @@ export class SeedService implements OnModuleInit {
     await this.seedInterviewQuestions();
     await this.seedSalaryInsights();
     await this.seedDailyTips();
+    await this.seedRoadmaps();
   }
 
   private async seedAdmin() {
@@ -112,6 +115,16 @@ export class SeedService implements OnModuleInit {
   }
 
   private async seedCourses() {
+    // Remove duplicate courses (same title, keep latest)
+    const allCourses = await this.courseRepo.find({ order: { created_at: 'ASC' } });
+    const seen = new Map<string, string>();
+    for (const course of allCourses) {
+      if (seen.has(course.title)) {
+        await this.courseRepo.delete(seen.get(course.title)!);
+      }
+      seen.set(course.title, course.id);
+    }
+
     const count = await this.courseRepo.count();
     if (count > 0) return;
     const courses = [
@@ -121,7 +134,7 @@ export class SeedService implements OnModuleInit {
         rating: 4.8, students: '120K', price: '₹499',
         description: 'Master React 18, Next.js 14, TypeScript, Redux Toolkit, and Tailwind CSS. The most comprehensive React course available — from fundamentals to production-ready full-stack apps.',
         modules: JSON.stringify(['React Fundamentals & Hooks', 'Next.js App Router', 'Styling with Tailwind CSS', 'State Management', 'Database Integration (Prisma)', 'Authentication & Authorization', 'Performance Optimization', 'Deployment & CI/CD']),
-        course_link: '#',
+        course_link: 'https://www.udemy.com/course/nextjs-react-the-complete-guide/',
       },
       {
         title: 'Kubernetes for Developers', platform: 'Coursera', category: 'DevOps',
@@ -129,7 +142,7 @@ export class SeedService implements OnModuleInit {
         rating: 4.7, students: '45K', price: '₹799',
         description: 'Learn Kubernetes from the ground up. This course covers pods, deployments, services, Helm charts, and running production-grade workloads on Kubernetes.',
         modules: JSON.stringify(['Container Basics', 'Pods & Deployments', 'Services & Networking', 'ConfigMaps & Secrets', 'Helm Charts', 'Kubernetes on GKE', 'Monitoring & Logging']),
-        course_link: '#',
+        course_link: 'https://www.coursera.org/learn/google-kubernetes-engine',
       },
       {
         title: 'Machine Learning A-Z', platform: 'Udemy', category: 'AI/ML',
@@ -137,15 +150,15 @@ export class SeedService implements OnModuleInit {
         rating: 4.6, students: '200K', price: '₹499',
         description: 'The most complete Machine Learning course on Udemy. Covers supervised, unsupervised learning, NLP, deep learning — all in Python and R.',
         modules: JSON.stringify(['Python & R basics', 'Data Preprocessing', 'Regression', 'Classification', 'Clustering', 'NLP', 'Deep Learning with TensorFlow', 'Model Deployment']),
-        course_link: '#',
+        course_link: 'https://www.udemy.com/course/machinelearning/',
       },
       {
-        title: 'Advanced NestJS & Microservices', platform: 'Pluralsight', category: 'Backend',
-        duration: '20h', level: 'Advanced', instructor: 'Vladimir Agaev',
-        rating: 4.9, students: '30K', price: '₹1,499',
-        description: 'Deep-dive into NestJS architecture, microservices patterns, message queues, and enterprise-grade API development.',
-        modules: JSON.stringify(['NestJS Architecture', 'Guards & Interceptors', 'Microservices Patterns', 'RabbitMQ & Redis', 'GraphQL with NestJS', 'Testing NestJS Apps', 'Deployment']),
-        course_link: '#',
+        title: 'NestJS: The Complete Developer\'s Guide', platform: 'Udemy', category: 'Backend',
+        duration: '25h', level: 'Intermediate', instructor: 'Stephen Grider',
+        rating: 4.8, students: '55K', price: '₹499',
+        description: 'Build full-stack applications with NestJS and TypeORM. Covers Guards, Interceptors, Microservices, GraphQL, and enterprise-grade REST APIs.',
+        modules: JSON.stringify(['NestJS Architecture', 'Modules & Providers', 'Guards & Interceptors', 'TypeORM Integration', 'Authentication with JWT', 'Testing NestJS Apps', 'Deployment']),
+        course_link: 'https://www.udemy.com/course/nestjs-the-complete-developers-guide/',
       },
       {
         title: 'TypeScript: The Complete Guide', platform: 'Udemy', category: 'Frontend',
@@ -153,7 +166,7 @@ export class SeedService implements OnModuleInit {
         rating: 4.8, students: '85K', price: '₹499',
         description: 'A comprehensive guide to TypeScript including types, interfaces, generics, decorators, and integrating TypeScript with React and Node.js.',
         modules: JSON.stringify(['Type Annotations', 'Interfaces & Classes', 'Generics', 'Decorators', 'TypeScript with React', 'TypeScript with Node.js', 'Advanced Patterns']),
-        course_link: '#',
+        course_link: 'https://www.udemy.com/course/typescript-the-complete-developers-guide/',
       },
       {
         title: 'AWS Solutions Architect', platform: 'Coursera', category: 'DevOps',
@@ -161,7 +174,39 @@ export class SeedService implements OnModuleInit {
         rating: 4.7, students: '60K', price: '₹999',
         description: 'Prepare for the AWS Solutions Architect Associate exam. Covers EC2, S3, RDS, Lambda, VPC, IAM, and cloud architecture best practices.',
         modules: JSON.stringify(['AWS Fundamentals', 'EC2 & Auto Scaling', 'S3 & CloudFront', 'RDS & DynamoDB', 'Lambda & Serverless', 'VPC & Networking', 'IAM & Security', 'Exam Prep']),
-        course_link: '#',
+        course_link: 'https://www.coursera.org/learn/aws-certified-solutions-architect-associate',
+      },
+      {
+        title: 'Full Stack Web Development Bootcamp', platform: 'YouTube', category: 'Full-Stack',
+        duration: '12h', level: 'Beginner', instructor: 'Traversy Media',
+        rating: 4.7, students: '500K', price: '',
+        description: 'A complete free bootcamp covering HTML, CSS, JavaScript, Node.js, Express, MongoDB and React from scratch. Perfect for beginners.',
+        modules: JSON.stringify(['HTML & CSS Basics', 'JavaScript Essentials', 'DOM Manipulation', 'Node.js & Express', 'MongoDB & Mongoose', 'React Fundamentals', 'Building & Deploying']),
+        course_link: 'https://www.youtube.com/watch?v=f2EqECiTBL8',
+      },
+      {
+        title: 'Git & GitHub for Beginners', platform: 'YouTube', category: 'DevOps',
+        duration: '3h', level: 'Beginner', instructor: 'freeCodeCamp',
+        rating: 4.9, students: '2M', price: '',
+        description: 'Learn Git version control and GitHub from scratch. Covers commits, branches, pull requests, merging, and collaboration workflows.',
+        modules: JSON.stringify(['Git Basics', 'Branching & Merging', 'Remote Repositories', 'Pull Requests', 'GitHub Workflows', 'Resolving Conflicts']),
+        course_link: 'https://www.youtube.com/watch?v=RGOj5yH7evk',
+      },
+      {
+        title: 'Python for Everybody', platform: 'Coursera', category: 'Backend',
+        duration: '30h', level: 'Beginner', instructor: 'Dr. Charles Severance',
+        rating: 4.8, students: '1.2M', price: '',
+        description: 'Learn Python from scratch with this popular Coursera specialization. Covers data structures, web scraping, databases, and data visualization.',
+        modules: JSON.stringify(['Python Basics', 'Data Structures', 'Using Python to Access Web Data', 'Using Databases with Python', 'Capstone Project']),
+        course_link: 'https://www.coursera.org/specializations/python',
+      },
+      {
+        title: 'CSS Full Course - Flexbox & Grid', platform: 'YouTube', category: 'Frontend',
+        duration: '11h', level: 'Beginner', instructor: 'Dave Gray',
+        rating: 4.8, students: '800K', price: '',
+        description: 'A comprehensive free CSS course covering Flexbox, Grid, animations, responsive design, and modern CSS features.',
+        modules: JSON.stringify(['CSS Selectors', 'Box Model', 'Flexbox Layout', 'CSS Grid', 'Responsive Design', 'Animations & Transitions', 'CSS Variables']),
+        course_link: 'https://www.youtube.com/watch?v=OXGznpKZ_sA',
       },
     ];
     await this.courseRepo.save(courses as any[]);
@@ -217,7 +262,51 @@ export class SeedService implements OnModuleInit {
 
   private async seedServices() {
     const count = await this.serviceRepo.count();
-    if (count > 0) return;
+    if (count > 0) {
+      const newServices = [
+        {
+          name: '1:1 Career Call',
+          description: 'A 30-minute one-on-one call with our career expert. Get personalised advice on your resume, job search strategy, or interview prep.',
+          price: '₹500',
+          included_features: JSON.stringify(['30-min video/voice call', 'Resume feedback', 'Career roadmap guidance', 'Interview tips', 'Q&A session']),
+        },
+        {
+          name: 'Mock Interview',
+          description: 'Simulated interview session conducted by an experienced interviewer. Get real-time feedback to boost your confidence before the actual interview.',
+          price: '₹799',
+          included_features: JSON.stringify(['45-min mock interview session', 'Real-time feedback', 'Strengths & weaknesses report', 'Common mistakes highlighted', 'Follow-up tips']),
+        },
+        {
+          name: 'Recruiter-Level Interview Questions',
+          description: 'Curated set of interview questions used by top recruiters, tailored to your target role and company. Includes model answers.',
+          price: '₹399',
+          included_features: JSON.stringify(['50+ role-specific questions', 'Model answers included', 'Company-specific questions', 'HR round questions', 'PDF format delivery']),
+        },
+        {
+          name: 'ATS Resume — India Format',
+          description: 'Professional ATS-optimised resume crafted specifically for the Indian job market. Tailored for portals like Naukri, LinkedIn, and company portals.',
+          price: '₹699',
+          included_features: JSON.stringify(['ATS-friendly India format', 'Naukri & LinkedIn optimised', 'Keyword-rich content', '2 revision rounds', 'PDF + Word format']),
+        },
+        {
+          name: 'ATS Resume — International Format',
+          description: 'ATS-optimised resume tailored for international job markets including US, UK, Australia, and Ireland. Follows global hiring standards.',
+          price: '₹999',
+          included_features: JSON.stringify(['US / UK / Australia / Ireland format', 'ATS score >90%', 'Tailored for global job portals', 'Cover letter included', '3 revision rounds', 'PDF + Word format']),
+        },
+        {
+          name: 'SAP Guidance',
+          description: 'One-on-one guidance session for SAP aspirants. Get clarity on SAP modules, career paths, certifications, and how to land your first SAP role.',
+          price: '₹999',
+          included_features: JSON.stringify(['SAP module selection advice', 'Certification roadmap', 'Resume for SAP roles', 'Interview preparation tips', '60-min session']),
+        },
+      ];
+      for (const svc of newServices) {
+        const exists = await this.serviceRepo.findOne({ where: { name: svc.name } });
+        if (!exists) await this.serviceRepo.save(svc as any);
+      }
+      return;
+    }
     const services = [
       {
         name: 'Basic',
@@ -236,6 +325,12 @@ export class SeedService implements OnModuleInit {
         description: 'The complete career package. Everything included.',
         price: '₹1,499',
         included_features: JSON.stringify(['Everything in ATS Pro', 'LinkedIn optimization', 'GitHub profile review', '30-min mock interview', 'Job strategy guide', 'Unlimited revisions', '24hr priority delivery']),
+      },
+      {
+        name: '1:1 Career Call',
+        description: 'A 30-minute one-on-one call with our career expert. Get personalised advice on your resume, job search strategy, or interview prep.',
+        price: '₹500',
+        included_features: JSON.stringify(['30-min video/voice call', 'Resume feedback', 'Career roadmap guidance', 'Interview tips', 'Q&A session']),
       },
     ];
     await this.serviceRepo.save(services as any[]);
@@ -305,5 +400,75 @@ export class SeedService implements OnModuleInit {
       { tip: 'Learn Git properly — branching, rebasing, and pull requests. It is the #1 collaboration tool in every tech company.', category: 'Career', active: true },
     ];
     await this.dailyTipRepo.save(tips);
+  }
+
+  private async seedRoadmaps() {
+    // Remove duplicates — keep the one with steps, or the latest
+    const all = await this.roadmapRepo.find({ order: { created_at: 'ASC' } });
+    const seen = new Map<string, string>();
+    for (const rm of all) {
+      const key = rm.title.toLowerCase().trim();
+      if (seen.has(key)) {
+        await this.roadmapRepo.delete(seen.get(key)!);
+      }
+      seen.set(key, rm.id);
+    }
+
+    const count = await this.roadmapRepo.count();
+    if (count > 0) return;
+    const roadmaps = [
+      {
+        title: 'Frontend Developer',
+        description: 'Go from zero to a job-ready frontend developer.',
+        color: '#2563eb',
+        icon: 'Globe',
+        published: true,
+        steps: [
+          { s: 'Internet Basics', d: 'DNS, HTTP, browsers' },
+          { s: 'HTML & CSS', d: 'Semantics, Flexbox, Grid' },
+          { s: 'JavaScript ES6+', d: 'DOM, async/await, modules' },
+          { s: 'React / Next.js', d: 'Components, hooks, App Router' },
+          { s: 'State Management', d: 'Zustand, Redux Toolkit' },
+          { s: 'Tailwind CSS', d: 'Utility-first styling' },
+          { s: 'API Integration', d: 'REST, GraphQL, React Query' },
+          { s: 'Testing & Deploy', d: 'Jest, Cypress, Vercel' },
+        ],
+      },
+      {
+        title: 'Backend Developer',
+        description: 'Build scalable APIs and master server-side systems.',
+        color: '#059669',
+        icon: 'Server',
+        published: true,
+        steps: [
+          { s: 'OS & Networking', d: 'Linux, TCP/IP, HTTP' },
+          { s: 'Node.js / Python', d: 'Server runtimes, async' },
+          { s: 'SQL Databases', d: 'PostgreSQL, MySQL, ORM' },
+          { s: 'NoSQL Databases', d: 'MongoDB, Redis' },
+          { s: 'REST & GraphQL', d: 'Express, NestJS, Fastify' },
+          { s: 'Authentication', d: 'JWT, OAuth 2.0' },
+          { s: 'Caching & Queues', d: 'Redis, BullMQ' },
+          { s: 'Docker & CI/CD', d: 'Containers, GitHub Actions' },
+        ],
+      },
+      {
+        title: 'DevOps Engineer',
+        description: 'Bridge dev and ops — master cloud and automation.',
+        color: '#7c3aed',
+        icon: 'Cloud',
+        published: true,
+        steps: [
+          { s: 'Linux Fundamentals', d: 'Shell, permissions' },
+          { s: 'Networking', d: 'TCP/IP, DNS, proxies' },
+          { s: 'Git & VCS', d: 'Branching, GitHub Flow' },
+          { s: 'Docker', d: 'Dockerfiles, Compose' },
+          { s: 'CI/CD Pipelines', d: 'GitHub Actions, GitLab CI' },
+          { s: 'Infra as Code', d: 'Terraform, Ansible' },
+          { s: 'Kubernetes', d: 'Pods, services, Helm' },
+          { s: 'Cloud Provider', d: 'AWS / GCP / Azure' },
+        ],
+      },
+    ];
+    await this.roadmapRepo.save(roadmaps as any[]);
   }
 }

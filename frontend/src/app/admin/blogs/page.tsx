@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, FileText } from 'lucide-react';
 import { api } from '@/lib/api';
+import DeleteModal from '@/components/DeleteModal';
 
 const CATEGORIES = ['Career Advice', 'Resume Tips', 'Interview Prep', 'Job Search', 'Frontend', 'Backend', 'DevOps', 'Full-Stack', 'AI/ML', 'General'];
 
@@ -26,6 +27,8 @@ export default function AdminBlogsPage() {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -81,14 +84,25 @@ export default function AdminBlogsPage() {
     }
   };
 
-  const del = async (id: string) => {
-    if (!confirm('Delete this article?')) return;
-    try { await api.blogs.delete(id); load(); }
-    catch { alert('Failed to delete article.'); }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await api.blogs.delete(deleteTarget.id); setDeleteTarget(null); load(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
   };
 
   return (
     <div>
+      {deleteTarget && (
+        <DeleteModal
+          title="Delete Article?"
+          name={deleteTarget.title}
+          deleting={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>Blog Articles</h1>
@@ -195,7 +209,7 @@ export default function AdminBlogsPage() {
                     <td style={{ padding: '14px 16px', whiteSpace: 'nowrap' }}>
                       <div style={{ display: 'flex', gap: 6 }}>
                         <button onClick={() => openEdit(blog)} style={iconBtn} title="Edit"><Pencil size={13} /></button>
-                        <button onClick={() => del(blog.id)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
+                        <button onClick={() => setDeleteTarget(blog)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete"><Trash2 size={13} /></button>
                       </div>
                     </td>
                   </tr>

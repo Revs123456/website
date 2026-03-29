@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Trash2, Download, ToggleLeft, ToggleRight, Users } from 'lucide-react';
+import DeleteModal from '@/components/DeleteModal';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
@@ -17,6 +18,8 @@ function LoadingSpinner() {
 export default function AdminSubscribersPage() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   async function load() {
     setLoading(true);
@@ -46,15 +49,13 @@ export default function AdminSubscribersPage() {
     }
   }
 
-  async function del(id: string) {
-    if (!confirm('Delete this subscriber?')) return;
-    try {
-      await fetch(`${BASE}/subscribers/${id}`, { method: 'DELETE' });
-      load();
-    } catch {
-      alert('Failed to delete subscriber.');
-    }
-  }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await fetch(`${BASE}/subscribers/${deleteTarget.id}`, { method: 'DELETE' }); setDeleteTarget(null); load(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
+  };
 
   function exportCSV() {
     if (items.length === 0) return;
@@ -78,6 +79,15 @@ export default function AdminSubscribersPage() {
 
   return (
     <div>
+      {deleteTarget && (
+        <DeleteModal
+          title="Delete Subscriber?"
+          name={deleteTarget.email || ''}
+          deleting={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>Subscribers</h1>
@@ -129,7 +139,7 @@ export default function AdminSubscribersPage() {
                         >
                           {item.active ? <ToggleRight size={15} style={{ color: '#22c55e' }} /> : <ToggleLeft size={15} />}
                         </button>
-                        <button onClick={() => del(item.id)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete">
+                        <button onClick={() => setDeleteTarget(item)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete">
                           <Trash2 size={13} />
                         </button>
                       </div>

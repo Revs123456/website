@@ -27,16 +27,16 @@ function colorBorder(color: string) {
 }
 
 export default function RoadmapsPage() {
-  const [roadmaps, setRoadmaps] = useState<any[]>([]);
+  const [roadmaps, setRoadmaps] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   const load = () => {
     const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
-    fetch(`${BASE}/roadmaps`, { cache: 'no-store' })
+    fetch(`${BASE}/roadmaps/published`, { cache: 'no-store' })
       .then(r => r.json())
       .then(data => {
         const list = Array.isArray(data) ? data : data.data ?? [];
-        setRoadmaps(list.length > 0 ? list : FALLBACK);
+        setRoadmaps(list);
       })
       .catch(() => setRoadmaps(FALLBACK))
       .finally(() => setLoading(false));
@@ -45,7 +45,7 @@ export default function RoadmapsPage() {
   useEffect(() => { load(); }, []);
   useAdminSync(load);
 
-  const maps = loading ? FALLBACK : roadmaps;
+  const maps = roadmaps ?? FALLBACK;
 
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>

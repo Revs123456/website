@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, Briefcase, Eye, EyeOff } from 'lucide-react';
 import { api } from '@/lib/api';
+import DeleteModal from '@/components/DeleteModal';
 
 const CATEGORIES = ['Frontend', 'Backend', 'DevOps', 'Full-Stack', 'AI/ML'];
 const TYPES = ['Full-time', 'Contract', 'Internship', 'Part-time'];
@@ -45,6 +46,8 @@ export default function AdminJobsPage() {
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -118,18 +121,25 @@ export default function AdminJobsPage() {
     }
   };
 
-  const del = async (id: string) => {
-    if (!confirm('Delete this job?')) return;
-    try {
-      await api.jobs.delete(id);
-      load();
-    } catch {
-      alert('Failed to delete job.');
-    }
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try { await api.jobs.delete(deleteTarget.id); setDeleteTarget(null); load(); }
+    catch { setDeleteTarget(null); }
+    finally { setDeleting(false); }
   };
 
   return (
     <div>
+      {deleteTarget && (
+        <DeleteModal
+          title="Delete Job?"
+          name={deleteTarget.title}
+          deleting={deleting}
+          onConfirm={confirmDelete}
+          onCancel={() => setDeleteTarget(null)}
+        />
+      )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>Jobs</h1>
@@ -296,7 +306,7 @@ export default function AdminJobsPage() {
                         <button onClick={() => openEdit(job)} style={iconBtn} title="Edit">
                           <Pencil size={13} />
                         </button>
-                        <button onClick={() => del(job.id)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete">
+                        <button onClick={() => setDeleteTarget(job)} style={{ ...iconBtn, color: '#ef4444' }} title="Delete">
                           <Trash2 size={13} />
                         </button>
                       </div>
