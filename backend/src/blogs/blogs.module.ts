@@ -6,7 +6,7 @@ import { BlogsService } from './blogs.service';
 import { Blog } from './entities/blog.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Blog, AuthModule])],
+  imports: [TypeOrmModule.forFeature([Blog]), AuthModule],
   controllers: [BlogsController],
   providers: [BlogsService],
   exports: [BlogsService],

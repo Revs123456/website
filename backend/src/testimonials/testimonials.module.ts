@@ -6,7 +6,7 @@ import { TestimonialsService } from './testimonials.service';
 import { TestimonialsController } from './testimonials.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Testimonial, AuthModule])],
+  imports: [TypeOrmModule.forFeature([Testimonial]), AuthModule],
   controllers: [TestimonialsController],
   providers: [TestimonialsService],
 })

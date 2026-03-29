@@ -6,7 +6,7 @@ import { ResumeTemplatesService } from './resume-templates.service';
 import { ResumeTemplatesController } from './resume-templates.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ResumeTemplate, AuthModule])],
+  imports: [TypeOrmModule.forFeature([ResumeTemplate]), AuthModule],
   controllers: [ResumeTemplatesController],
   providers: [ResumeTemplatesService],
 })

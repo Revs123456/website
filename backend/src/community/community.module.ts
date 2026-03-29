@@ -6,7 +6,7 @@ import { CommunityService } from './community.service';
 import { CommunityController } from './community.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CommunityQuestion, AuthModule])],
+  imports: [TypeOrmModule.forFeature([CommunityQuestion]), AuthModule],
   controllers: [CommunityController],
   providers: [CommunityService],
 })

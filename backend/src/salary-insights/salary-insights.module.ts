@@ -6,7 +6,7 @@ import { SalaryInsightsService } from './salary-insights.service';
 import { SalaryInsightsController } from './salary-insights.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SalaryInsight, AuthModule])],
+  imports: [TypeOrmModule.forFeature([SalaryInsight]), AuthModule],
   controllers: [SalaryInsightsController],
   providers: [SalaryInsightsService],
 })

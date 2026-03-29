@@ -6,7 +6,7 @@ import { InterviewQuestionsService } from './interview-questions.service';
 import { InterviewQuestionsController } from './interview-questions.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([InterviewQuestion, AuthModule])],
+  imports: [TypeOrmModule.forFeature([InterviewQuestion]), AuthModule],
   controllers: [InterviewQuestionsController],
   providers: [InterviewQuestionsService],
 })

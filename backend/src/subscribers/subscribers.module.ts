@@ -6,7 +6,7 @@ import { SubscribersService } from './subscribers.service';
 import { SubscribersController } from './subscribers.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Subscriber, AuthModule])],
+  imports: [TypeOrmModule.forFeature([Subscriber]), AuthModule],
   controllers: [SubscribersController],
   providers: [SubscribersService],
 })

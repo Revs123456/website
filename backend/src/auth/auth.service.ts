@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
 import { Admin } from './entities/admin.entity';
 import { LoginDto } from './dto/login.dto';
 
@@ -11,7 +11,6 @@ export class AuthService {
   constructor(
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
-    private readonly jwtService: JwtService,
   ) {}
 
   async listAdmins() {
@@ -37,7 +36,8 @@ export class AuthService {
     if (admin) {
       const valid = await bcrypt.compare(loginDto.password, admin.passwordHash);
       if (!valid) throw new UnauthorizedException('Invalid password');
-      const token = this.jwtService.sign({ sub: admin.id, email: admin.email, role: 'admin' });
+      const secret = process.env.JWT_SECRET || 'tch-jwt-secret';
+      const token = jwt.sign({ sub: admin.id, email: admin.email, role: 'admin' }, secret, { expiresIn: '7d' });
       return { role: 'admin', email: admin.email, token };
     }
     return { role: 'user', email: loginDto.email };

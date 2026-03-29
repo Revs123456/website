@@ -6,7 +6,7 @@ import { SuccessStoriesService } from './success-stories.service';
 import { SuccessStoriesController } from './success-stories.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([SuccessStory, AuthModule])],
+  imports: [TypeOrmModule.forFeature([SuccessStory]), AuthModule],
   controllers: [SuccessStoriesController],
   providers: [SuccessStoriesService],
 })

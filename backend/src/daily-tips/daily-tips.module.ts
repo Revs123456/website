@@ -6,7 +6,7 @@ import { DailyTipsService } from './daily-tips.service';
 import { DailyTipsController } from './daily-tips.controller';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([DailyTip, AuthModule])],
+  imports: [TypeOrmModule.forFeature([DailyTip]), AuthModule],
   controllers: [DailyTipsController],
   providers: [DailyTipsService],
 })
