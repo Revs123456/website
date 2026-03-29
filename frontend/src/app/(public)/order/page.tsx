@@ -2,7 +2,7 @@
 import { Suspense, useState, useEffect } from 'react';
 import BackButton from '@/components/BackButton';
 import { useSearchParams } from 'next/navigation';
-import { Check, Upload, User, Mail, Briefcase, MessageSquare, Zap, Shield, Star } from 'lucide-react';
+import { Check, User, Mail, Briefcase, MessageSquare, Zap, Shield, Star } from 'lucide-react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 
@@ -16,7 +16,6 @@ function Form() {
     level: 'Fresher',
     message: '',
   });
-  const [file, setFile] = useState('');
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
@@ -33,7 +32,7 @@ function Form() {
       } else if (list.length > 0) {
         setData(d => ({ ...d, service_id: String(list[0].id) }));
       }
-    }).catch(console.error);
+    }).catch(() => {});
   }, []);
 
   const change = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
@@ -133,25 +132,6 @@ function Form() {
               <option>Senior (5+ yrs)</option>
             </select>
           </div>
-        </div>
-
-        {/* File upload */}
-        <div>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#94a3b8', marginBottom: 8 }}>
-            <Upload size={11} /> Resume (optional)
-          </label>
-          <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '32px 16px', borderRadius: 12, cursor: 'pointer', background: '#f8fafc', border: '1.5px dashed #cbd5e1' }}>
-            <input type="file" style={{ display: 'none' }} accept=".pdf,.doc,.docx" onChange={e => setFile(e.target.files?.[0]?.name || '')} />
-            <Upload size={20} style={{ color: '#94a3b8' }} />
-            {file ? (
-              <span style={{ fontSize: 13, color: '#2563eb', fontWeight: 500 }}>{file}</span>
-            ) : (
-              <p style={{ fontSize: 13, textAlign: 'center', color: '#94a3b8', margin: 0 }}>
-                <span style={{ color: '#2563eb', fontWeight: 500 }}>Click to upload</span> or drag & drop<br />
-                <span style={{ fontSize: 11, color: '#cbd5e1' }}>PDF, DOCX · max 5MB</span>
-              </p>
-            )}
-          </label>
         </div>
 
         {/* Message */}

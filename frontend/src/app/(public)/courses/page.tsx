@@ -119,7 +119,7 @@ export default function CoursesPage() {
   const [lvl, setLvl] = useState('All');
 
   const load = () => {
-    api.courses.list().then(d => setCourses(d.filter((c: any) => c.published !== false))).catch(console.error).finally(() => setLoading(false));
+    api.courses.list().then(d => setCourses(d.filter((c: any) => c.published !== false))).catch(() => {}).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);

@@ -19,6 +19,7 @@ import { SuccessStoriesModule } from './success-stories/success-stories.module';
 import { CommunityModule } from './community/community.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { ResumeTemplatesModule } from './resume-templates/resume-templates.module';
+import { RoadmapsModule } from './roadmaps/roadmaps.module';
 import { Job } from './jobs/entities/job.entity';
 import { Course } from './courses/entities/course.entity';
 import { Order } from './orders/entities/order.entity';
@@ -35,6 +36,7 @@ import { SuccessStory } from './success-stories/entities/success-story.entity';
 import { CommunityQuestion } from './community/entities/community-question.entity';
 import { Booking } from './bookings/entities/booking.entity';
 import { ResumeTemplate } from './resume-templates/entities/resume-template.entity';
+import { Roadmap } from './roadmaps/entities/roadmap.entity';
 
 @Module({
   imports: [
@@ -45,12 +47,12 @@ import { ResumeTemplate } from './resume-templates/entities/resume-template.enti
       username: process.env.DB_USER || 'postgres.ytmmuncusugyaniztlom',
       password: process.env.DB_PASS || 'CGYeGtQ53%wv$?2',
       database: process.env.DB_NAME || 'postgres',
-      entities: [Job, Course, Order, Service, Admin, Blog, Setting, Testimonial, Subscriber, InterviewQuestion, SalaryInsight, DailyTip, SuccessStory, CommunityQuestion, Booking, ResumeTemplate],
+      entities: [Job, Course, Order, Service, Admin, Blog, Setting, Testimonial, Subscriber, InterviewQuestion, SalaryInsight, DailyTip, SuccessStory, CommunityQuestion, Booking, ResumeTemplate, Roadmap],
       synchronize: true,
       ssl: { rejectUnauthorized: false },
     }),
     JobsModule, CoursesModule, OrdersModule, ServicesModule, AuthModule, BlogsModule, SeedModule, SettingsModule, TestimonialsModule,
-    SubscribersModule, InterviewQuestionsModule, SalaryInsightsModule, DailyTipsModule, SuccessStoriesModule, CommunityModule, BookingsModule, ResumeTemplatesModule,
+    SubscribersModule, InterviewQuestionsModule, SalaryInsightsModule, DailyTipsModule, SuccessStoriesModule, CommunityModule, BookingsModule, ResumeTemplatesModule, RoadmapsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

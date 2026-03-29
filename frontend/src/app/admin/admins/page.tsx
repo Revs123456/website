@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { UserPlus, Trash2, Shield, Eye, EyeOff } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
+function authHeaders() { const t = getToken(); return { 'Content-Type': 'application/json', ...(t ? { Authorization: 'Bearer ' + t } : {}) }; }
 
 export default function AdminUsersPage() {
   const [admins, setAdmins] = useState<{ id: string; email: string }[]>([]);
@@ -32,7 +34,7 @@ export default function AdminUsersPage() {
     try {
       const res = await fetch(`${BASE}/auth/create-admin`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
       });
       const data = await res.json();

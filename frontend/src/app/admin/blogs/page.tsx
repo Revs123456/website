@@ -29,7 +29,7 @@ export default function AdminBlogsPage() {
 
   const load = () => {
     setLoading(true);
-    api.blogs.list().then(setBlogs).catch(console.error).finally(() => setLoading(false));
+    api.blogs.list().then(setBlogs).catch(() => {}).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);

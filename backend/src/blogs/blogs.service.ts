@@ -13,6 +13,8 @@ export class BlogsService {
 
   findAll() { return this.repo.find({ order: { created_at: 'DESC' } }); }
 
+  findPublished() { return this.repo.find({ where: { published: true }, order: { created_at: 'DESC' } }); }
+
   async findOne(id: string) {
     const b = await this.repo.findOne({ where: { id } });
     if (!b) throw new NotFoundException();

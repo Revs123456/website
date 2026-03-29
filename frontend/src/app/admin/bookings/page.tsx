@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Pencil, Trash2, X, Calendar } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
+function authHeaders() { const t = getToken(); return { 'Content-Type': 'application/json', ...(t ? { Authorization: 'Bearer ' + t } : {}) }; }
 
 const STATUSES = ['Pending', 'Confirmed', 'Completed', 'Cancelled'];
 
@@ -59,7 +61,7 @@ export default function AdminBookingsPage() {
     try {
       await fetch(`${BASE}/bookings/${editing.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({ status }),
       });
       setShowForm(false);

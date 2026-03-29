@@ -38,7 +38,7 @@ export default function AdminServicesPage() {
 
   const load = () => {
     setLoading(true);
-    api.services.list().then(setServices).catch(console.error).finally(() => setLoading(false));
+    api.services.list().then(setServices).catch(() => {}).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);

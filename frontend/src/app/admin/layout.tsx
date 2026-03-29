@@ -78,7 +78,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Zap size={14} /> View site
           </Link>
           <button
-            onClick={() => { localStorage.removeItem('tch_auth'); router.push('/login'); }}
+            onClick={() => { localStorage.removeItem('tch_auth'); localStorage.removeItem('tch_token'); router.push('/login'); }}
             style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 8, fontSize: 13, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left' }}
           >
             <LogOut size={14} /> Sign out

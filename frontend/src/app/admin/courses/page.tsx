@@ -43,7 +43,7 @@ export default function AdminCoursesPage() {
 
   const load = () => {
     setLoading(true);
-    api.courses.list().then(setCourses).catch(console.error).finally(() => setLoading(false));
+    api.courses.list().then(setCourses).catch(() => {}).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);

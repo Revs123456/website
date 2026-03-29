@@ -48,7 +48,7 @@ export default function AdminJobsPage() {
 
   const load = () => {
     setLoading(true);
-    api.jobs.list().then(setJobs).catch(console.error).finally(() => setLoading(false));
+    api.jobs.list().then(setJobs).catch(() => {}).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);

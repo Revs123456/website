@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Trash2, Download, ToggleLeft, ToggleRight, Users } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
+function authHeaders() { const t = getToken(); return { 'Content-Type': 'application/json', ...(t ? { Authorization: 'Bearer ' + t } : {}) }; }
 
 function LoadingSpinner() {
   return (
@@ -35,7 +37,7 @@ export default function AdminSubscribersPage() {
     try {
       await fetch(`${BASE}/subscribers/${item.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({ active: !item.active }),
       });
       load();

@@ -26,7 +26,7 @@ export default function AdminOrdersPage() {
 
   const load = () => {
     setLoading(true);
-    api.orders.list().then(setOrders).catch(console.error).finally(() => setLoading(false));
+    api.orders.list().then(setOrders).catch(() => {}).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);

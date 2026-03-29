@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SalaryInsight } from './entities/salary-insight.entity';
@@ -7,8 +7,8 @@ import { SalaryInsight } from './entities/salary-insight.entity';
 export class SalaryInsightsService {
   constructor(@InjectRepository(SalaryInsight) private repo: Repository<SalaryInsight>) {}
   findAll() { return this.repo.find({ order: { role: 'ASC' } }); }
-  findOne(id: string) { return this.repo.findOne({ where: { id } }); }
+  async findOne(id: string) { const item = await this.repo.findOne({ where: { id } }); if (!item) throw new NotFoundException(); return item; }
   create(data: Partial<SalaryInsight>) { return this.repo.save(data); }
-  async update(id: string, data: Partial<SalaryInsight>) { await this.repo.update(id, data); return this.repo.findOne({ where: { id } }); }
+  async update(id: string, data: any) { await this.findOne(id); await this.repo.update(id, data); return this.repo.findOne({ where: { id } }); }
   async remove(id: string) { await this.repo.delete(id); return { deleted: true }; }
 }

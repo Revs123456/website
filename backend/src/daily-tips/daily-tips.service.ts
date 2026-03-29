@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DailyTip } from './entities/daily-tip.entity';
@@ -12,7 +12,8 @@ export class DailyTipsService {
     if (!all.length) return null;
     return all[Math.floor(Math.random() * all.length)];
   }
+  async findOne(id: string) { const item = await this.repo.findOne({ where: { id } }); if (!item) throw new NotFoundException(); return item; }
   create(data: Partial<DailyTip>) { return this.repo.save(data); }
-  async update(id: string, data: Partial<DailyTip>) { await this.repo.update(id, data); return this.repo.findOne({ where: { id } }); }
+  async update(id: string, data: any) { await this.findOne(id); await this.repo.update(id, data); return this.repo.findOne({ where: { id } }); }
   async remove(id: string) { await this.repo.delete(id); return { deleted: true }; }
 }

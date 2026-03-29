@@ -1,6 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 import { Admin } from './entities/admin.entity';
 import { LoginDto } from './dto/login.dto';
 
@@ -9,6 +11,7 @@ export class AuthService {
   constructor(
     @InjectRepository(Admin)
     private readonly adminRepository: Repository<Admin>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async listAdmins() {
@@ -19,7 +22,8 @@ export class AuthService {
   async createAdmin(email: string, password: string) {
     const existing = await this.adminRepository.findOne({ where: { email } });
     if (existing) return { message: 'Admin already exists', email };
-    await this.adminRepository.save({ email, passwordHash: password });
+    const passwordHash = await bcrypt.hash(password, 10);
+    await this.adminRepository.save({ email, passwordHash });
     return { message: 'Admin created', email };
   }
 
@@ -31,12 +35,11 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const admin = await this.adminRepository.findOne({ where: { email: loginDto.email } });
     if (admin) {
-      if (admin.passwordHash !== loginDto.password) {
-        throw new UnauthorizedException('Invalid password');
-      }
-      return { role: 'admin', email: admin.email };
+      const valid = await bcrypt.compare(loginDto.password, admin.passwordHash);
+      if (!valid) throw new UnauthorizedException('Invalid password');
+      const token = this.jwtService.sign({ sub: admin.id, email: admin.email, role: 'admin' });
+      return { role: 'admin', email: admin.email, token };
     }
-    // Non-admin emails are treated as regular users
     return { role: 'user', email: loginDto.email };
   }
 }

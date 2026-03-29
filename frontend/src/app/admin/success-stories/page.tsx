@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, Star, ToggleLeft, ToggleRight } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
+function authHeaders() { const t = getToken(); return { 'Content-Type': 'application/json', ...(t ? { Authorization: 'Bearer ' + t } : {}) }; }
 
 const EMPTY = {
   name: '', before_role: '', after_role: '', company: '',
@@ -92,13 +94,13 @@ export default function AdminSuccessStoriesPage() {
       if (editing) {
         await fetch(`${BASE}/success-stories/${editing.id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           body: JSON.stringify(form),
         });
       } else {
         await fetch(`${BASE}/success-stories`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           body: JSON.stringify(form),
         });
       }
@@ -125,7 +127,7 @@ export default function AdminSuccessStoriesPage() {
     try {
       await fetch(`${BASE}/success-stories/${item.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({ published: !item.published }),
       });
       load();

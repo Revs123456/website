@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, MessageSquare, ToggleLeft, ToggleRight } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
+function authHeaders() { const t = getToken(); return { 'Content-Type': 'application/json', ...(t ? { Authorization: 'Bearer ' + t } : {}) }; }
 
 const EMPTY = {
   author_name: '', title: '', question: '', answer: '',
@@ -83,13 +85,13 @@ export default function AdminCommunityPage() {
       if (editing) {
         await fetch(`${BASE}/community/${editing.id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           body: JSON.stringify(payload),
         });
       } else {
         await fetch(`${BASE}/community`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           body: JSON.stringify(payload),
         });
       }
@@ -116,7 +118,7 @@ export default function AdminCommunityPage() {
     try {
       await fetch(`${BASE}/community/${item.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({ [field]: !item[field] }),
       });
       load();

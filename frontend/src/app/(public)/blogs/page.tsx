@@ -42,7 +42,7 @@ export default function BlogsPage() {
   const load = () => {
     api.blogs.list()
       .then(data => setBlogs(data.filter((b: any) => b.published !== false)))
-      .catch(console.error)
+      .catch(() => {})
       .finally(() => setLoading(false));
   };
 

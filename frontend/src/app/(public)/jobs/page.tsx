@@ -57,7 +57,7 @@ export default function JobsPage() {
         if (autoExpiry < now) return false;
       }
       return true;
-    }))).catch(console.error).finally(() => setLoading(false));
+    }))).catch(() => {}).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);

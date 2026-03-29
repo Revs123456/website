@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, Lightbulb, ToggleLeft, ToggleRight } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
+function authHeaders() { const t = getToken(); return { 'Content-Type': 'application/json', ...(t ? { Authorization: 'Bearer ' + t } : {}) }; }
 
 const CATEGORIES = ['Career', 'DSA', 'Resume', 'Interview', 'Frontend', 'Backend'];
 
@@ -81,13 +83,13 @@ export default function AdminDailyTipsPage() {
       if (editing) {
         await fetch(`${BASE}/daily-tips/${editing.id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           body: JSON.stringify(form),
         });
       } else {
         await fetch(`${BASE}/daily-tips`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           body: JSON.stringify(form),
         });
       }
@@ -114,7 +116,7 @@ export default function AdminDailyTipsPage() {
     try {
       await fetch(`${BASE}/daily-tips/${item.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({ active: !item.active }),
       });
       load();

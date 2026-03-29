@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, FileText, ToggleLeft, ToggleRight } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
+function authHeaders() { const t = getToken(); return { 'Content-Type': 'application/json', ...(t ? { Authorization: 'Bearer ' + t } : {}) }; }
 
 const EMPTY = {
   name: '', description: '', price: 'Free', download_link: '',
@@ -78,13 +80,13 @@ export default function AdminTemplatesPage() {
       if (editing) {
         await fetch(`${BASE}/templates/${editing.id}`, {
           method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           body: JSON.stringify(form),
         });
       } else {
         await fetch(`${BASE}/resume-templates`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: authHeaders(),
           body: JSON.stringify(form),
         });
       }
@@ -111,7 +113,7 @@ export default function AdminTemplatesPage() {
     try {
       await fetch(`${BASE}/templates/${item.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: authHeaders(),
         body: JSON.stringify({ published: !item.published }),
       });
       load();

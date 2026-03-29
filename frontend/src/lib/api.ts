@@ -1,14 +1,41 @@
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
 
+function getToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return localStorage.getItem('tch_token');
+  } catch {
+    return null;
+  }
+}
+
+export function authFetch(url: string, opts?: RequestInit): Promise<Response> {
+  const token = getToken();
+  return fetch(url, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(opts?.headers || {}),
+    },
+  });
+}
+
 async function req<T>(path: string, opts?: RequestInit): Promise<T> {
+  const token = getToken();
+  const isWrite = opts?.method && ['POST', 'PATCH', 'DELETE'].includes(opts.method);
   const res = await fetch(`${BASE}${path}`, {
     ...opts,
-    headers: { 'Content-Type': 'application/json', ...(opts?.headers || {}) },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(isWrite && token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(opts?.headers || {}),
+    },
     cache: 'no-store',
   });
   if (!res.ok) throw new Error(`API error ${res.status}`);
   const data = await res.json();
-  if (typeof window !== 'undefined' && opts?.method && ['POST', 'PATCH', 'DELETE'].includes(opts.method)) {
+  if (typeof window !== 'undefined' && isWrite) {
     new BroadcastChannel('admin-update').postMessage('refresh');
   }
   return data;
@@ -31,6 +58,7 @@ export const api = {
   },
   blogs: {
     list: () => req<any[]>('/blogs'),
+    listPublished: () => req<any[]>('/blogs/published'),
     get: (id: string) => req<any>(`/blogs/${id}`),
     create: (data: any) => req<any>('/blogs', { method: 'POST', body: JSON.stringify(data) }),
     update: (id: string, data: any) => req<any>(`/blogs/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),

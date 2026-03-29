@@ -39,6 +39,7 @@ export default function LoginPage() {
       }
       const data = await res.json();
       localStorage.setItem('tch_auth', JSON.stringify({ role: data.role, email: data.email }));
+      if (data.token) localStorage.setItem('tch_token', data.token);
       router.replace(data.role === 'admin' ? '/admin' : '/');
     } catch (err: any) {
       setError(err.message || 'Login failed');

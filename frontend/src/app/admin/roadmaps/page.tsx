@@ -27,7 +27,7 @@ export default function AdminRoadmapsPage() {
 
   const load = () => {
     setLoading(true);
-    api.roadmaps.list().then(setItems).catch(console.error).finally(() => setLoading(false));
+    api.roadmaps.list().then(setItems).catch(() => {}).finally(() => setLoading(false));
   };
 
   useEffect(() => { load(); }, []);

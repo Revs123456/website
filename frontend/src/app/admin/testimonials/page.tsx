@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, X, Eye, EyeOff, Star } from 'lucide-react';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+function getToken() { try { return typeof window !== 'undefined' ? localStorage.getItem('tch_token') : null; } catch { return null; } }
+function authHeaders() { const t = getToken(); return { 'Content-Type': 'application/json', ...(t ? { Authorization: 'Bearer ' + t } : {}) }; }
 
 const EMPTY = { name: '', role: '', quote: '', initials: '', color: '#2563eb', bg: '#eff6ff', package: '', published: true };
 
@@ -30,7 +32,7 @@ export default function AdminTestimonialsPage() {
     setSaving(true);
     const url = editId ? `${BASE}/testimonials/${editId}` : `${BASE}/testimonials`;
     const method = editId ? 'PATCH' : 'POST';
-    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+    await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(form) });
     setSaving(false);
     setShowForm(false);
     load();
@@ -43,7 +45,7 @@ export default function AdminTestimonialsPage() {
   }
 
   async function togglePublished(t: any) {
-    await fetch(`${BASE}/testimonials/${t.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ published: !t.published }) });
+    await fetch(`${BASE}/testimonials/${t.id}`, { method: 'PATCH', headers: authHeaders(), body: JSON.stringify({ published: !t.published }) });
     load();
   }
 
