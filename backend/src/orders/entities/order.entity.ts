@@ -35,6 +35,18 @@ export class Order {
   @Column({ default: 'pending' })
   status: string;
 
+  @Column({ default: 'unpaid' })
+  payment_status: string;
+
+  @Column({ nullable: true })
+  razorpay_order_id: string;
+
+  @Column({ nullable: true })
+  razorpay_payment_id: string;
+
+  @Column({ nullable: true })
+  amount: number;
+
   @CreateDateColumn()
   created_at: Date;
 }

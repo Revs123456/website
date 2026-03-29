@@ -20,6 +20,7 @@ import { CommunityModule } from './community/community.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { ResumeTemplatesModule } from './resume-templates/resume-templates.module';
 import { RoadmapsModule } from './roadmaps/roadmaps.module';
+import { PaymentsModule } from './payments/payments.module';
 import { Job } from './jobs/entities/job.entity';
 import { Course } from './courses/entities/course.entity';
 import { Order } from './orders/entities/order.entity';
@@ -52,7 +53,7 @@ import { Roadmap } from './roadmaps/entities/roadmap.entity';
       ssl: { rejectUnauthorized: false },
     }),
     JobsModule, CoursesModule, OrdersModule, ServicesModule, AuthModule, BlogsModule, SeedModule, SettingsModule, TestimonialsModule,
-    SubscribersModule, InterviewQuestionsModule, SalaryInsightsModule, DailyTipsModule, SuccessStoriesModule, CommunityModule, BookingsModule, ResumeTemplatesModule, RoadmapsModule,
+    SubscribersModule, InterviewQuestionsModule, SalaryInsightsModule, DailyTipsModule, SuccessStoriesModule, CommunityModule, BookingsModule, ResumeTemplatesModule, RoadmapsModule, PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

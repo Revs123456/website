@@ -2,9 +2,26 @@
 import { Suspense, useState, useEffect } from 'react';
 import BackButton from '@/components/BackButton';
 import { useSearchParams } from 'next/navigation';
-import { Check, User, Mail, Briefcase, MessageSquare, Zap, Shield, Star } from 'lucide-react';
+import { Check, User, Mail, Briefcase, MessageSquare, Zap, Shield, Star, CreditCard } from 'lucide-react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
+
+const BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+
+declare global {
+  interface Window { Razorpay: any; }
+}
+
+function loadRazorpayScript(): Promise<boolean> {
+  return new Promise(resolve => {
+    if (window.Razorpay) return resolve(true);
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
 
 function Form() {
   const params = useSearchParams();
@@ -25,7 +42,6 @@ function Form() {
       setServices(list);
       const s = params.get('service');
       if (s) {
-        // Try to match by id (number) or by name slug
         const match = list.find((sv: any) => String(sv.id) === s || sv.name?.toLowerCase().replace(/\s+/g, '-') === s);
         if (match) setData(d => ({ ...d, service_id: String(match.id) }));
         else if (list.length > 0) setData(d => ({ ...d, service_id: String(list[0].id) }));
@@ -44,7 +60,9 @@ function Form() {
     setError('');
     try {
       const selectedSvc = services.find((s: any) => String(s.id) === data.service_id);
-      await api.orders.create({
+
+      // Step 1: Create order in DB
+      const order = await api.orders.create({
         customer_name: data.name,
         customer_email: data.email,
         name: data.name,
@@ -54,10 +72,60 @@ function Form() {
         experience_level: data.level,
         message: data.message,
       });
-      setDone(true);
+
+      // Step 2: Parse amount from service price (e.g. "₹999" → 999)
+      const rawPrice = selectedSvc?.price || '0';
+      const amount = parseFloat(String(rawPrice).replace(/[^0-9.]/g, '')) || 0;
+
+      // Step 3: Create Razorpay order
+      const res = await fetch(`${BASE}/payments/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: order.id, amount }),
+      });
+      const rzpData = await res.json();
+
+      if (!res.ok) throw new Error(rzpData.message || 'Payment initiation failed');
+
+      // Step 4: Load Razorpay script & open checkout
+      const loaded = await loadRazorpayScript();
+      if (!loaded) throw new Error('Failed to load payment gateway');
+
+      const rzp = new window.Razorpay({
+        key: rzpData.key_id,
+        amount: rzpData.amount,
+        currency: rzpData.currency,
+        name: 'TechChampsByRev',
+        description: selectedSvc?.name || 'Service',
+        order_id: rzpData.razorpay_order_id,
+        prefill: { name: data.name, email: data.email },
+        theme: { color: '#2563eb' },
+        handler: async (response: any) => {
+          // Step 5: Verify payment on backend
+          try {
+            await fetch(`${BASE}/payments/verify`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            setDone(true);
+          } catch {
+            setError('Payment received but verification failed. Please contact support.');
+          }
+          setLoading(false);
+        },
+        modal: {
+          ondismiss: () => setLoading(false),
+        },
+      });
+
+      rzp.open();
     } catch (err: any) {
-      setError('Failed to place order. Please try again.');
-    } finally {
+      setError(err.message || 'Failed to place order. Please try again.');
       setLoading(false);
     }
   };
@@ -72,9 +140,9 @@ function Form() {
       }}>
         <Check size={28} style={{ color: '#16a34a' }} />
       </div>
-      <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Order confirmed!</h2>
+      <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Payment successful!</h2>
       <p style={{ fontSize: 14, color: '#64748b', marginBottom: 4 }}>
-        Thanks <strong style={{ color: '#0f172a' }}>{data.name}</strong>! We've received your order.
+        Thanks <strong style={{ color: '#0f172a' }}>{data.name}</strong>! Your order is confirmed.
       </p>
       <p style={{ fontSize: 13, color: '#94a3b8', marginBottom: 32 }}>Our team will reach out to your email within a few hours.</p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' }}>
@@ -134,7 +202,6 @@ function Form() {
           </div>
         </div>
 
-        {/* Message */}
         <div>
           <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#94a3b8', marginBottom: 8 }}>
             <MessageSquare size={11} /> Special requests (optional)
@@ -154,15 +221,19 @@ function Form() {
           type="submit"
           disabled={loading || services.length === 0}
           className="btn btn-blue"
-          style={{ padding: '13px', opacity: loading ? 0.7 : 1 }}
+          style={{ padding: '13px', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
         >
           {loading ? (
             <svg style={{ animation: 'spin .8s linear infinite', width: 20, height: 20 }} fill="none" viewBox="0 0 24 24">
               <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-          ) : 'Complete Order'}
+          ) : <><CreditCard size={16} /> Pay {selectedService?.price || 'Now'}</>}
         </button>
+
+        <p style={{ fontSize: 11, color: '#94a3b8', textAlign: 'center' }}>
+          Secured by Razorpay · UPI, Cards, Net Banking accepted
+        </p>
       </form>
 
       {/* Sidebar */}
