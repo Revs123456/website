@@ -101,7 +101,19 @@ user impact:
 ## Test database for `test:e2e`
 
 `test/jest-e2e.json` runs specs matching `*.e2e-spec.ts` against a real
-NestJS app instance. Point `DATABASE_URL` at a disposable Postgres instance
-before running it locally — `docker-compose.yml` at the repo root spins one
-up (`docker compose up db`). CI does the same via a `postgres` service
-container (see `.github/workflows/test.yml`).
+NestJS app instance, which needs a working Postgres reachable via
+`DATABASE_URL` and a fully migrated schema.
+
+**Known issue — migration history is currently broken on a fresh database.**
+`prisma/migrations/20260517000000_add_site_user` assumes an `otp_codes`
+table that's never created by any tracked migration; it only exists because
+`prisma/otp_migration.sql` was run by hand outside `prisma migrate deploy`
+at some point. Running `npx prisma migrate deploy` against a brand-new
+database fails with `relation "otp_codes" does not exist`. Until this is
+fixed (turn `otp_migration.sql`, and likely `service_migration.sql`, into
+proper tracked migrations inserted at the right point in the history), CI
+does **not** run `test:e2e` and does not spin up a Postgres service —
+only the fully-mocked unit tests run automatically. Reproduce locally by
+pointing `DATABASE_URL` at an empty Postgres and running
+`npx prisma migrate deploy` to see the same failure before attempting to
+run `npm run test:e2e`.
