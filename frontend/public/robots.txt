@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Block admin and private routes
+Disallow: /admin/
+Disallow: /login
+Disallow: /order
+Disallow: /book
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://www.techchampsbyrev.in/sitemap.xml

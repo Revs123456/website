@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="96" failures="0" errors="0" time="3.444">
+  <testsuite name="OrdersService" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:09" time="1.024" tests="9">
+    <testcase classname="OrdersService create passes the DTO fields straight through to Prisma" name="OrdersService create passes the DTO fields straight through to Prisma" time="0.047">
+    </testcase>
+    <testcase classname="OrdersService findAll uses the pagination_default_limit setting the first time, then caches it" name="OrdersService findAll uses the pagination_default_limit setting the first time, then caches it" time="0.008">
+    </testcase>
+    <testcase classname="OrdersService findAll caps the limit at 200 even if a caller asks for more" name="OrdersService findAll caps the limit at 200 even if a caller asks for more" time="0.016">
+    </testcase>
+    <testcase classname="OrdersService findOne returns the order when found" name="OrdersService findOne returns the order when found" time="0.004">
+    </testcase>
+    <testcase classname="OrdersService findOne throws NotFoundException when missing" name="OrdersService findOne throws NotFoundException when missing" time="0.013">
+    </testcase>
+    <testcase classname="OrdersService update checks existence before updating" name="OrdersService update checks existence before updating" time="0.007">
+    </testcase>
+    <testcase classname="OrdersService update throws NotFoundException instead of updating a missing order" name="OrdersService update throws NotFoundException instead of updating a missing order" time="0.006">
+    </testcase>
+    <testcase classname="OrdersService remove checks existence before deleting" name="OrdersService remove checks existence before deleting" time="0.008">
+    </testcase>
+    <testcase classname="OrdersService remove throws NotFoundException instead of deleting a missing order" name="OrdersService remove throws NotFoundException instead of deleting a missing order" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="PaymentsService" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:09" time="1.203" tests="11">
+    <testcase classname="PaymentsService createOrder prices from the linked service and creates a Razorpay order" name="PaymentsService createOrder prices from the linked service and creates a Razorpay order" time="0.026">
+    </testcase>
+    <testcase classname="PaymentsService createOrder falls back to the slot-booking price setting when there is no linked service" name="PaymentsService createOrder falls back to the slot-booking price setting when there is no linked service" time="0.008">
+    </testcase>
+    <testcase classname="PaymentsService createOrder defaults to ₹500 for a slot booking when no price setting exists" name="PaymentsService createOrder defaults to ₹500 for a slot booking when no price setting exists" time="0.005">
+    </testcase>
+    <testcase classname="PaymentsService createOrder rejects when the order does not exist" name="PaymentsService createOrder rejects when the order does not exist" time="0.02">
+    </testcase>
+    <testcase classname="PaymentsService createOrder rejects when the linked service has an invalid price" name="PaymentsService createOrder rejects when the linked service has an invalid price" time="0.005">
+    </testcase>
+    <testcase classname="PaymentsService createOrder surfaces a Razorpay failure as a 500" name="PaymentsService createOrder surfaces a Razorpay failure as a 500" time="0.012">
+    </testcase>
+    <testcase classname="PaymentsService verifyPayment rejects an invalid signature before calling Razorpay" name="PaymentsService verifyPayment rejects an invalid signature before calling Razorpay" time="0.004">
+    </testcase>
+    <testcase classname="PaymentsService verifyPayment rejects a payment that was not captured or authorized" name="PaymentsService verifyPayment rejects a payment that was not captured or authorized" time="0.002">
+    </testcase>
+    <testcase classname="PaymentsService verifyPayment rejects when the Razorpay order id does not match" name="PaymentsService verifyPayment rejects when the Razorpay order id does not match" time="0.008">
+    </testcase>
+    <testcase classname="PaymentsService verifyPayment rejects when the captured amount does not match the stored order amount" name="PaymentsService verifyPayment rejects when the captured amount does not match the stored order amount" time="0.004">
+    </testcase>
+    <testcase classname="PaymentsService verifyPayment marks the order paid and confirmed on a fully valid payment" name="PaymentsService verifyPayment marks the order paid and confirmed on a fully valid payment" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="AuthController" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:09" time="1.309" tests="8">
+    <testcase classname="AuthController login sets auth cookies and strips tokens from the response body" name="AuthController login sets auth cookies and strips tokens from the response body" time="0.019">
+    </testcase>
+    <testcase classname="AuthController login propagates a failed login without setting cookies" name="AuthController login propagates a failed login without setting cookies" time="0.012">
+    </testcase>
+    <testcase classname="AuthController refresh throws when there is no refresh cookie" name="AuthController refresh throws when there is no refresh cookie" time="0.018">
+    </testcase>
+    <testcase classname="AuthController refresh rotates cookies on a valid refresh token" name="AuthController refresh rotates cookies on a valid refresh token" time="0.001">
+    </testcase>
+    <testcase classname="AuthController logout rejects a mismatched CSRF token when a session cookie is present" name="AuthController logout rejects a mismatched CSRF token when a session cookie is present" time="0.011">
+    </testcase>
+    <testcase classname="AuthController logout clears cookies and logs out when CSRF matches" name="AuthController logout clears cookies and logs out when CSRF matches" time="0.001">
+    </testcase>
+    <testcase classname="AuthController logout skips the CSRF check entirely when there is no session cookie" name="AuthController logout skips the CSRF check entirely when there is no session cookie" time="0.009">
+    </testcase>
+    <testcase classname="AuthController deleteAdmin delegates to the service with the requesting admin id from the JWT payload" name="AuthController deleteAdmin delegates to the service with the requesting admin id from the JWT payload" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="OrdersController" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:09" time="1.295" tests="6">
+    <testcase classname="OrdersController create delegates the DTO" name="OrdersController create delegates the DTO" time="0.018">
+    </testcase>
+    <testcase classname="OrdersController findAll defaults to page 1 and an unspecified limit when query params are absent" name="OrdersController findAll defaults to page 1 and an unspecified limit when query params are absent" time="0.005">
+    </testcase>
+    <testcase classname="OrdersController findAll parses page and limit query params to numbers" name="OrdersController findAll parses page and limit query params to numbers" time="0.004">
+    </testcase>
+    <testcase classname="OrdersController findOne delegates the id" name="OrdersController findOne delegates the id" time="0.004">
+    </testcase>
+    <testcase classname="OrdersController update delegates id and body" name="OrdersController update delegates id and body" time="0.013">
+    </testcase>
+    <testcase classname="OrdersController remove delegates the id" name="OrdersController remove delegates the id" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="UsersService" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:09" time="1.338" tests="20">
+    <testcase classname="UsersService startAuth normalizes the email and delegates to OtpService" name="UsersService startAuth normalizes the email and delegates to OtpService" time="0.036">
+    </testcase>
+    <testcase classname="UsersService verifyOtp creates a new user, awards first-login XP, and issues tokens" name="UsersService verifyOtp creates a new user, awards first-login XP, and issues tokens" time="0.011">
+    </testcase>
+    <testcase classname="UsersService verifyOtp awards referral Xp to both sides when a valid referral code is used" name="UsersService verifyOtp awards referral Xp to both sides when a valid referral code is used" time="0.002">
+    </testcase>
+    <testcase classname="UsersService verifyOtp does not overwrite an existing name and skips referral logic for a returning user" name="UsersService verifyOtp does not overwrite an existing name and skips referral logic for a returning user" time="0.004">
+    </testcase>
+    <testcase classname="UsersService verifyOtp propagates an invalid OTP as a rejection without creating a user" name="UsersService verifyOtp propagates an invalid OTP as a rejection without creating a user" time="0.027">
+    </testcase>
+    <testcase classname="UsersService refresh rotates a valid refresh token" name="UsersService refresh rotates a valid refresh token" time="0.005">
+    </testcase>
+    <testcase classname="UsersService refresh rejects an expired refresh token" name="UsersService refresh rejects an expired refresh token" time="0.015">
+    </testcase>
+    <testcase classname="UsersService logout no-ops without a token" name="UsersService logout no-ops without a token" time="0.006">
+    </testcase>
+    <testcase classname="UsersService logout deletes the matching token" name="UsersService logout deletes the matching token" time="0.004">
+    </testcase>
+    <testcase classname="UsersService getMe returns the public shape of the user" name="UsersService getMe returns the public shape of the user" time="0.002">
+    </testcase>
+    <testcase classname="UsersService getMe throws NotFoundException when the user is gone" name="UsersService getMe throws NotFoundException when the user is gone" time="0.001">
+    </testcase>
+    <testcase classname="UsersService updateProfile rejects a reserved username" name="UsersService updateProfile rejects a reserved username" time="0.002">
+    </testcase>
+    <testcase classname="UsersService updateProfile rejects a username already taken by someone else" name="UsersService updateProfile rejects a username already taken by someone else" time="0.006">
+    </testcase>
+    <testcase classname="UsersService updateProfile allows re-saving your own already-set username" name="UsersService updateProfile allows re-saving your own already-set username" time="0.003">
+    </testcase>
+    <testcase classname="UsersService updateProfile throws NotFoundException when the user no longer exists" name="UsersService updateProfile throws NotFoundException when the user no longer exists" time="0.002">
+    </testcase>
+    <testcase classname="UsersService updateProfile translates a unique-constraint race into ConflictException" name="UsersService updateProfile translates a unique-constraint race into ConflictException" time="0.002">
+    </testcase>
+    <testcase classname="UsersService updateProfile awards username-claimed XP only the first time a username is set" name="UsersService updateProfile awards username-claimed XP only the first time a username is set" time="0.003">
+    </testcase>
+    <testcase classname="UsersService updateProfile awards profile-complete XP once all key fields are populated" name="UsersService updateProfile awards profile-complete XP once all key fields are populated" time="0.003">
+    </testcase>
+    <testcase classname="UsersService deleteAccount deletes the site user by id" name="UsersService deleteAccount deletes the site user by id" time="0.003">
+    </testcase>
+    <testcase classname="UsersService cleanupExpiredUserTokens deletes expired user refresh tokens" name="UsersService cleanupExpiredUserTokens deletes expired user refresh tokens" time="0.011">
+    </testcase>
+  </testsuite>
+  <testsuite name="UsersController" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:09" time="1.385" tests="8">
+    <testcase classname="UsersController startAuth always returns the same opaque message" name="UsersController startAuth always returns the same opaque message" time="0.013">
+    </testcase>
+    <testcase classname="UsersController verifyOtp sets session cookies and fires the welcome email for a new opted-in user" name="UsersController verifyOtp sets session cookies and fires the welcome email for a new opted-in user" time="0.007">
+    </testcase>
+    <testcase classname="UsersController verifyOtp does not send a welcome email for a returning user" name="UsersController verifyOtp does not send a welcome email for a returning user" time="0.004">
+    </testcase>
+    <testcase classname="UsersController refresh throws without a refresh cookie" name="UsersController refresh throws without a refresh cookie" time="0.021">
+    </testcase>
+    <testcase classname="UsersController logout rejects a mismatched CSRF token" name="UsersController logout rejects a mismatched CSRF token" time="0.003">
+    </testcase>
+    <testcase classname="UsersController me delegates the authenticated user id from the request" name="UsersController me delegates the authenticated user id from the request" time="0.004">
+    </testcase>
+    <testcase classname="UsersController updateProfile delegates the user id and DTO" name="UsersController updateProfile delegates the user id and DTO" time="0.001">
+    </testcase>
+    <testcase classname="UsersController deleteAccount clears session cookies after deleting" name="UsersController deleteAccount clears session cookies after deleting" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="PaymentsController" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:10" time="0.38" tests="2">
+    <testcase classname="PaymentsController delegates createOrder with the body order_id and amount" name="PaymentsController delegates createOrder with the body order_id and amount" time="0.017">
+    </testcase>
+    <testcase classname="PaymentsController delegates verifyPayment with the full body" name="PaymentsController delegates verifyPayment with the full body" time="0.008">
+    </testcase>
+  </testsuite>
+  <testsuite name="AppController" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:10" time="0.161" tests="1">
+    <testcase classname="AppController root should return &quot;Hello World!&quot;" name="AppController root should return &quot;Hello World!&quot;" time="0.006">
+    </testcase>
+  </testsuite>
+  <testsuite name="BookingsService" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:10" time="0.213" tests="8">
+    <testcase classname="BookingsService findAll paginates with the given page and limit" name="BookingsService findAll paginates with the given page and limit" time="0.011">
+    </testcase>
+    <testcase classname="BookingsService findAll caps the limit at 200" name="BookingsService findAll caps the limit at 200" time="0.003">
+    </testcase>
+    <testcase classname="BookingsService findOne returns the booking when found" name="BookingsService findOne returns the booking when found" time="0.004">
+    </testcase>
+    <testcase classname="BookingsService findOne throws NotFoundException when missing" name="BookingsService findOne throws NotFoundException when missing" time="0.01">
+    </testcase>
+    <testcase classname="BookingsService create forwards the data straight to Prisma" name="BookingsService create forwards the data straight to Prisma" time="0.002">
+    </testcase>
+    <testcase classname="BookingsService update checks existence before updating" name="BookingsService update checks existence before updating" time="0.012">
+    </testcase>
+    <testcase classname="BookingsService update throws NotFoundException instead of updating a missing booking" name="BookingsService update throws NotFoundException instead of updating a missing booking" time="0.001">
+    </testcase>
+    <testcase classname="BookingsService remove deletes the booking and reports success" name="BookingsService remove deletes the booking and reports success" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="BookingsController" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:10" time="0.314" tests="5">
+    <testcase classname="BookingsController findAll parses page/limit query strings to numbers" name="BookingsController findAll parses page/limit query strings to numbers" time="0.015">
+    </testcase>
+    <testcase classname="BookingsController findOne delegates the id" name="BookingsController findOne delegates the id" time="0.003">
+    </testcase>
+    <testcase classname="BookingsController create delegates the DTO" name="BookingsController create delegates the DTO" time="0.002">
+    </testcase>
+    <testcase classname="BookingsController update delegates id and body" name="BookingsController update delegates id and body" time="0.001">
+    </testcase>
+    <testcase classname="BookingsController remove delegates the id" name="BookingsController remove delegates the id" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="AuthService" errors="0" failures="0" skipped="0" timestamp="2026-08-18T13:10:09" time="2.761" tests="18">
+    <testcase classname="AuthService login issues a token and refresh token for valid credentials" name="AuthService login issues a token and refresh token for valid credentials" time="0.85">
+    </testcase>
+    <testcase classname="AuthService login rejects a wrong password" name="AuthService login rejects a wrong password" time="0.621">
+    </testcase>
+    <testcase classname="AuthService login rejects an unknown email without a different error shape than a wrong password" name="AuthService login rejects an unknown email without a different error shape than a wrong password" time="0.008">
+    </testcase>
+    <testcase classname="AuthService refresh rotates a valid, unexpired refresh token" name="AuthService refresh rotates a valid, unexpired refresh token" time="0.003">
+    </testcase>
+    <testcase classname="AuthService refresh rejects and cleans up an expired refresh token" name="AuthService refresh rejects and cleans up an expired refresh token" time="0.002">
+    </testcase>
+    <testcase classname="AuthService refresh rejects an unknown refresh token" name="AuthService refresh rejects an unknown refresh token" time="0.002">
+    </testcase>
+    <testcase classname="AuthService logout deletes the matching refresh token when one is provided" name="AuthService logout deletes the matching refresh token when one is provided" time="0.001">
+    </testcase>
+    <testcase classname="AuthService logout no-ops when no refresh token is provided" name="AuthService logout no-ops when no refresh token is provided" time="0.002">
+    </testcase>
+    <testcase classname="AuthService createAdmin rejects a password shorter than 12 characters" name="AuthService createAdmin rejects a password shorter than 12 characters" time="0.002">
+    </testcase>
+    <testcase classname="AuthService createAdmin rejects a password missing an uppercase letter" name="AuthService createAdmin rejects a password missing an uppercase letter" time="0.002">
+    </testcase>
+    <testcase classname="AuthService createAdmin rejects a password missing a number" name="AuthService createAdmin rejects a password missing a number" time="0.002">
+    </testcase>
+    <testcase classname="AuthService createAdmin rejects a password missing a special character" name="AuthService createAdmin rejects a password missing a special character" time="0.001">
+    </testcase>
+    <testcase classname="AuthService createAdmin creates an admin when the password satisfies the policy" name="AuthService createAdmin creates an admin when the password satisfies the policy" time="0.282">
+    </testcase>
+    <testcase classname="AuthService createAdmin short-circuits without creating a duplicate admin" name="AuthService createAdmin short-circuits without creating a duplicate admin" time="0.001">
+    </testcase>
+    <testcase classname="AuthService deleteAdmin refuses to delete your own account" name="AuthService deleteAdmin refuses to delete your own account" time="0.002">
+    </testcase>
+    <testcase classname="AuthService deleteAdmin refuses to delete the last remaining admin" name="AuthService deleteAdmin refuses to delete the last remaining admin" time="0.001">
+    </testcase>
+    <testcase classname="AuthService deleteAdmin deletes another admin when more than one exists" name="AuthService deleteAdmin deletes another admin when more than one exists" time="0.003">
+    </testcase>
+    <testcase classname="AuthService cleanupExpiredTokens deletes refresh tokens past their expiry" name="AuthService cleanupExpiredTokens deletes refresh tokens past their expiry" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

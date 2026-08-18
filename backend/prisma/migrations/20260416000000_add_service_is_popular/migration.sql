@@ -1,0 +1,1 @@
+ALTER TABLE "services" ADD COLUMN "is_popular" BOOLEAN NOT NULL DEFAULT false;

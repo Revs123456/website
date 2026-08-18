@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: tech_career_hub_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: tech_career_hub
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hub_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tech_career_hub_backend
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/tech_career_hub?schema=public
+      PORT: 4001
+    ports:
+      - "4001:4001"
+    depends_on:
+      - db
+    networks:
+      - hub_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tech_career_hub_frontend
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080/api
+    ports:
+      - "4000:3000"
+    depends_on:
+      - backend
+    networks:
+      - hub_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: tech_career_hub_nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - hub_network
+
+networks:
+  hub_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

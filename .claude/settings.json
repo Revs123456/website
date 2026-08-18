@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s http://localhost:4001/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:4001/auth/login -X POST -H \"Content-Type: application/json\" -d '{\"email\":\"test@test.com\",\"password\":\"test\"}')",
+      "PowerShell(Stop-Process -Id 21576 -Force)",
+      "Bash(npx prisma *)"
+    ]
+  }
+}

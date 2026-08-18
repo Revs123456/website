@@ -1,0 +1,56 @@
+{
+  "name": "TechChampsByRev — Career Acceleration",
+  "short_name": "TechChamps",
+  "description": "AI-powered career platform: jobs, resume tools, mock interviews, daily challenges, and more.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "lang": "en-IN",
+  "categories": ["education", "productivity", "business"],
+  "icons": [
+    {
+      "src": "/tc.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/tc.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/tc.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Daily Challenge",
+      "short_name": "Challenge",
+      "description": "Take today's career challenge",
+      "url": "/challenges",
+      "icons": [{ "src": "/tc.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Application Tracker",
+      "short_name": "Tracker",
+      "description": "Manage your job applications",
+      "url": "/applications",
+      "icons": [{ "src": "/tc.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Tools",
+      "short_name": "Tools",
+      "description": "Resume roast, mock interview, RevBot",
+      "url": "/tools",
+      "icons": [{ "src": "/tc.png", "sizes": "192x192" }]
+    }
+  ]
+}

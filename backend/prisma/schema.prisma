@@ -1,0 +1,974 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String @id @default(uuid()) @db.Uuid
+  email        String @unique
+  passwordHash String
+
+  @@map("admins")
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid()) @db.Uuid
+  token_hash String   @unique
+  admin_id   String
+  expires_at DateTime @db.Timestamptz
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@index([token_hash])
+  @@index([admin_id])
+  @@map("refresh_token")
+}
+
+model Job {
+  id           String    @id @default(uuid()) @db.Uuid
+  title        String
+  company      String
+  location     String
+  experience   String
+  type         String    @default("Full-time")
+  category     String    @default("Frontend")
+  salary       String?
+  description  String
+  requirements String?
+  benefits     String?
+  tech_stack   String?
+  apply_link   String?
+  published    Boolean   @default(true)
+  expires_at   DateTime? @db.Date
+  created_at   DateTime  @default(now()) @db.Timestamptz
+
+  // Phase 6 — back-relations
+  saved_by         SavedJob[]
+  applications     JobApplication[]
+
+  @@map("jobs")
+}
+
+model Course {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  platform    String
+  category    String   @default("Frontend")
+  duration    String
+  level       String   @default("Beginner")
+  instructor  String?
+  rating      Float    @default(4.5)
+  students    String?
+  price       String?
+  description String?
+  modules     String?
+  course_link String?
+  published   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  @@map("courses")
+}
+
+model Blog {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  category    String   @default("General")
+  author      String?
+  read_time   String?
+  summary     String
+  content     String
+  cover_image String?
+  published   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  @@map("blogs")
+}
+
+model Service {
+  id                String   @id @default(uuid()) @db.Uuid
+  name              String
+  description       String
+  price             String
+  included_features String
+  image_url         String?
+  is_popular        Boolean  @default(false)
+  published         Boolean  @default(true)
+  created_at        DateTime @default(now()) @db.Timestamptz
+  updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  @@index([published])
+  @@index([is_popular])
+  @@map("services")
+}
+
+model Setting {
+  key         String   @id
+  value       String
+  label       String?
+  description String?
+  updated_at  DateTime @updatedAt @db.Timestamptz
+
+  @@map("settings")
+}
+
+model Testimonial {
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String
+  role       String
+  quote      String
+  initials   String?
+  color      String   @default("#2563eb")
+  bg         String   @default("#eff6ff")
+  package    String?
+  rating     Int      @default(5)
+  published  Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@map("testimonials")
+}
+
+model Subscriber {
+  id         String   @id @default(uuid()) @db.Uuid
+  email      String?
+  whatsapp   String?
+  type       String   @default("both")
+  active     Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@map("subscribers")
+}
+
+model InterviewQuestion {
+  id         String   @id @default(uuid()) @db.Uuid
+  company    String
+  role       String
+  question   String
+  answer     String?
+  difficulty String   @default("Medium")
+  category   String   @default("DSA")
+  published  Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@map("interview_questions")
+}
+
+model SalaryInsight {
+  id               String   @id @default(uuid()) @db.Uuid
+  role             String
+  city             String
+  experience_level String
+  min_salary       String
+  max_salary       String
+  avg_salary       String?
+  companies        String?
+  created_at       DateTime @default(now()) @db.Timestamptz
+
+  @@map("salary_insights")
+}
+
+model DailyTip {
+  id         String   @id @default(uuid()) @db.Uuid
+  tip        String
+  category   String   @default("Career")
+  active     Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@map("daily_tips")
+}
+
+model SuccessStory {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  before_role String
+  after_role  String
+  company     String
+  salary_hike String?
+  story       String
+  initials    String?
+  color       String   @default("#2563eb")
+  bg          String   @default("#eff6ff")
+  published   Boolean  @default(false)
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  @@map("success_stories")
+}
+
+model CommunityQuestion {
+  id          String   @id @default(uuid()) @db.Uuid
+  author_name String
+  title       String
+  question    String
+  answer      String?
+  answered_by String?
+  tags        String?
+  solved      Boolean  @default(false)
+  published   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  // Phase 6 — user-submitted answers + voting infra
+  // Nullable site_user_id covers legacy questions seeded with author_name only.
+  // New questions populate it.
+  site_user_id String? @db.Uuid
+  // Denormalized vote count for fast sorting on /community listing
+  votes_count  Int     @default(0)
+  // Denormalized answer count for the list view
+  answers_count Int    @default(0)
+
+  user         SiteUser?           @relation("CommunityQuestionAuthor", fields: [site_user_id], references: [id], onDelete: SetNull)
+  answers      CommunityAnswer[]
+  votes        CommunityVote[]
+  bookmarks    CommunityBookmark[]
+
+  @@index([site_user_id])
+  @@index([votes_count])
+  @@map("community_questions")
+}
+
+model Booking {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String
+  email          String
+  phone          String?
+  experience     String
+  role           String
+  preferred_date String?
+  preferred_time String?
+  notes          String?
+  status         String   @default("Pending")
+  created_at     DateTime @default(now()) @db.Timestamptz
+
+  @@map("bookings")
+}
+
+model ResumeTemplate {
+  id            String   @id @default(uuid()) @db.Uuid
+  name          String
+  description   String
+  price         String   @default("Free")
+  download_link String?
+  preview_image String?
+  tag           String   @default("ATS-Friendly")
+  is_free       Boolean  @default(true)
+  published     Boolean  @default(true)
+  created_at    DateTime @default(now()) @db.Timestamptz
+
+  @@map("resume_templates")
+}
+
+model Roadmap {
+  id          String   @id @default(uuid()) @db.Uuid
+  title       String
+  description String?
+  color       String   @default("#2563eb")
+  icon        String   @default("Globe")
+  steps       Json?
+  published   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  @@map("roadmaps")
+}
+
+model Order {
+  id                  String   @id @default(uuid()) @db.Uuid
+  name                String?
+  customer_name       String?
+  email               String?
+  customer_email      String?
+  service_type        String?
+  service_id          String?
+  experience_level    String?
+  message             String?
+  resume_file         String?
+  status              String   @default("pending")
+  payment_status      String   @default("unpaid")
+  razorpay_order_id   String?
+  razorpay_payment_id String?
+  amount              Float?
+  created_at          DateTime @default(now()) @db.Timestamptz
+
+  @@map("orders")
+}
+
+model Slot {
+  id           String   @id @default(uuid()) @db.Uuid
+  date         String
+  start_time   String
+  end_time     String
+  is_booked    Boolean  @default(false)
+  is_active    Boolean  @default(true)
+  booked_name  String?
+  booked_email String?
+  order_id     String?
+  created_at   DateTime @default(now()) @db.Timestamptz
+
+  @@map("slots")
+}
+
+model OtpCode {
+  id         String   @id @default(uuid()) @db.Uuid
+  email      String
+  code       String
+  expires_at DateTime @db.Timestamptz
+  used       Boolean  @default(false)
+  purpose    String   @default("verification")
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@index([email])
+  @@map("otp_codes")
+}
+
+// End-user account (distinct from Admin — Admin is for CMS only)
+model SiteUser {
+  id            String   @id @default(uuid()) @db.Uuid
+  email         String   @unique
+  // Set on first successful OTP verification — must be unique when present.
+  // Used for Phase 3 public profile URLs (/u/<username>) when profile_public=true.
+  username      String?  @unique
+  name          String?
+  phone         String?
+  // Free-form: "0-1 years", "1-3 years", "3-5 years", "5+ years"
+  experience    String?
+  // Free-form: "Frontend Engineer", "Backend Engineer", etc.
+  target_role   String?
+  current_role  String?
+  bio           String?
+  avatar_url    String?
+  github_url    String?
+  linkedin_url  String?
+  // Engagement counters — denormalized for fast reads in profile/leaderboard.
+  // Source of truth is the XpEvent ledger; these are maintained in the same
+  // transaction as the event insert.
+  xp            Int      @default(0)
+  level         Int      @default(1)
+  // Monetization — populated by Phase 5
+  is_pro        Boolean  @default(false)
+  pro_expires_at DateTime? @db.Timestamptz
+  // Email-marketing preference (defaults true; honored by transactional engine)
+  email_opt_in  Boolean  @default(true)
+  // Phase 3 — privacy gate for public profile pages. Default OFF.
+  profile_public Boolean @default(false)
+  // Phase 3 — referrals. Code is lazy-generated on first request to /me/referral.
+  // referred_by_id is set during signup if the user came in with ?ref=CODE.
+  referral_code  String? @unique
+  referred_by_id String? @db.Uuid
+  last_login_at DateTime? @db.Timestamptz
+  created_at    DateTime @default(now()) @db.Timestamptz
+  updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  refresh_tokens          UserRefreshToken[]
+  xp_events               XpEvent[]
+  streak                  UserStreak?
+  challenge_submissions   ChallengeSubmission[]
+  badges                  UserBadge[]
+  resume_roasts           ResumeRoast[]
+  quiz_results            QuizResult[]
+  // Phase 3 — referral graph (self-relation)
+  referred_by             SiteUser?  @relation("ReferralGraph", fields: [referred_by_id], references: [id], onDelete: SetNull)
+  referred_users          SiteUser[] @relation("ReferralGraph")
+  // Phase 4 — AI features
+  ai_usage                AiUsage[]
+  resume_optimizations    ResumeOptimization[]
+  answer_evaluations      AnswerEvaluation[]
+  mock_interviews         MockInterview[]
+  // Phase 5 — Pro subscriptions
+  subscriptions           Subscription[]
+  // Phase 6 — Retention + community
+  saved_jobs              SavedJob[]
+  job_applications        JobApplication[]
+  community_questions     CommunityQuestion[] @relation("CommunityQuestionAuthor")
+  community_answers       CommunityAnswer[]
+  community_votes         CommunityVote[]
+  community_bookmarks     CommunityBookmark[]
+  activity_events         ActivityEvent[]
+  notifications           Notification[]
+  // Phase 7 — Web Push subscriptions
+  push_subscriptions      PushSubscription[]
+
+  @@index([email])
+  @@index([username])
+  @@index([xp])
+  @@index([profile_public, username])
+  @@index([referral_code])
+  @@index([referred_by_id])
+  @@map("site_users")
+}
+
+// User session token — mirrors RefreshToken shape so the cleanup cron pattern can be reused.
+// Separate table (vs reusing refresh_token) because admin_id is a TEXT column there;
+// site_user_id is a real FK with cascade delete for clean account-deletion semantics.
+model UserRefreshToken {
+  id            String   @id @default(uuid()) @db.Uuid
+  token_hash    String   @unique
+  site_user_id  String   @db.Uuid
+  expires_at    DateTime @db.Timestamptz
+  created_at    DateTime @default(now()) @db.Timestamptz
+
+  user          SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  @@index([token_hash])
+  @@index([site_user_id])
+  @@map("user_refresh_token")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 2 — ENGAGEMENT ENGINE
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Append-only ledger of every XP award. The source of truth — site_users.xp is
+// a denormalized sum maintained in the same transaction as the event insert.
+// Indexed by (user, created_at) for fast leaderboard windowing.
+model XpEvent {
+  id           String   @id @default(uuid()) @db.Uuid
+  site_user_id String   @db.Uuid
+  amount       Int      // can be negative for adjustments
+  reason       String   // see XpReason enum in xp.service.ts — kept as string for flexibility
+  metadata     Json?    // free-form context (challenge_id, badge_code, etc.)
+  // De-duplication key for one-time awards (e.g. "first_login", "profile_complete:<userId>").
+  // Null for repeating awards. Unique partial-index enforces idempotency.
+  idempotency_key String?
+  created_at   DateTime @default(now()) @db.Timestamptz
+
+  user         SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  @@unique([idempotency_key])
+  @@index([site_user_id, created_at])
+  @@index([created_at])
+  @@map("xp_events")
+}
+
+// One row per user, created lazily on first touchStreak() call.
+// Separate table (vs columns on SiteUser) so mass cron updates and leaderboard
+// joins don't bloat the user row.
+model UserStreak {
+  site_user_id        String   @id @db.Uuid
+  current_streak      Int      @default(0)
+  longest_streak      Int      @default(0)
+  // IST calendar date as YYYY-MM-DD string (same convention as Slot.date).
+  // String form avoids timezone bugs when comparing "today" vs "yesterday".
+  last_activity_date  String?
+  // Pro users get monthly shields that auto-cover one missed day.
+  // Populated by Phase 5; safe at 0 today.
+  shields_remaining   Int      @default(0)
+  // Counts how many missed days have been auto-covered this month (analytics).
+  shields_used_total  Int      @default(0)
+  updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  user                SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  @@index([current_streak])
+  @@map("user_streaks")
+}
+
+// One row per IST day — the daily challenge for that date. Cron writes; users read.
+// The selected InterviewQuestion is locked for the day (everyone sees the same one).
+model DailyChallenge {
+  id              String   @id @default(uuid()) @db.Uuid
+  // IST calendar date as YYYY-MM-DD — uniqueness enforces "one challenge per day"
+  date            String   @unique
+  question_id     String   @db.Uuid
+  // XP awarded for any submission (regardless of correctness — Phase 2 is
+  // participation-based; AI evaluation arrives in Phase 4)
+  xp_reward       Int      @default(50)
+  created_at      DateTime @default(now()) @db.Timestamptz
+
+  // No FK to InterviewQuestion — if a question is deleted later, the challenge
+  // row is preserved for historical accuracy; the join just returns null.
+  submissions     ChallengeSubmission[]
+
+  @@index([date])
+  @@map("daily_challenges")
+}
+
+// User's answer to a daily challenge. Unique on (user, challenge) — one shot per day.
+model ChallengeSubmission {
+  id            String   @id @default(uuid()) @db.Uuid
+  site_user_id  String   @db.Uuid
+  challenge_id  String   @db.Uuid
+  answer        String
+  // Optional AI evaluation — populated by Phase 4. Null in Phase 2.
+  ai_score      Int?
+  ai_feedback   String?
+  submitted_at  DateTime @default(now()) @db.Timestamptz
+
+  user          SiteUser       @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+  challenge     DailyChallenge @relation(fields: [challenge_id], references: [id], onDelete: Cascade)
+
+  @@unique([site_user_id, challenge_id])
+  @@index([site_user_id])
+  @@index([challenge_id])
+  @@map("challenge_submissions")
+}
+
+// Badge catalog. Seeded once; admin can add more via CMS later.
+// `criteria` is a Json blob interpreted by badges.service.ts evaluators —
+// keeps the catalog data-driven instead of hardcoded TypeScript constants.
+model Badge {
+  id          String   @id @default(uuid()) @db.Uuid
+  // Stable slug used in code (BADGE_FIRST_CHALLENGE, etc.) — never change once seeded
+  code        String   @unique
+  name        String
+  description String
+  icon        String   @default("🏆") // emoji or lucide name
+  tier        String   @default("bronze") // bronze | silver | gold | platinum
+  // { type: 'streak'|'level'|'xp'|'challenges'|'profile', threshold: number }
+  criteria    Json
+  // Hidden badges aren't shown in the catalog until earned — used for "discovery" badges
+  hidden      Boolean  @default(false)
+  published   Boolean  @default(true)
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  user_badges UserBadge[]
+
+  @@index([published])
+  @@map("badges")
+}
+
+// Join table — one row per (user, badge) earned. Idempotent via unique constraint.
+model UserBadge {
+  id           String   @id @default(uuid()) @db.Uuid
+  site_user_id String   @db.Uuid
+  badge_id     String   @db.Uuid
+  earned_at    DateTime @default(now()) @db.Timestamptz
+
+  user         SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+  badge        Badge    @relation(fields: [badge_id], references: [id], onDelete: Cascade)
+
+  @@unique([site_user_id, badge_id])
+  @@index([site_user_id])
+  @@index([badge_id])
+  @@map("user_badges")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 3 — VIRAL GROWTH
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Anonymous-friendly resume roast. The `share_token` is the public URL slug.
+// `site_user_id` is nullable so anonymous visitors can roast without an account
+// (critical for virality). Logged-in users link the roast to their profile.
+model ResumeRoast {
+  id            String   @id @default(uuid()) @db.Uuid
+  share_token   String   @unique
+  site_user_id  String?  @db.Uuid
+  // The resume text we sent to the AI (truncated). Kept for transparency +
+  // to let users see what we analyzed. Capped at 20K chars to bound storage.
+  resume_text   String
+  // Structured response from Claude — { score, verdict, roasts[], fixes[] }
+  result        Json
+  // 0–100 — duplicated out of `result` for fast leaderboard-style queries.
+  score         Int
+  // IP hash (sha256) for anti-abuse; never the raw IP.
+  ip_hash       String?
+  ai_cost_usd   Float    @default(0)
+  created_at    DateTime @default(now()) @db.Timestamptz
+
+  user          SiteUser? @relation(fields: [site_user_id], references: [id], onDelete: SetNull)
+
+  @@index([share_token])
+  @@index([site_user_id])
+  @@index([ip_hash, created_at])
+  @@map("resume_roasts")
+}
+
+// Career prediction quiz results. Anonymous by default; linked if signed in.
+// Phase 3 logic is deterministic (no AI cost). Phase 4 may add an AI explanation.
+model QuizResult {
+  id            String   @id @default(uuid()) @db.Uuid
+  share_token   String   @unique
+  site_user_id  String?  @db.Uuid
+  // The 8 archetype slugs the quiz can resolve to (e.g. 'system-design-architect')
+  result_type   String
+  result_label  String   // human-readable display name
+  // Original answers for analytics + potential future personalization
+  answers       Json
+  created_at    DateTime @default(now()) @db.Timestamptz
+
+  user          SiteUser? @relation(fields: [site_user_id], references: [id], onDelete: SetNull)
+
+  @@index([share_token])
+  @@index([site_user_id])
+  @@index([result_type])
+  @@map("quiz_results")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 4 — AI FEATURES
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Append-only ledger of every AI call made.
+// Source of truth for cost analytics, abuse investigation, and the per-user
+// per-feature daily-cap check. Mirrors the XpEvent pattern from Phase 2.
+model AiUsage {
+  id            String   @id @default(uuid()) @db.Uuid
+  // Null only for anonymous calls (Phase 3 roast). All Phase 4 features require auth.
+  site_user_id  String?  @db.Uuid
+  feature       String   // 'optimizer' | 'evaluator' | 'mock_interview' | 'revbot' | 'roast' | 'placement_polish'
+  model_id      String   // 'claude-haiku-4-5' | 'claude-sonnet-4-6'
+  input_tokens  Int
+  output_tokens Int
+  cost_usd      Float
+  created_at    DateTime @default(now()) @db.Timestamptz
+
+  user          SiteUser? @relation(fields: [site_user_id], references: [id], onDelete: SetNull)
+
+  // Drives the (user, feature, created_at) range query that gates free-tier usage
+  @@index([site_user_id, feature, created_at])
+  @@index([created_at])
+  @@map("ai_usage")
+}
+
+// Resume + JD → AI-rewritten resume tailored to the role.
+// Auth-only (anonymous bait-and-switch isn't viral here — users want their data saved).
+model ResumeOptimization {
+  id              String   @id @default(uuid()) @db.Uuid
+  share_token     String   @unique
+  site_user_id    String   @db.Uuid
+  original_text   String
+  jd_text         String
+  // { ats_score_before, ats_score_after, optimized_summary, rewrote_bullets[], missing_keywords[], added_keywords[], one_liner }
+  result          Json
+  ai_cost_usd     Float    @default(0)
+  created_at      DateTime @default(now()) @db.Timestamptz
+
+  user            SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  @@index([share_token])
+  @@index([site_user_id, created_at])
+  @@map("resume_optimizations")
+}
+
+// One-shot interview-answer evaluation. Distinct from ChallengeSubmission.ai_score
+// (which auto-fires on daily-challenge submit); this is the "evaluate any answer
+// for any question" tool on the /interview-questions page.
+model AnswerEvaluation {
+  id              String   @id @default(uuid()) @db.Uuid
+  site_user_id    String   @db.Uuid
+  // Null when user pastes a custom question (not from the catalog)
+  question_id     String?  @db.Uuid
+  question_text   String   // Snapshot — survives question deletion
+  answer          String
+  // { overall_score, structure_score, clarity_score, technical_score, strengths[], improvements[], star_compliance, improved_version }
+  result          Json
+  ai_cost_usd     Float    @default(0)
+  created_at      DateTime @default(now()) @db.Timestamptz
+
+  user            SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  @@index([site_user_id, created_at])
+  @@map("answer_evaluations")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 5 — MONETIZATION (Razorpay Subscriptions)
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Available Pro plans. Seeded on boot; admin can edit pricing later via CMS.
+// `razorpay_plan_id` is lazy-created on first checkout — keeps test/prod
+// environments self-bootstrapping without manual Razorpay dashboard steps.
+model Plan {
+  id                String   @id @default(uuid()) @db.Uuid
+  code              String   @unique             // 'pro_monthly' | 'pro_annual'
+  name              String                       // "Pro Monthly"
+  description       String?
+  price_inr         Int                          // in paise (49900 = ₹499)
+  period            String                       // 'monthly' | 'yearly'
+  interval          Int      @default(1)         // every N periods
+  features          Json     @default("[]")      // ["unlimited mock interviews", ...]
+  // Razorpay's plan_id. Null until first checkout lazy-creates it.
+  razorpay_plan_id  String?  @unique
+  active            Boolean  @default(true)
+  sort_order        Int      @default(0)
+  created_at        DateTime @default(now()) @db.Timestamptz
+  updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  subscriptions     Subscription[]
+
+  @@index([active, sort_order])
+  @@map("plans")
+}
+
+// One row per user-plan subscription. A user can have multiple historical
+// subscriptions (e.g. cancelled monthly → resubscribed annual) but only
+// one with `status IN ('authenticated', 'active', 'pending')` at a time.
+model Subscription {
+  id                       String   @id @default(uuid()) @db.Uuid
+  site_user_id             String   @db.Uuid
+  plan_id                  String   @db.Uuid
+  // Razorpay's subscription_id (sub_XXX). Unique = no duplicate processing.
+  razorpay_subscription_id String   @unique
+  // Razorpay status: created | authenticated | active | pending | halted | cancelled | completed | expired
+  status                   String   @default("created")
+  current_period_start     DateTime? @db.Timestamptz
+  current_period_end       DateTime? @db.Timestamptz
+  // True after user cancels — Pro stays active until period_end then expires
+  cancel_at_period_end     Boolean  @default(false)
+  cancelled_at             DateTime? @db.Timestamptz
+  activated_at             DateTime? @db.Timestamptz
+  // Counters for billing-history display
+  charges_count            Int      @default(0)
+  total_paid_paise         Int      @default(0)
+  // Last webhook payload — debugging aid for support tickets
+  raw_payload              Json?
+  created_at               DateTime @default(now()) @db.Timestamptz
+  updated_at               DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  user                     SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+  plan                     Plan     @relation(fields: [plan_id], references: [id])
+  payment_events           PaymentEvent[]
+
+  @@index([site_user_id, status])
+  @@index([razorpay_subscription_id])
+  @@index([status])
+  @@index([current_period_end])     // drives expiry sweep cron
+  @@map("subscriptions")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 6 — RETENTION & COMMUNITY
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Saved/bookmarked jobs. One row per (user, job) — unique constraint.
+model SavedJob {
+  id           String   @id @default(uuid()) @db.Uuid
+  site_user_id String   @db.Uuid
+  job_id       String   @db.Uuid
+  notes        String?
+  saved_at     DateTime @default(now()) @db.Timestamptz
+
+  user         SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+  job          Job      @relation(fields: [job_id], references: [id], onDelete: Cascade)
+
+  @@unique([site_user_id, job_id])
+  @@index([site_user_id, saved_at])
+  @@map("saved_jobs")
+}
+
+// Application tracker — Kanban-friendly. job_id is nullable so users can
+// track jobs from external sites (LinkedIn, company careers) that we don't host.
+// Snapshot fields (company, role, job_link) survive Job deletion.
+model JobApplication {
+  id              String    @id @default(uuid()) @db.Uuid
+  site_user_id    String    @db.Uuid
+  job_id          String?   @db.Uuid
+  // Snapshot — required even when job_id is set so cards render after a Job delete
+  company         String
+  role            String
+  job_link        String?
+  // Kanban column: saved | applied | interview | offer | rejected
+  status          String    @default("saved")
+  notes           String?
+  applied_at      DateTime? @db.Timestamptz
+  next_follow_up  DateTime? @db.Timestamptz
+  offered_salary  String?
+  created_at      DateTime  @default(now()) @db.Timestamptz
+  updated_at      DateTime  @default(now()) @updatedAt @db.Timestamptz
+
+  user            SiteUser  @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+  job             Job?      @relation(fields: [job_id], references: [id], onDelete: SetNull)
+
+  @@index([site_user_id, status])
+  @@index([next_follow_up])
+  @@map("job_applications")
+}
+
+// User-submitted answers to community questions. Coexists with the existing
+// admin-curated `CommunityQuestion.answer` field — neither replaces the other.
+model CommunityAnswer {
+  id             String   @id @default(uuid()) @db.Uuid
+  question_id    String   @db.Uuid
+  site_user_id   String   @db.Uuid
+  content        String
+  // Set true by the question's asker. Only one accepted answer per question
+  // (enforced in service layer — Prisma doesn't support conditional unique).
+  accepted       Boolean  @default(false)
+  // Denormalized vote sum — kept in sync inside the vote transaction.
+  votes_count    Int      @default(0)
+  created_at     DateTime @default(now()) @db.Timestamptz
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz
+
+  question       CommunityQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  user           SiteUser          @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+  votes          CommunityVote[]
+
+  @@index([question_id, votes_count])
+  @@index([site_user_id])
+  @@map("community_answers")
+}
+
+// Polymorphic vote — covers questions AND answers via nullable FKs.
+// Exactly one of question_id / answer_id is set per row.
+// Phase 6 v1 = upvotes only (no downvotes — moderation overhead not worth it).
+model CommunityVote {
+  id           String   @id @default(uuid()) @db.Uuid
+  site_user_id String   @db.Uuid
+  question_id  String?  @db.Uuid
+  answer_id    String?  @db.Uuid
+  // +1 upvote only. Schema accepts negatives for future downvote support.
+  value        Int      @default(1)
+  created_at   DateTime @default(now()) @db.Timestamptz
+
+  user         SiteUser            @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+  question     CommunityQuestion?  @relation(fields: [question_id], references: [id], onDelete: Cascade)
+  answer       CommunityAnswer?    @relation(fields: [answer_id], references: [id], onDelete: Cascade)
+
+  // Two partial unique constraints — one per target type. Enforces "one vote per user per question/answer".
+  @@unique([site_user_id, question_id])
+  @@unique([site_user_id, answer_id])
+  @@index([question_id])
+  @@index([answer_id])
+  @@map("community_votes")
+}
+
+// Bookmarked questions — separate from votes (a user can bookmark without voting).
+model CommunityBookmark {
+  id           String   @id @default(uuid()) @db.Uuid
+  site_user_id String   @db.Uuid
+  question_id  String   @db.Uuid
+  created_at   DateTime @default(now()) @db.Timestamptz
+
+  user         SiteUser          @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+  question     CommunityQuestion @relation(fields: [question_id], references: [id], onDelete: Cascade)
+
+  @@unique([site_user_id, question_id])
+  @@index([site_user_id])
+  @@map("community_bookmarks")
+}
+
+// Activity feed events. Public ones (placements, big level-ups) feed the
+// global feed; private ones (your own badge earned) only show in your own.
+//
+// metadata is type-discriminated by `type` — frontend renderers switch on it.
+model ActivityEvent {
+  id           String   @id @default(uuid()) @db.Uuid
+  site_user_id String   @db.Uuid
+  // 'level_up' | 'badge_earned' | 'mock_interview_aced' | 'pro_subscribed'
+  // | 'placement_reported' | 'streak_milestone' | 'answer_accepted'
+  type         String
+  metadata     Json
+  is_public    Boolean  @default(true)
+  created_at   DateTime @default(now()) @db.Timestamptz
+
+  user         SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  // Drives the public feed query (most-recent first, filtered to public)
+  @@index([is_public, created_at])
+  @@index([site_user_id, created_at])
+  @@index([type])
+  @@map("activity_events")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PHASE 7 — PWA + WEB PUSH
+// ═══════════════════════════════════════════════════════════════════════════
+
+// One row per (user, device) pair. The browser's PushManager.subscribe()
+// returns an `endpoint` URL (unique per device installation) plus a keypair
+// the server needs to encrypt the payload.
+//
+// We treat `endpoint` as the natural key — same device re-subscribing replaces
+// the row. user_agent is captured for debugging support tickets.
+model PushSubscription {
+  id           String   @id @default(uuid()) @db.Uuid
+  site_user_id String   @db.Uuid
+  endpoint     String   @unique
+  // p256dh + auth come from the browser's PushSubscription.toJSON()
+  p256dh       String
+  auth         String
+  user_agent   String?
+  created_at   DateTime @default(now()) @db.Timestamptz
+  // Updated whenever a successful push delivers — lets us prune dead subscriptions
+  // (set to null when delivery returns 404/410 and the row is deleted).
+  last_used_at DateTime?
+
+  user         SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  @@index([site_user_id])
+  @@map("push_subscriptions")
+}
+
+// In-app notifications. Polled by the navbar bell every 30s.
+// Phase 7 can layer Web Push for real-time delivery without schema changes.
+model Notification {
+  id           String   @id @default(uuid()) @db.Uuid
+  site_user_id String   @db.Uuid
+  // 'new_job_match' | 'streak_at_risk' | 'answer_received' | 'answer_accepted'
+  // | 'pro_renewing' | 'pro_payment_failed' | 'badge_earned' | 'level_up'
+  type         String
+  title        String
+  body         String?
+  link_url     String?
+  // Lucide icon name OR emoji — frontend handles both
+  icon         String?
+  read         Boolean  @default(false)
+  read_at      DateTime? @db.Timestamptz
+  created_at   DateTime @default(now()) @db.Timestamptz
+
+  user         SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  // Compound index drives "unread first, then chronological" sort
+  @@index([site_user_id, read, created_at])
+  @@index([created_at])
+  @@map("notifications")
+}
+
+// Append-only ledger of every Razorpay webhook event we processed.
+// `razorpay_event_id` UNIQUE = idempotency guard for webhook retries.
+model PaymentEvent {
+  id                       String   @id @default(uuid()) @db.Uuid
+  // Null for events that fired before a Subscription row was created (rare)
+  subscription_id          String?  @db.Uuid
+  // Razorpay's event ID — unique constraint = dedup
+  razorpay_event_id        String   @unique
+  razorpay_payment_id      String?
+  // 'subscription.charged' | 'subscription.cancelled' | 'payment.failed' | etc.
+  event_type               String
+  amount_paid_paise        Int?
+  raw_payload              Json     // full webhook body for audit/debug
+  created_at               DateTime @default(now()) @db.Timestamptz
+
+  subscription             Subscription? @relation(fields: [subscription_id], references: [id], onDelete: SetNull)
+
+  @@index([subscription_id, created_at])
+  @@index([event_type])
+  @@map("payment_events")
+}
+
+// Stateful multi-turn AI mock interview. Transcript is appended on each turn
+// (server-side, not client) so the conversation is durable + auditable.
+model MockInterview {
+  id              String   @id @default(uuid()) @db.Uuid
+  share_token     String   @unique
+  site_user_id    String   @db.Uuid
+  role            String   // "Frontend Engineer"
+  company         String?  // "Google" or null for generic
+  difficulty      String   @default("medium")   // easy | medium | hard
+  status          String   @default("active")   // active | completed | abandoned
+  // [{ role: 'user'|'assistant', content: string, ts: string }]
+  transcript      Json     @default("[]")
+  // Final evaluation: { overall, technical, communication, summary, strengths[], improvements[] }
+  scores          Json?
+  ai_cost_usd     Float    @default(0)
+  started_at      DateTime @default(now()) @db.Timestamptz
+  completed_at    DateTime? @db.Timestamptz
+
+  user            SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  @@index([site_user_id, started_at])
+  @@index([share_token])
+  @@index([status])
+  @@map("mock_interviews")
+}
+
+
+model AuditLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  admin_email String
+  method      String
+  path        String
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  @@map("audit_log")
+}
