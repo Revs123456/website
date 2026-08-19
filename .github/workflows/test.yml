@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: ['**']
 
+# This repo's default Actions token permission is read-only, which silently
+# stops dorny/test-reporter from publishing its check-run report (the step
+# still exits 0). Grant checks:write explicitly so the per-test report
+# actually gets created.
+permissions:
+  contents: read
+  checks: write
+
 jobs:
   backend-test:
     name: Backend (Jest)
