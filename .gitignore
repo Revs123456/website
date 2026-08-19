@@ -23,6 +23,10 @@ db-backups/
 *.sql.gz
 *.dump
 
+# Test coverage (backend/frontend .gitignore also cover their own — this
+# catches jest-junit's output too, which resolves relative to cwd, not rootDir)
+/coverage/
+
 # Logs
 *.log
 npm-debug.log*
