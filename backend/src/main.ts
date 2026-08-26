@@ -47,7 +47,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   app.setGlobalPrefix('v1');
-  await app.listen(process.env.PORT ?? 4001);
+  await app.listen(process.env.PORT ?? 4001, '0.0.0.0');
 
   // Graceful shutdown — finish in-flight requests before closing
   process.on('SIGTERM', async () => {
