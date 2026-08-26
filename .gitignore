@@ -42,3 +42,5 @@ Thumbs.db
 backend/format_out.txt
 backend/prisma_error.txt
 backend/validate.txt
+.vercel
+.env*
