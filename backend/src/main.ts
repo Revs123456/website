@@ -13,7 +13,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 if (!process.env.DATABASE_URL) {
   const { DB_HOST, DB_PORT = '5432', DB_USER, DB_PASS, DB_NAME = 'postgres' } = process.env;
   if (DB_HOST && DB_USER && DB_PASS) {
-    process.env.DATABASE_URL = `postgresql://${encodeURIComponent(DB_USER)}:${encodeURIComponent(DB_PASS)}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require`;
+    process.env.DATABASE_URL = `postgresql://${encodeURIComponent(DB_USER)}:${encodeURIComponent(DB_PASS)}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require&pgbouncer=true`;
   }
 }
 
