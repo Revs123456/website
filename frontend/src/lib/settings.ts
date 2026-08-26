@@ -27,6 +27,7 @@ export async function getPublicSettings(): Promise<PublicSettings> {
   try {
     const res = await fetch(`${API}/settings/public`, {
       next: { revalidate: 300 }, // revalidate every 5 minutes
+      signal: AbortSignal.timeout(8000), // don't hang forever if the API is down
     });
     if (!res.ok) return FALLBACKS;
     const data: PublicSettings = await res.json();
