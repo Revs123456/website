@@ -8,6 +8,7 @@ import * as crypto from 'crypto';
 import { UsersService } from './users.service';
 import { MailService } from '../mail/mail.service';
 import { StartAuthDto } from './dto/start-auth.dto';
+import { CheckEmailDto } from './dto/check-email.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { UserJwtAuthGuard } from './guards/user-jwt.guard';
@@ -35,6 +36,18 @@ export class UsersController {
     private readonly users: UsersService,
     private readonly mail: MailService,
   ) {}
+
+  // ── Auth: check email (routes sign-in modal before an OTP is sent) ─────────
+  // Throttled tighter than start-auth since this endpoint is itself the
+  // enumeration surface — the limit exists to make scraping expensive, not
+  // to hide the answer (that's the accepted trade-off, see CheckEmailDto).
+  @Throttle({ default: { ttl: 60000, limit: 8 } })
+  @Post('check-email')
+  @HttpCode(200)
+  async checkEmail(@Body() dto: CheckEmailDto) {
+    const exists = await this.users.emailExists(dto.email);
+    return { exists };
+  }
 
   // ── Auth: start (send OTP) ─────────────────────────────────────────────────
   // 3/min matches OtpController and is sized for "user fat-fingers the email"

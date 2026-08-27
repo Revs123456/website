@@ -559,6 +559,15 @@ function inferFeatureFromPath(path: string): string {
 }
 
 export const userApi = {
+  /** Step 0 (optional): does an account already exist for this email? Used by
+   * AuthModal to route to OTP (existing) vs. the name-collection signup step
+   * (new) before an OTP is sent. */
+  checkEmail: (email: string) =>
+    userReq<{ exists: boolean }>('/users/check-email', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+
   /** Step 1: ask backend to send an OTP. Always returns the same opaque message
    * so the UI cannot leak whether the email already exists. */
   startAuth: (email: string) =>

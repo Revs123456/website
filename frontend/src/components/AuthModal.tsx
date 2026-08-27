@@ -28,6 +28,9 @@ export default function AuthModal({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [resendIn, setResendIn] = useState(0);
+  // Set when we auto-switch login↔signup after a check-email lookup, so the
+  // user understands why the form under them just changed shape.
+  const [switchHint, setSwitchHint] = useState('');
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -65,7 +68,7 @@ export default function AuthModal({
   useEffect(() => {
     if (!open) {
       setStep('email'); setEmail(''); setName(''); setCode('');
-      setError(''); setBusy(false); setMode(initialMode);
+      setError(''); setBusy(false); setMode(initialMode); setSwitchHint('');
     }
   }, [open, initialMode]);
 
@@ -99,6 +102,7 @@ export default function AuthModal({
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
     setError('');
+    setSwitchHint('');
     const trimmed = email.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       setError('Please enter a valid email address.');
@@ -106,6 +110,22 @@ export default function AuthModal({
     }
     setBusy(true);
     try {
+      // Route before sending an OTP: a "Sign in" attempt with no matching
+      // account goes to the signup step (name field) instead of straight to
+      // OTP; a "Create an account" attempt with a matching account goes to
+      // sign-in instead of creating a duplicate. Either way we stop short of
+      // sending an OTP until the mode actually matches the account state.
+      const { exists } = await userApi.checkEmail(trimmed);
+      if (mode === 'login' && !exists) {
+        setMode('signup');
+        setSwitchHint("We couldn't find an account with that email — let's create one.");
+        return;
+      }
+      if (mode === 'signup' && exists) {
+        setMode('login');
+        setSwitchHint('An account already exists for that email — sign in instead.');
+        return;
+      }
       await userApi.startAuth(trimmed);
       setStep('otp');
       setResendIn(30);
@@ -250,7 +270,7 @@ export default function AuthModal({
                 className="input"
                 type="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={e => { setEmail(e.target.value); setSwitchHint(''); }}
                 placeholder="you@example.com"
                 autoComplete="email"
                 required
@@ -258,6 +278,7 @@ export default function AuthModal({
               />
             </div>
 
+            {switchHint && <div style={hintBox}>{switchHint}</div>}
             {error && <div style={errorBox}>{error}</div>}
 
             <button type="submit" disabled={busy} className="btn btn-blue" style={{ width: '100%', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
@@ -269,7 +290,7 @@ export default function AuthModal({
               {mode === 'signup' ? 'Already have an account? ' : 'New here? '}
               <button
                 type="button"
-                onClick={() => { setMode(m => m === 'signup' ? 'login' : 'signup'); setError(''); }}
+                onClick={() => { setMode(m => m === 'signup' ? 'login' : 'signup'); setError(''); setSwitchHint(''); }}
                 style={{ background: 'none', border: 'none', color: '#2563eb', fontWeight: 600, cursor: 'pointer', padding: 0 }}
               >
                 {mode === 'signup' ? 'Sign in' : 'Create an account'}
@@ -342,4 +363,13 @@ const errorBox: React.CSSProperties = {
   padding: '8px 12px',
   fontSize: 12,
   color: '#dc2626',
+};
+
+const hintBox: React.CSSProperties = {
+  background: '#eff6ff',
+  border: '1px solid #bfdbfe',
+  borderRadius: 8,
+  padding: '8px 12px',
+  fontSize: 12,
+  color: '#1d4ed8',
 };

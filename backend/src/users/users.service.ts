@@ -14,7 +14,7 @@ const RESERVED_USERNAMES = new Set([
   'admin', 'administrator', 'root', 'api', 'app', 'auth', 'account', 'login',
   'logout', 'register', 'signup', 'me', 'user', 'users', 'profile', 'settings',
   'help', 'support', 'about', 'contact', 'terms', 'privacy', 'jobs', 'courses',
-  'blogs', 'services', 'community', 'roadmaps', 'mock-interview', 'ats-checker',
+  'blogs', 'services', 'community', 'roadmaps', 'mock-interview',
   'salary-insights', 'success-stories', 'daily-tips', 'templates', 'order',
   'book', 'interview-questions', 'techchamps', 'techchampsbyrev',
 ]);
@@ -90,6 +90,21 @@ export class UsersService {
     const normalized = email.trim().toLowerCase();
     await this.otp.send(normalized);
     return { message: 'OTP sent' };
+  }
+
+  /**
+   * Step 0 (optional, pre-OTP): does an account already exist for this email?
+   * Lets the sign-in modal route new users into the name-collection/signup
+   * step instead of straight to OTP. Deliberately reveals existence — see
+   * CheckEmailDto for the trade-off this accepts vs. start-auth.
+   */
+  async emailExists(email: string): Promise<boolean> {
+    const normalized = email.trim().toLowerCase();
+    const user = await this.prisma.siteUser.findUnique({
+      where: { email: normalized },
+      select: { id: true },
+    });
+    return !!user;
   }
 
   private getJwtSecret(): string {
