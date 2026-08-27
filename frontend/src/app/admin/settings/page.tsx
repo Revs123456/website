@@ -8,6 +8,7 @@ const STAT_KEYS = [
   { key: 'stat_resumes',      label: 'Resumes Optimised',               description: 'Resumes completed stat on homepage',                               placeholder: '1,200+' },
   { key: 'stat_hired',        label: 'Jobs Landed',                     description: 'Hired stat on homepage stats strip and CTA section',               placeholder: '500+' },
   { key: 'stat_satisfaction', label: 'Client Satisfaction',             description: 'Satisfaction percentage on homepage stats strip',                  placeholder: '98%' },
+  { key: 'stat_newsletter_subscribers', label: 'Newsletter Subscribers', description: '"X developers trust us" in the newsletter signup section',        placeholder: '60,000+' },
 ];
 
 export default function AdminSettingsPage() {

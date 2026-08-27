@@ -254,6 +254,7 @@ export class SeedService implements OnModuleInit {
         { key: 'stat_resumes',      value: '1,200+', label: 'Resumes Optimised',              description: 'Number of resumes optimised, shown in stats strip' },
         { key: 'stat_hired',        value: '500+',   label: 'Jobs Landed',                    description: 'Number of people hired, shown in stats strip and CTA' },
         { key: 'stat_satisfaction', value: '98%',    label: 'Client Satisfaction',            description: 'Satisfaction percentage shown in stats strip' },
+        { key: 'stat_newsletter_subscribers', value: '60,000+', label: 'Newsletter Subscribers', description: 'Shown as "X developers trust us" in the homepage newsletter signup section' },
         // Site identity
         { key: 'site_name',         value: 'TechChampsByRev', label: 'Site Name', description: 'Brand name shown in header, footer, and page titles' },
         { key: 'founder_name',      value: 'Revanth Kalamshetty', label: 'Founder Name', description: 'Used in schema.org metadata' },

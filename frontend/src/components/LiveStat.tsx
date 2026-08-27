@@ -6,7 +6,10 @@ const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
 let _promise: Promise<Record<string, string>> | null = null;
 function fetchStats() {
   if (!_promise) {
-    _promise = fetch(`${BASE}/settings/map`, { cache: 'no-store' })
+    // Public, unauthenticated endpoint — /settings/map requires an admin
+    // session, so a real (logged-out) visitor's fetch would 401 and silently
+    // fall back to the static default forever, never actually going "live".
+    _promise = fetch(`${BASE}/settings/public`, { cache: 'no-store' })
       .then(r => r.json())
       .catch(() => ({}))
       .finally(() => { _promise = null; });

@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Mail, Check, Bell } from 'lucide-react';
+import LiveStat from './LiveStat';
 
 const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
 
@@ -47,7 +48,8 @@ export default function NewsletterSection() {
           Stay ahead in your tech career
         </h2>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.8)', marginBottom: 32, lineHeight: 1.6 }}>
-          Get weekly job alerts, interview tips, salary insights, and career resources — straight to your inbox. 60,000+ developers trust us.
+          Get weekly job alerts, interview tips, salary insights, and career resources — straight to your inbox.{' '}
+          <LiveStat statKey="stat_newsletter_subscribers" fallback="60,000+" /> developers trust us.
         </p>
 
         {done ? (
