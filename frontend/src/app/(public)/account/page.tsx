@@ -10,7 +10,6 @@ import {
 import { useUser } from '@/contexts/UserContext';
 import {
   userApi, type SiteUser, type ReferralStats,
-  type UsageDashboard,
   LEVEL_NAMES,
 } from '@/lib/api';
 
@@ -39,7 +38,6 @@ export default function AccountPage() {
   return (
     <div style={{ maxWidth: 880, margin: '0 auto', padding: '96px 24px 60px' }}>
       <Header user={user} />
-      <AiUsagePanel />
       <ReferralPanel user={user} />
       <ProfileForm user={user} patchLocal={patchLocal} />
       <PrivacyPanel user={user} patchLocal={patchLocal} />
@@ -436,84 +434,6 @@ function ReferralPanel({ user }: { user: SiteUser }) {
             </>
           )}
         </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Phase 4: AI usage dashboard ─────────────────────────────────────────────
-function AiUsagePanel() {
-  const [data, setData] = useState<UsageDashboard | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      try { setData(await userApi.myAiUsage()); }
-      finally { setLoading(false); }
-    })();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="card" style={{ padding: 24, marginBottom: 20, display: 'flex', justifyContent: 'center' }}>
-        <Loader2 size={18} className="spin" style={{ color: '#cbd5e1' }} />
-      </div>
-    );
-  }
-  if (!data) return null;
-
-  const labels: Record<string, string> = {
-    optimizer: 'Resume Optimizer',
-    evaluator: 'Answer Evaluator',
-    mock_interview: 'Mock Interview',
-    revbot: 'RevBot Chat',
-  };
-
-  return (
-    <div className="card" style={{ padding: 24, marginBottom: 20 }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6, flexWrap: 'wrap', gap: 8 }}>
-        <h2 style={sectionTitle}>AI feature usage</h2>
-        {data.is_pro ? (
-          <span className="badge badge-violet">PRO · Unlimited</span>
-        ) : (
-          <Link href="/tools" style={{ fontSize: 12, color: '#2563eb', fontWeight: 600, textDecoration: 'none' }}>
-            Upgrade for unlimited →
-          </Link>
-        )}
-      </div>
-      <p style={sectionHint}>Free-tier limits reset on their window. Pro users have no caps.</p>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-        {data.features.map(f => {
-          const label = labels[f.feature] || f.feature;
-          const pct = f.limit ? Math.min(100, (f.used / f.limit) * 100) : 0;
-          const tone: 'green' | 'amber' | 'red' = f.limit
-            ? (f.remaining === 0 ? 'red' : f.remaining! <= Math.ceil(f.limit / 5) ? 'amber' : 'green')
-            : 'green';
-          return (
-            <div key={f.feature} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 10, padding: 14 }}>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>{label}</div>
-              {data.is_pro ? (
-                <div style={{ fontSize: 12, color: '#64748b' }}>Unlimited</div>
-              ) : (
-                <>
-                  <div style={{ fontSize: 12, color: '#64748b', marginBottom: 6 }}>
-                    {f.used} / {f.limit} used {f.window_label}
-                  </div>
-                  <div style={{ height: 5, background: '#e2e8f0', borderRadius: 99, overflow: 'hidden' }}>
-                    <div
-                      style={{
-                        width: `${pct}%`, height: '100%',
-                        background: tone === 'red' ? '#dc2626' : tone === 'amber' ? '#f59e0b' : '#16a34a',
-                        transition: 'width .4s ease',
-                      }}
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          );
-        })}
       </div>
     </div>
   );
