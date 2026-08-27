@@ -338,17 +338,12 @@ function Field({ label, icon, hint, children }: { label: string; icon?: React.Re
 // ── Engagement panels (Phase 2) ─────────────────────────────────────────────
 function EngagementPanels({ user }: { user: SiteUser }) {
   const [dash, setDash] = useState<EngagementDashboard | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      try {
-        const d = await userApi.engagementDashboard();
-        if (!cancelled) setDash(d);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+      const d = await userApi.engagementDashboard().catch(() => null);
+      if (!cancelled && d) setDash(d);
     })();
     return () => { cancelled = true; };
   }, []);
@@ -356,7 +351,6 @@ function EngagementPanels({ user }: { user: SiteUser }) {
   return (
     <>
       <ProgressPanel user={user} streak={dash?.streak ?? null} />
-      <BadgesPanel dash={dash} loading={loading} />
     </>
   );
 }
@@ -459,69 +453,6 @@ function StatCard({ icon, label, value, subtext, tone = 'slate' }: {
       {subtext && <div style={{ fontSize: 11, color: tone === 'danger' ? '#b91c1c' : '#64748b', marginTop: 2 }}>{subtext}</div>}
     </div>
   );
-}
-
-function BadgesPanel({ dash, loading }: { dash: EngagementDashboard | null; loading: boolean }) {
-  return (
-    <div className="card" style={{ padding: 24, marginBottom: 20 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6, flexWrap: 'wrap', gap: 8 }}>
-        <h2 style={sectionTitle}>Badges</h2>
-        {dash && (
-          <span style={{ fontSize: 12, color: '#64748b' }}>
-            {dash.earned_count} of {dash.total_count} earned
-          </span>
-        )}
-      </div>
-      <p style={sectionHint}>Unlock badges by hitting milestones. Earned ones appear in color.</p>
-
-      {loading ? (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: 30 }}>
-          <Loader2 size={20} className="spin" style={{ color: '#cbd5e1' }} />
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 10 }}>
-          {dash?.badges.map(b => (
-            <div
-              key={b.id}
-              title={b.description}
-              style={{
-                padding: 14, borderRadius: 10,
-                background: b.earned ? badgeBgByTier(b.tier) : '#f8fafc',
-                border: `1px solid ${b.earned ? badgeBorderByTier(b.tier) : '#e2e8f0'}`,
-                opacity: b.earned ? 1 : 0.45,
-                textAlign: 'center', position: 'relative',
-                transition: 'transform .2s',
-              }}
-            >
-              <div style={{ fontSize: 28, lineHeight: 1, marginBottom: 6 }}>{b.icon}</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: '#0f172a', marginBottom: 2 }}>{b.name}</div>
-              <div style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.05, fontWeight: 600 }}>
-                {b.tier}
-              </div>
-              {b.earned && <Check size={12} style={{ position: 'absolute', top: 8, right: 8, color: '#16a34a' }} />}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function badgeBgByTier(tier: string) {
-  switch (tier) {
-    case 'platinum': return 'linear-gradient(135deg,#ecfeff,#cffafe)';
-    case 'gold':     return 'linear-gradient(135deg,#fffbeb,#fef3c7)';
-    case 'silver':   return 'linear-gradient(135deg,#f8fafc,#e2e8f0)';
-    default:         return 'linear-gradient(135deg,#fef3c7,#fed7aa)'; // bronze
-  }
-}
-function badgeBorderByTier(tier: string) {
-  switch (tier) {
-    case 'platinum': return '#67e8f9';
-    case 'gold':     return '#fde68a';
-    case 'silver':   return '#cbd5e1';
-    default:         return '#fdba74'; // bronze
-  }
 }
 
 // ── Phase 3: Referral panel ────────────────────────────────────────────────
