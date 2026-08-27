@@ -41,7 +41,16 @@ export class MailService {
       return;
     }
     try {
-      await this.resend.emails.send({ from: this.from, to, subject, html });
+      // Resend's SDK does NOT throw on API-level failures (invalid key, rate
+      // limit, unverified domain, etc.) — those come back as `{ error }` in
+      // a resolved response, not a rejection. Only network-level failures
+      // throw. Checking `error` here is the whole fix — without it, every
+      // rejected send silently logged as "Mail sent".
+      const { error } = await this.resend.emails.send({ from: this.from, to, subject, html });
+      if (error) {
+        this.logger.error(`Mail failed → ${masked} | ${subject} | ${error.message || JSON.stringify(error)}`);
+        return;
+      }
       this.logger.log(`Mail sent → ${masked} | ${subject}`);
     } catch (err) {
       this.logger.error(`Mail failed → ${masked} | ${subject}`, err);
