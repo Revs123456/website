@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Award, Flame, Calendar, ArrowRight, Bookmark, Briefcase, Sparkles,
+  Flame, Calendar, ArrowRight, Bookmark, Briefcase, Sparkles,
   Bell, Loader2, MessageSquare, Crown, Zap, Target,
 } from 'lucide-react';
 import { userApi, type DashboardData } from '@/lib/api';
@@ -98,33 +98,6 @@ export default function DashboardPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 2fr) minmax(0, 1fr)', gap: 18 }}>
         {/* ── LEFT COLUMN ── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
-          {/* XP progress bar */}
-          <div className="card" style={{ padding: 22 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Award size={15} /> Level progress
-              </h2>
-              <span style={{ fontSize: 12, color: '#64748b' }}>
-                {data.user.progress.is_max_level
-                  ? `${data.user.xp.toLocaleString('en-IN')} XP (max tier)`
-                  : `${data.user.xp.toLocaleString('en-IN')} / ${data.user.progress.next_threshold.toLocaleString('en-IN')} XP`}
-              </span>
-            </div>
-            <div style={{ height: 10, background: '#f1f5f9', borderRadius: 99, overflow: 'hidden' }}>
-              <div style={{
-                width: `${data.user.progress.is_max_level ? 100 : Math.min(100, Math.round((data.user.progress.xp_into_level / Math.max(1, data.user.progress.next_threshold - data.user.progress.current_threshold)) * 100))}%`,
-                height: '100%',
-                background: 'linear-gradient(90deg,#2563eb,#7c3aed)',
-                transition: 'width .6s ease',
-              }} />
-            </div>
-            {!data.user.progress.is_max_level && (
-              <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 6 }}>
-                {data.user.progress.xp_to_next.toLocaleString('en-IN')} XP to next tier
-              </p>
-            )}
-          </div>
-
           {/* Today's challenge CTA — only show if streak is at risk OR not active today */}
           <DailyChallengeCTA streak={data.streak} />
 
