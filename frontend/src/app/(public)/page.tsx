@@ -8,6 +8,7 @@ import NewsletterSection from '@/components/NewsletterSection';
 import LiveStat from '@/components/LiveStat';
 import ScrollReveal from '@/components/ScrollReveal';
 import TypingHeadline from '@/components/TypingHeadline';
+import HomeRedirectGuard from '@/components/HomeRedirectGuard';
 import { api } from '@/lib/api';
 
 const wrap = { maxWidth: 1152, margin: '0 auto', padding: '0 24px' } as const;
@@ -21,6 +22,7 @@ export default async function Home() {
 
   return (
     <div style={{ background: '#f8fafc' }}>
+      <HomeRedirectGuard />
 
       {/* ── HERO ── */}
       <section className="hero-section" style={{ background: 'linear-gradient(160deg, #edf0ff 0%, #f8f9ff 45%, #f0edff 100%)', borderBottom: '1px solid #e8eaf6', position: 'relative', overflow: 'hidden' }}>
