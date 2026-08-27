@@ -21,10 +21,17 @@ export default function NewsletterSection() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, type: 'newsletter' }),
       });
-      if (!res.ok) throw new Error('Failed');
+      if (!res.ok) {
+        let msg = 'Could not subscribe. Please try again.';
+        try {
+          const body = await res.json();
+          if (body?.message) msg = Array.isArray(body.message) ? body.message.join(', ') : body.message;
+        } catch { /* keep default */ }
+        throw new Error(msg);
+      }
       setDone(true);
-    } catch {
-      setSubError('Could not subscribe. Please try again.');
+    } catch (err: any) {
+      setSubError(err.message || 'Could not subscribe. Please try again.');
     } finally {
       setSubmitting(false);
     }

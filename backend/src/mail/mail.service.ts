@@ -186,6 +186,31 @@ export class MailService {
     `);
   }
 
+  // ── Newsletter subscriber welcome (fired once on first sign-up) ────────────
+  async sendSubscriberWelcome(opts: { email: string; unsubscribeUrl: string }) {
+    const { email, unsubscribeUrl } = opts;
+    const subject = await this.getSetting('email_subscriber_welcome_subject', "🎉 You're on the list!");
+    const teamName = await this.getSetting('email_team_name', 'TechChampsByRev Team');
+
+    await this.send(email, subject, `
+      <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;background:#f8fafc;border-radius:12px;">
+        <div style="background:#fff;border-radius:12px;padding:32px;border:1px solid #e2e8f0;">
+          <h1 style="color:#0f172a;font-size:22px;margin:0 0 8px;">You're subscribed 🎉</h1>
+          <p style="color:#64748b;font-size:15px;margin:0 0 24px;">
+            Weekly job alerts, interview tips, salary insights, and career resources — straight to your inbox.
+          </p>
+          <p style="color:#475569;font-size:14px;line-height:1.6;margin:0 0 20px;">
+            No spam, ever. We'll only send what's actually useful for your job search.
+          </p>
+          <p style="color:#94a3b8;font-size:13px;margin:0;">— <strong>${teamName}</strong></p>
+        </div>
+        <p style="color:#cbd5e1;font-size:11px;margin:20px 0 0;text-align:center;">
+          <a href="${unsubscribeUrl}" style="color:#94a3b8;">Unsubscribe</a> anytime, one click, no questions asked.
+        </p>
+      </div>
+    `);
+  }
+
   // ── OTP verification ───────────────────────────────────────────────────────
   async sendOtp(email: string, code: string) {
     await this.send(email, `${code} — Your TechChampsByRev verification code`, `
