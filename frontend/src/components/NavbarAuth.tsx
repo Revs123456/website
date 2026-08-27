@@ -2,9 +2,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LogIn, ChevronDown, User as UserIcon, LogOut, Settings as SettingsIcon, Flame, Award, LayoutGrid, Briefcase, Bookmark } from 'lucide-react';
+import { LogIn, ChevronDown, User as UserIcon, LogOut, Settings as SettingsIcon, Flame, LayoutGrid, Briefcase, Bookmark } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
-import { LEVEL_NAMES } from '@/lib/api';
 import AuthModal from './AuthModal';
 
 /**
@@ -97,7 +96,6 @@ export default function NavbarAuth({ variant = 'desktop' }: { variant?: 'desktop
 
   // Desktop dropdown
   const streak = user.streak?.current_streak ?? 0;
-  const levelName = LEVEL_NAMES[Math.max(0, Math.min(user.level - 1, LEVEL_NAMES.length - 1))];
   const last = user.streak?.last_activity_date;
   const today = istTodayStringClient();
   const yesterday = istYesterdayStringClient();
@@ -126,20 +124,6 @@ export default function NavbarAuth({ variant = 'desktop' }: { variant?: 'desktop
           <Flame size={12} /> {streak}
         </Link>
       )}
-
-      {/* Level chip — always shown for logged-in users */}
-      <Link
-        href="/account"
-        title={`${levelName} — Level ${user.level} · ${user.xp} XP`}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: 4,
-          padding: '5px 10px', borderRadius: 99, fontSize: 12, fontWeight: 700,
-          textDecoration: 'none', color: '#1d4ed8', background: '#eff6ff',
-          border: '1px solid #bfdbfe',
-        }}
-      >
-        <Award size={12} /> Lv {user.level}
-      </Link>
 
       <button
         onClick={() => setMenuOpen(o => !o)}

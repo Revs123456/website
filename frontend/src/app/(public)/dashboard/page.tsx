@@ -3,12 +3,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
-  Flame, Calendar, ArrowRight, Bookmark, Briefcase, Sparkles,
-  Bell, Loader2, MessageSquare, Zap, Target,
+  Flame, Calendar, ArrowRight, Bookmark, Briefcase,
+  Bell, Loader2, MessageSquare, Map, BookOpen,
 } from 'lucide-react';
 import { userApi, type DashboardData } from '@/lib/api';
 import { useUser } from '@/contexts/UserContext';
-import ActivityFeedItem from '@/components/ActivityFeedItem';
 
 const STATUS_LABEL: Record<string, string> = {
   saved: 'Saved', applied: 'Applied', interview: 'Interview',
@@ -50,9 +49,6 @@ export default function DashboardPage() {
         <h1 style={{ fontSize: 28, fontWeight: 800, color: '#0f172a', margin: 0, letterSpacing: '-0.02em' }}>
           {greeting}, {firstName} 👋
         </h1>
-        <p style={{ fontSize: 13, color: '#64748b', margin: '4px 0 0' }}>
-          {data.user.level_name} · Lv {data.user.level} · {data.user.xp.toLocaleString('en-IN')} XP
-        </p>
       </div>
 
       {/* Counters row */}
@@ -62,11 +58,6 @@ export default function DashboardPage() {
           label="Day streak"
           value={data.streak.current_streak}
           link="/challenges"
-        />
-        <StatCard
-          icon={<Zap size={18} style={{ color: '#2563eb' }} />}
-          label="XP this week"
-          value={`+${data.counters.weekly_xp.toLocaleString('en-IN')}`}
         />
         <StatCard
           icon={<Bookmark size={18} style={{ color: '#64748b' }} />}
@@ -174,55 +165,18 @@ export default function DashboardPage() {
 
         {/* ── RIGHT COLUMN ── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, minWidth: 0 }}>
-          {/* Recent badges */}
-          {data.recent_badges.length > 0 && (
-            <div className="card" style={{ padding: 22 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: '0 0 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Sparkles size={15} /> Recent badges
-              </h2>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {data.recent_badges.map(rb => (
-                  <div key={rb.badge.code} title={rb.badge.name} style={{
-                    padding: '10px 12px', borderRadius: 10, textAlign: 'center',
-                    background: rb.badge.tier === 'gold' ? '#fffbeb' : rb.badge.tier === 'silver' ? '#f8fafc' : '#fef3c7',
-                    border: `1px solid ${rb.badge.tier === 'gold' ? '#fde68a' : rb.badge.tier === 'silver' ? '#cbd5e1' : '#fdba74'}`,
-                    minWidth: 70,
-                  }}>
-                    <div style={{ fontSize: 22, lineHeight: 1, marginBottom: 4 }}>{rb.badge.icon}</div>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: '#0f172a' }}>{rb.badge.name}</div>
-                  </div>
-                ))}
-              </div>
+          {/* Quick links */}
+          <div className="card" style={{ padding: 22 }}>
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: '0 0 14px' }}>
+              Keep going
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <QuickLink href="/roadmaps" icon={<Map size={16} style={{ color: '#2563eb' }} />} label="Roadmaps" desc="Follow a step-by-step learning path" />
+              <QuickLink href="/courses" icon={<BookOpen size={16} style={{ color: '#7c3aed' }} />} label="Courses" desc="Curated courses by role & level" />
+              <QuickLink href="/jobs" icon={<Briefcase size={16} style={{ color: '#b45309' }} />} label="Jobs" desc="Browse curated openings" />
+              <QuickLink href="/community" icon={<MessageSquare size={16} style={{ color: '#059669' }} />} label="Community" desc="Ask questions, help others" />
             </div>
-          )}
-
-          {/* My recent activity */}
-          {data.my_recent_activity.length > 0 && (
-            <div className="card" style={{ padding: 22 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Target size={15} /> Your week
-              </h2>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {data.my_recent_activity.slice(0, 5).map(ev => (
-                  <ActivityFeedItem key={ev.id} event={ev} showUser={false} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Community pulse */}
-          {data.public_activity.length > 0 && (
-            <div className="card" style={{ padding: 22 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Flame size={15} style={{ color: '#dc2626' }} /> Community pulse
-              </h2>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {data.public_activity.slice(0, 6).map(ev => (
-                  <ActivityFeedItem key={ev.id} event={ev} showUser={true} />
-                ))}
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
 
@@ -253,6 +207,21 @@ function StatCard({ icon, label, value, link }: { icon: React.ReactNode; label: 
     </div>
   );
   return link ? <Link href={link} style={{ textDecoration: 'none' }}>{content}</Link> : content;
+}
+
+function QuickLink({ href, icon, label, desc }: { href: string; icon: React.ReactNode; label: string; desc: string }) {
+  return (
+    <Link href={href} className="card card-blue" style={{ padding: 12, display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
+      <div style={{ width: 34, height: 34, borderRadius: 9, background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        {icon}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{label}</div>
+        <div style={{ fontSize: 11, color: '#94a3b8' }}>{desc}</div>
+      </div>
+      <ArrowRight size={14} style={{ color: '#94a3b8', flexShrink: 0 }} />
+    </Link>
+  );
 }
 
 function greetingFor() {
