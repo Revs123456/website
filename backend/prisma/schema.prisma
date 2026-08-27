@@ -4,7 +4,15 @@ generator client {
 
 datasource db {
   provider  = "postgresql"
+  // Pooled (pgbouncer transaction mode, port 6543) — used by Prisma Client
+  // at runtime. High concurrency, but doesn't preserve session state.
   url       = env("DATABASE_URL")
+  // Direct/session-mode (port 5432, no pgbouncer) — used ONLY by `prisma
+  // migrate deploy`/`migrate dev`. Migrations need advisory locks, which
+  // pgbouncer's transaction mode doesn't reliably support (locks can be
+  // acquired/released on different underlying connections), causing
+  // `migrate deploy` to hang indefinitely instead of failing loudly.
+  directUrl = env("DIRECT_URL")
 }
 
 model Admin {
