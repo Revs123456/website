@@ -5,16 +5,15 @@ import Link from 'next/link';
 import {
   User as UserIcon, Mail, Briefcase, Target, Github, Linkedin, Save,
   LogOut, Trash2, Loader2, Award, Flame, Check, AtSign, Bell,
-  Lock, ArrowRight, Calendar, Globe, Gift, Copy, Sparkles, Users, Crown,
+  ArrowRight, Calendar, Globe, Gift, Copy, Sparkles, Users, Crown,
   XCircle, Receipt,
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import {
-  userApi, type SiteUser, type EngagementDashboard, type ReferralStats,
+  userApi, type SiteUser, type ReferralStats,
   type UsageDashboard, type Subscription, type PaymentEventRow,
-  LEVEL_NAMES, levelProgress,
+  LEVEL_NAMES,
 } from '@/lib/api';
-import ShareableStreakCard from '@/components/ShareableStreakCard';
 
 const EXPERIENCE_OPTIONS = ['0-1 years', '1-3 years', '3-5 years', '5-8 years', '8+ years'];
 
@@ -41,7 +40,6 @@ export default function AccountPage() {
   return (
     <div style={{ maxWidth: 880, margin: '0 auto', padding: '96px 24px 60px' }}>
       <Header user={user} />
-      <EngagementPanels user={user} />
       <BillingPanel user={user} refresh={refresh} />
       <AiUsagePanel />
       <ReferralPanel user={user} />
@@ -331,108 +329,6 @@ function Field({ label, icon, hint, children }: { label: string; icon?: React.Re
       </label>
       {children}
       {hint && <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 4 }}>{hint}</div>}
-    </div>
-  );
-}
-
-// ── Engagement panels (Phase 2) ─────────────────────────────────────────────
-function EngagementPanels({ user }: { user: SiteUser }) {
-  const [dash, setDash] = useState<EngagementDashboard | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const d = await userApi.engagementDashboard().catch(() => null);
-      if (!cancelled && d) setDash(d);
-    })();
-    return () => { cancelled = true; };
-  }, []);
-
-  return (
-    <>
-      <ProgressPanel user={user} streak={dash?.streak ?? null} />
-    </>
-  );
-}
-
-function ProgressPanel({ user, streak }: {
-  user: SiteUser;
-  streak: EngagementDashboard['streak'] | null;
-}) {
-  const prog = levelProgress(user.xp);
-
-  return (
-    <div className="card" style={{ padding: 24, marginBottom: 20 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6, flexWrap: 'wrap', gap: 8 }}>
-        <h2 style={sectionTitle}>Progress</h2>
-        <Link href="/challenges" style={{ fontSize: 12, color: '#2563eb', fontWeight: 600, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4 }}>
-          Today&apos;s challenge <ArrowRight size={12} />
-        </Link>
-      </div>
-      <p style={sectionHint}>Earn XP by completing daily challenges and building your profile.</p>
-
-      {/* Level + XP bar */}
-      <div style={{ marginBottom: 18 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>
-            {prog.name} · Level {prog.level}
-          </span>
-          <span style={{ fontSize: 12, color: '#64748b' }}>
-            {prog.is_max_level
-              ? `${user.xp.toLocaleString('en-IN')} XP (max tier)`
-              : `${user.xp.toLocaleString('en-IN')} / ${prog.next_threshold.toLocaleString('en-IN')} XP`
-            }
-          </span>
-        </div>
-        <div style={{ height: 10, background: '#f1f5f9', borderRadius: 99, overflow: 'hidden' }}>
-          <div
-            style={{
-              width: `${prog.progress_pct}%`, height: '100%',
-              background: 'linear-gradient(90deg,#2563eb,#7c3aed)',
-              transition: 'width .6s ease',
-            }}
-          />
-        </div>
-        {!prog.is_max_level && (
-          <p style={{ fontSize: 11, color: '#94a3b8', marginTop: 6 }}>
-            {prog.xp_to_next.toLocaleString('en-IN')} XP to next tier
-          </p>
-        )}
-      </div>
-
-      {/* Streak summary */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
-        <StatCard
-          icon={<Flame size={18} style={{ color: streak?.at_risk ? '#dc2626' : '#f59e0b' }} />}
-          label="Current streak"
-          value={`${streak?.current_streak ?? 0} day${(streak?.current_streak ?? 0) === 1 ? '' : 's'}`}
-          tone={streak?.at_risk ? 'danger' : 'amber'}
-          subtext={streak?.at_risk ? 'At risk — take today\'s challenge!' : streak?.active_today ? 'Active today ✓' : undefined}
-        />
-        <StatCard
-          icon={<Calendar size={18} style={{ color: '#64748b' }} />}
-          label="Longest streak"
-          value={`${streak?.longest_streak ?? 0} day${(streak?.longest_streak ?? 0) === 1 ? '' : 's'}`}
-        />
-        <StatCard
-          icon={<Lock size={18} style={{ color: '#64748b' }} />}
-          label="Streak shields"
-          value={`${streak?.shields_remaining ?? 0}`}
-          subtext={!user.is_pro ? 'Pro only' : 'Auto-saves 1 missed day'}
-        />
-      </div>
-
-      {/* Shareable card — only when there's actually a streak to brag about */}
-      {(streak?.current_streak ?? 0) >= 3 && (
-        <div style={{ marginTop: 18 }}>
-          <ShareableStreakCard
-            streak={streak!.current_streak}
-            userName={user.name}
-            xp={user.xp}
-            level={user.level}
-          />
-        </div>
-      )}
     </div>
   );
 }
