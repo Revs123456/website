@@ -278,7 +278,7 @@ export default function AuthModal({
               />
             </div>
 
-            {switchHint && <div style={hintBox}>{switchHint}</div>}
+            {switchHint && <div style={errorBox}>{switchHint}</div>}
             {error && <div style={errorBox}>{error}</div>}
 
             <button type="submit" disabled={busy} className="btn btn-blue" style={{ width: '100%', marginTop: 4, opacity: busy ? 0.7 : 1 }}>
@@ -363,13 +363,4 @@ const errorBox: React.CSSProperties = {
   padding: '8px 12px',
   fontSize: 12,
   color: '#dc2626',
-};
-
-const hintBox: React.CSSProperties = {
-  background: '#eff6ff',
-  border: '1px solid #bfdbfe',
-  borderRadius: 8,
-  padding: '8px 12px',
-  fontSize: 12,
-  color: '#1d4ed8',
 };
