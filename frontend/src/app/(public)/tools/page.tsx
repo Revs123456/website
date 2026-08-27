@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Flame, Brain, FileText, Trophy, ArrowRight, Sparkles, MessageSquare, Bot } from 'lucide-react';
+import { Flame, Brain, Trophy, ArrowRight, Sparkles, MessageSquare, Bot } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'Free AI Career Tools',
@@ -57,14 +57,6 @@ const TOOLS = [
     label: 'Placement Story',
     blurb: 'Just got placed? AI polishes your story for LinkedIn. We feature top stories on our site.',
     badge: 'NEW',
-  },
-  {
-    href: '/ats-checker',
-    icon: <FileText size={22} />,
-    color: '#475569', bg: '#f8fafc',
-    label: 'ATS Resume Checker',
-    blurb: 'Quick ATS-readiness score for your resume. No AI, instant result.',
-    badge: 'FREE',
   },
 ];
 

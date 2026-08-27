@@ -256,7 +256,6 @@ export default async function Home() {
           </div></ScrollReveal>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))', gap: 16 }}>
             {[
-              { icon: FileCheck,   c: '#2563eb', bg: '#eff6ff', title: 'ATS Score Checker',      desc: 'Instantly check how well your resume passes ATS filters.',             href: '/ats-checker'          },
               { icon: HelpCircle,  c: '#7c3aed', bg: '#f5f3ff', title: 'Interview Question Bank', desc: 'Real questions from Google, Amazon, Flipkart and more.',               href: '/interview-questions'  },
               { icon: DollarSign,  c: '#059669', bg: '#ecfdf5', title: 'Salary Insights',         desc: 'Know your market value before negotiating your next offer.',           href: '/salary-insights'      },
               { icon: Trophy,      c: '#d97706', bg: '#fffbeb', title: 'Success Stories',          desc: 'Read real journeys from developers who transformed their careers.',     href: '/success-stories'      },

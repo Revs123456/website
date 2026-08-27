@@ -122,7 +122,6 @@ PLATFORM FEATURES YOU CAN REFER USERS TO:
 - /challenges — Daily challenge for XP + streak
 - /jobs — Curated job board (with personalized match scores when logged in)
 - /roadmaps — Learning roadmaps for Frontend, Backend, DevOps, AI/ML, etc.
-- /ats-checker — Free ATS resume score
 - /salary-insights — Salary data by role and city
 
 NEVER:

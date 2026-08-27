@@ -73,7 +73,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/tools/resume-optimizer`,  lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE}/tools/mock-interview`,    lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE}/tools/revbot`,            lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
-    { url: `${SITE}/ats-checker`,             lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${SITE}/mock-interview`,          lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
     // Phase 6 — community
     { url: `${SITE}/community`,               lastModified: now, changeFrequency: 'daily',   priority: 0.6 },

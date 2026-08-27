@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
-import { ArrowRight, Briefcase, BookOpen, Building2, Map, Search, CheckCircle, DollarSign, Layout, FileText, HelpCircle } from 'lucide-react';
+import { ArrowRight, Briefcase, BookOpen, Building2, Map, Search, CheckCircle, DollarSign, Layout, HelpCircle } from 'lucide-react';
 
 const FREE_SERVICES = [
   {
@@ -86,18 +86,6 @@ const FREE_SERVICES = [
     cta: 'Browse Templates',
     href: '/templates',
     highlights: ['ATS-safe layouts', 'Tech-industry focused', 'PDF & Word formats', 'Free to download'],
-  },
-  {
-    icon: FileText,
-    color: '#2563eb',
-    bg: '#eff6ff',
-    border: '#bfdbfe',
-    title: 'ATS Resume Checker',
-    caption: 'Score your resume before recruiters see it',
-    desc: 'Instantly analyse your resume against ATS algorithms. Get a score, see missing keywords, and fix issues before you apply.',
-    cta: 'Check My Resume',
-    href: '/ats-checker',
-    highlights: ['Instant ATS score', 'Keyword gap analysis', 'Actionable suggestions', 'Free & unlimited'],
   },
   {
     icon: Search,

@@ -13,7 +13,6 @@ const FAQS: { patterns: string[]; answer: string }[] = [
   { patterns: ['job', 'jobs', 'hiring', 'openings', 'vacancy', 'apply'],         answer: 'Browse all current job openings on our **Jobs** page at /jobs. We update listings daily from top companies!' },
   { patterns: ['course', 'courses', 'learn', 'learning', 'tutorial', 'training'], answer: 'Check out our **Courses** page at /courses — curated programs for web dev, data science, cloud, and more.' },
   { patterns: ['roadmap', 'roadmaps', 'career path', 'path', 'guide', 'plan'],    answer: 'Our **Roadmaps** at /roadmaps offer step-by-step learning paths for frontend, backend, DevOps, AI, and more.' },
-  { patterns: ['resume', 'cv', 'ats', 'ats checker', 'resume check'],             answer: 'Use our free **ATS Checker** at /ats-checker to scan your resume against job descriptions instantly.' },
   { patterns: ['interview', 'mock interview', 'interview questions'],              answer: 'Prepare with our **Mock Interview** at /mock-interview or browse common **Interview Questions** at /interview-questions.' },
   { patterns: ['mentor', 'mentorship', 'service', 'coaching', '1:1'],             answer: 'We offer 1:1 mentorship & career coaching. Explore **Services** at /services or book at /book.' },
   { patterns: ['salary', 'pay', 'compensation', 'wage', 'ctc'],                   answer: 'Explore **Salary Insights** at /salary-insights — compare pay across roles, companies, and cities.' },

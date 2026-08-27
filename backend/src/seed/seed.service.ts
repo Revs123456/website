@@ -297,7 +297,6 @@ export class SeedService implements OnModuleInit {
         { key: 'feature_mock_interview',  value: 'true', label: 'Feature: Mock Interview',   description: 'Set to false to disable the mock interview page' },
         { key: 'feature_salary_insights', value: 'true', label: 'Feature: Salary Insights',  description: 'Set to false to disable the salary insights page' },
         { key: 'feature_community',       value: 'true', label: 'Feature: Community',        description: 'Set to false to disable the community page' },
-        { key: 'feature_ats_checker',     value: 'true', label: 'Feature: ATS Checker',      description: 'Set to false to disable the ATS checker page' },
         { key: 'feature_templates',       value: 'true', label: 'Feature: Resume Templates', description: 'Set to false to disable the templates page' },
         { key: 'feature_success_stories', value: 'true', label: 'Feature: Success Stories',  description: 'Set to false to disable the success stories page' },
 
