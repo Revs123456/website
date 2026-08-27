@@ -278,20 +278,9 @@ export class SubscriptionsService {
       }
     });
 
-    // Referral conversion bonus — outside the tx because XpService opens its own.
-    // Idempotent via xpService's idempotency key, so duplicate webhook = no-op.
+    // referral_converted XP bonus retired — only signup, profile completion,
+    // daily login, and referral signups pay XP now, not Pro conversion.
     if (isFirstActivation) {
-      const user = await this.prisma.siteUser.findUnique({
-        where: { id: userId },
-        select: { referred_by_id: true },
-      });
-      if (user?.referred_by_id) {
-        await this.xp.award(user.referred_by_id, 1000, 'referral_converted', {
-          metadata: { converted_user_id: userId, subscription_id: subId },
-          idempotencyKey: `referral_converted:${userId}`,
-        });
-      }
-
       // Public activity feed event — "Yaswanth went Pro" feels social-proof-y
       // and inspires upgrades. Fire-and-forget.
       const sub = await this.prisma.subscription.findUnique({
@@ -443,19 +432,7 @@ export class SubscriptionsService {
       });
     });
 
-    // First-charge bonuses (idempotent — XpService dedups)
-    if (!sub.activated_at) {
-      const user = await this.prisma.siteUser.findUnique({
-        where: { id: sub.site_user_id },
-        select: { referred_by_id: true },
-      });
-      if (user?.referred_by_id) {
-        await this.xp.award(user.referred_by_id, 1000, 'referral_converted', {
-          metadata: { converted_user_id: sub.site_user_id, subscription_id: sub.id },
-          idempotencyKey: `referral_converted:${sub.site_user_id}`,
-        });
-      }
-    }
+    // referral_converted XP bonus retired — see the matching removal above.
   }
 
   private async handleSubscriptionStateChange(sub: any, payload: any, eventType: string) {

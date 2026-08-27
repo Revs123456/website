@@ -197,7 +197,7 @@ describe('UsersService', () => {
       await expect(service.updateProfile('user-1', { bio: 'hi' } as any)).rejects.toThrow(ConflictException);
     });
 
-    it('awards username-claimed XP only the first time a username is set', async () => {
+    it('does not award XP for claiming a username (retired — only signup/profile-complete/daily-login/referral pay XP)', async () => {
       prisma.siteUser.findUnique
         .mockResolvedValueOnce(null) // username-existing lookup — nobody else has it
         .mockResolvedValueOnce({ id: 'user-1', username: null }) // before-snapshot
@@ -206,7 +206,7 @@ describe('UsersService', () => {
 
       await service.updateProfile('user-1', { username: 'janedoe' } as any);
 
-      expect(xp.awardUsernameClaimed).toHaveBeenCalledWith('user-1');
+      expect(xp.awardUsernameClaimed).not.toHaveBeenCalled();
     });
 
     it('awards profile-complete XP once all key fields are populated', async () => {
