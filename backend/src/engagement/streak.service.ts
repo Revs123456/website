@@ -6,7 +6,7 @@ import { MailService } from '../mail/mail.service';
 import { XpService } from './xp.service';
 import {
   daysBetween, istTodayDate, istYesterdayDate,
-  STREAK_MILESTONES, XP_REASONS,
+  STREAK_MILESTONES,
 } from './engagement.constants';
 
 export type TouchStreakResult = {
@@ -149,23 +149,13 @@ export class StreakService {
         },
       });
 
-      // Milestone XP — award inside the same transaction so a crash here
-      // rolls back the streak update too (no orphaned "you reached 7 days
-      // but got no XP" cases).
+      // Milestone XP retired — streak milestones no longer pay out (only
+      // signup, profile completion, daily login, and referrals do). Still
+      // detect the milestone itself: `milestone_hit` drives non-XP UI (e.g.
+      // a "you hit 7 days!" moment) and STREAK_MILESTONES backs
+      // `next_milestone` in getStreak() below.
       const milestone = STREAK_MILESTONES.find(m => m.days === nextStreak);
-      let milestoneXp = 0;
-      if (milestone) {
-        // Idempotency key includes the streak length AND user — re-entering
-        // the same streak length later (after a reset) is a NEW achievement
-        // and gets awarded again? No — we want it to only fire once per user
-        // per milestone, EVER. Otherwise users could farm by resetting.
-        const res = await this.xp.award(userId, milestone.xp, XP_REASONS.STREAK_MILESTONE, {
-          metadata: { days: milestone.days },
-          idempotencyKey: `streak_milestone:${milestone.days}:${userId}`,
-          tx: db,
-        });
-        milestoneXp = res.awarded ? res.amount : 0;
-      }
+      const milestoneXp = 0;
 
       return {
         changed: true,

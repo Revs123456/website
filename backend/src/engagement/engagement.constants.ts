@@ -8,9 +8,17 @@
  */
 
 // ── XP award reasons (string enum — kept open so new modules can add reasons) ─
+// Only 4 actions actually grant XP right now: first_login, profile_complete,
+// daily_login, and the referral pair (referral_made/referral_joined, awarded
+// directly by ReferralsService — not listed here since they're not read from
+// this enum). username_claimed, daily_challenge, streak_milestone, and
+// badge_awarded are kept as historical/inert reasons — old XpEvent ledger
+// rows still reference them, and the underlying features (usernames,
+// challenges, streaks, badges) still work — they just no longer pay out XP.
 export const XP_REASONS = {
   FIRST_LOGIN: 'first_login',
   PROFILE_COMPLETE: 'profile_complete',
+  DAILY_LOGIN: 'daily_login',
   USERNAME_CLAIMED: 'username_claimed',
   DAILY_CHALLENGE: 'daily_challenge',
   STREAK_MILESTONE: 'streak_milestone',
@@ -22,8 +30,7 @@ export type XpReason = (typeof XP_REASONS)[keyof typeof XP_REASONS] | string;
 export const XP_AMOUNTS = {
   FIRST_LOGIN: 25,
   PROFILE_COMPLETE: 100,
-  USERNAME_CLAIMED: 50,
-  DAILY_CHALLENGE: 50,
+  DAILY_LOGIN: 10,
 } as const;
 
 // ── Streak milestones → XP bonus ────────────────────────────────────────────

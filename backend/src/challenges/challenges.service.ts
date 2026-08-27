@@ -5,7 +5,7 @@ import { XpService } from '../engagement/xp.service';
 import { StreakService } from '../engagement/streak.service';
 import { BadgesService } from '../engagement/badges.service';
 import { EvaluatorService } from '../evaluator/evaluator.service';
-import { istTodayDate, XP_REASONS } from '../engagement/engagement.constants';
+import { istTodayDate } from '../engagement/engagement.constants';
 
 @Injectable()
 export class ChallengesService {
@@ -131,13 +131,13 @@ export class ChallengesService {
         throw e;
       }
 
-      const xpResult = await this.xp.award(userId, challenge.xp_reward, XP_REASONS.DAILY_CHALLENGE, {
-        metadata: { challenge_id: challenge.id, date },
-        // No idempotency_key here — the submission's unique constraint above
-        // is what guards against double XP; using one would block intentional
-        // future re-grading by AI.
-        tx,
-      });
+      // Daily challenge completion no longer pays XP (only signup, profile
+      // completion, daily login, and referrals do) — challenge.xp_reward is
+      // now inert. Still read the real current total here rather than
+      // stubbing 0, since it flows into the API response and the
+      // leveled_up-gated badge check below.
+      const currentXp = await tx.siteUser.findUnique({ where: { id: userId }, select: { xp: true } });
+      const xpResult = { awarded: false, amount: 0, total_xp: currentXp?.xp ?? 0, leveled_up: false, previous_level: 0, new_level: 0 };
 
       const streakResult = await this.streak.touchStreak(userId, tx);
 

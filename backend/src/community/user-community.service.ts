@@ -188,12 +188,11 @@ export class UserCommunityService {
       });
     });
 
-    // Reward the answer author — outside tx (XP/activity/notification each manage their own)
+    // Reward the answer author — outside tx (activity/notification each manage their own).
+    // No XP here — answer_accepted isn't one of the 4 actions that pay XP
+    // (signup, profile completion, daily login, referrals). Still recorded
+    // in the activity feed and notified, just without the XP side-effect.
     if (ans.site_user_id !== userId) {
-      await this.xp.award(ans.site_user_id, 100, 'answer_accepted', {
-        metadata: { question_id: ans.question_id, answer_id: answerId },
-        idempotencyKey: `answer_accepted:${answerId}`,
-      });
       await this.activity.record({
         userId: ans.site_user_id,
         type: 'answer_accepted',

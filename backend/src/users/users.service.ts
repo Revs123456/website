@@ -277,6 +277,13 @@ export class UsersService {
       },
     });
     if (!user) throw new NotFoundException('User not found');
+
+    // Daily-login XP — idempotent per IST day (see XpService.awardDailyLogin),
+    // so calling this on every /me hit is safe: only the first call of the
+    // day actually writes anything. Don't let a hiccup here break session
+    // hydration, which every page load depends on.
+    await this.xp.awardDailyLogin(userId).catch(() => undefined);
+
     return {
       ...publicUser(user),
       streak: user.streak ? {
@@ -323,12 +330,6 @@ export class UsersService {
       // Race condition on unique-username if two writes land at once
       if (e?.code === 'P2002') throw new ConflictException('Username already taken');
       throw e;
-    }
-
-    // One-time XP rewards — both award helpers are idempotency-keyed, so even
-    // if the same field is "set" again later (via another PATCH), no double-award.
-    if (!before.username && updated.username) {
-      await this.xp.awardUsernameClaimed(userId);
     }
 
     // "Profile complete" requires all key fields populated. We check on every

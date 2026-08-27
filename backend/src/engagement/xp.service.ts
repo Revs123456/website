@@ -1,7 +1,7 @@
 import { Injectable, Logger, Optional } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { calcLevel, LEVEL_NAMES, XP_REASONS, type XpReason } from './engagement.constants';
+import { calcLevel, istTodayDate, LEVEL_NAMES, XP_REASONS, type XpReason } from './engagement.constants';
 import { ActivityFeedService } from '../activity-feed/activity-feed.service';
 import { NotificationsService } from '../notifications/notifications.service';
 
@@ -160,9 +160,17 @@ export class XpService {
     });
   }
 
-  awardUsernameClaimed(userId: string, tx?: Prisma.TransactionClient) {
-    return this.award(userId, 50, XP_REASONS.USERNAME_CLAIMED, {
-      idempotencyKey: `${XP_REASONS.USERNAME_CLAIMED}:${userId}`,
+  /**
+   * Once per IST calendar day — first qualifying call each day awards XP,
+   * every later call that same day is a no-op via the idempotency key.
+   * Fired from UsersService.getMeWithEngagement, which backs GET /users/me
+   * and runs on every app load, so "logged in" here really means "showed up
+   * today", regardless of how their session was established.
+   */
+  awardDailyLogin(userId: string, tx?: Prisma.TransactionClient) {
+    const today = istTodayDate();
+    return this.award(userId, 10, XP_REASONS.DAILY_LOGIN, {
+      idempotencyKey: `${XP_REASONS.DAILY_LOGIN}:${today}:${userId}`,
       tx,
     });
   }
