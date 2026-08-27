@@ -23,7 +23,6 @@ export default function Navbar() {
   const MORE_LINKS_DEFAULT = [
     { href: '/tools', label: 'Free AI Tools' },
     { href: '/challenges', label: 'Daily Challenge' },
-    { href: '/pricing', label: 'Pro Pricing' },
     { href: '/success-stories', label: 'Success Stories' },
     { href: '/mock-interview', label: 'Mock Interview' },
   ];

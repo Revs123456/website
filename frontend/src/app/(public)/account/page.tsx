@@ -5,13 +5,12 @@ import Link from 'next/link';
 import {
   User as UserIcon, Mail, Briefcase, Target, Github, Linkedin, Save,
   LogOut, Trash2, Loader2, Award, Flame, Check, AtSign, Bell,
-  ArrowRight, Calendar, Globe, Gift, Copy, Sparkles, Users, Crown,
-  XCircle, Receipt,
+  ArrowRight, Globe, Gift, Copy, Sparkles, Users,
 } from 'lucide-react';
 import { useUser } from '@/contexts/UserContext';
 import {
   userApi, type SiteUser, type ReferralStats,
-  type UsageDashboard, type Subscription, type PaymentEventRow,
+  type UsageDashboard,
   LEVEL_NAMES,
 } from '@/lib/api';
 
@@ -19,7 +18,7 @@ const EXPERIENCE_OPTIONS = ['0-1 years', '1-3 years', '3-5 years', '5-8 years', 
 
 export default function AccountPage() {
   const router = useRouter();
-  const { user, loading, logout, patchLocal, refresh } = useUser();
+  const { user, loading, logout, patchLocal } = useUser();
 
   // Redirect to home for unauthenticated visitors after hydration finishes.
   // We don't gate at the route level (no middleware) because UserContext
@@ -40,7 +39,6 @@ export default function AccountPage() {
   return (
     <div style={{ maxWidth: 880, margin: '0 auto', padding: '96px 24px 60px' }}>
       <Header user={user} />
-      <BillingPanel user={user} refresh={refresh} />
       <AiUsagePanel />
       <ReferralPanel user={user} />
       <ProfileForm user={user} patchLocal={patchLocal} />
@@ -439,181 +437,6 @@ function ReferralPanel({ user }: { user: SiteUser }) {
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-// ── Phase 5: Billing panel ──────────────────────────────────────────────────
-function BillingPanel({ user, refresh }: { user: SiteUser; refresh: () => Promise<void> }) {
-  const [sub, setSub] = useState<Subscription | null>(null);
-  const [history, setHistory] = useState<PaymentEventRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [cancelling, setCancelling] = useState(false);
-  const [error, setError] = useState('');
-  const [confirmCancel, setConfirmCancel] = useState(false);
-
-  const load = async () => {
-    try {
-      const [s, h] = await Promise.all([
-        userApi.myCurrentSubscription(),
-        userApi.myPaymentHistory(),
-      ]);
-      setSub(s);
-      setHistory(h);
-    } catch {
-      // best-effort — billing panel is enrichment, not blocking
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { void load(); }, []);
-
-  async function handleCancel() {
-    setCancelling(true); setError('');
-    try {
-      await userApi.cancelSubscription();
-      await load();
-      await refresh();
-      setConfirmCancel(false);
-    } catch (err: any) {
-      setError(err.message || 'Cancel failed');
-    } finally {
-      setCancelling(false);
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="card" style={{ padding: 24, marginBottom: 20, display: 'flex', justifyContent: 'center' }}>
-        <Loader2 size={18} className="spin" style={{ color: '#cbd5e1' }} />
-      </div>
-    );
-  }
-
-  // Not Pro — show upgrade prompt
-  if (!user.is_pro || !sub) {
-    return (
-      <div className="card" style={{ padding: 24, marginBottom: 20, background: 'linear-gradient(135deg,#eff6ff,#f5f3ff)', borderColor: '#bfdbfe' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-            background: 'linear-gradient(135deg,#2563eb,#7c3aed)', color: '#fff',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Crown size={22} />
-          </div>
-          <div style={{ flex: 1, minWidth: 220 }}>
-            <h2 style={{ ...sectionTitle, marginBottom: 4 }}>You&apos;re on the Free plan</h2>
-            <p style={{ ...sectionHint, marginBottom: 14 }}>
-              Unlock unlimited AI features, streak shields, and the PRO badge.
-            </p>
-            <Link href="/pricing" className="btn btn-blue btn-sm">
-              See Pro plans <ArrowRight size={12} />
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Active Pro — show subscription details
-  const periodEnd = sub.current_period_end ? new Date(sub.current_period_end) : null;
-  const isCancelling = sub.cancel_at_period_end;
-  const monthlyDisplay = sub.plan.period === 'yearly'
-    ? `₹${Math.round(sub.plan.price_inr / 100 / 12)}/mo (billed yearly)`
-    : `₹${Math.round(sub.plan.price_inr / 100)}/mo`;
-
-  return (
-    <div className="card" style={{ padding: 24, marginBottom: 20 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12, marginBottom: 12 }}>
-        <div>
-          <h2 style={sectionTitle}>
-            <Crown size={14} style={{ display: 'inline', marginRight: 6, color: '#7c3aed', verticalAlign: -2 }} />
-            Pro subscription
-          </h2>
-          <p style={sectionHint}>{monthlyDisplay}</p>
-        </div>
-        <span className={`badge ${isCancelling ? 'badge-amber' : 'badge-violet'}`}>
-          {isCancelling ? 'CANCELLING' : sub.status.toUpperCase()}
-        </span>
-      </div>
-
-      {/* Renewal / end-date callout */}
-      <div style={{
-        background: isCancelling ? '#fffbeb' : '#f8fafc',
-        border: `1px solid ${isCancelling ? '#fde68a' : '#e2e8f0'}`,
-        borderRadius: 10, padding: 14, marginBottom: 14,
-        display: 'flex', gap: 10, alignItems: 'flex-start',
-      }}>
-        <Calendar size={16} style={{ color: isCancelling ? '#b45309' : '#475569', flexShrink: 0, marginTop: 1 }} />
-        <div style={{ fontSize: 13, color: '#374151' }}>
-          {isCancelling ? (
-            <>
-              Pro access ends on <strong>{periodEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>.
-              No further charges.
-            </>
-          ) : (
-            <>
-              Next renewal on <strong>{periodEnd?.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>.
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Payment history */}
-      {history.length > 0 && (
-        <div style={{ marginBottom: 14 }}>
-          <h3 style={{ fontSize: 12, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.06, margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Receipt size={12} /> Payment history
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {history.slice(0, 5).map(ev => (
-              <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 12px', background: '#f8fafc', borderRadius: 8, fontSize: 12 }}>
-                <span style={{ color: '#475569' }}>
-                  {new Date(ev.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </span>
-                <span style={{
-                  color: ev.event_type === 'payment.failed' ? '#dc2626' : '#0f172a',
-                  fontWeight: 700,
-                }}>
-                  {ev.amount_paid_paise ? `₹${(ev.amount_paid_paise / 100).toLocaleString('en-IN')}` : '—'}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Cancel — only if not already cancelling */}
-      {!isCancelling && (
-        <>
-          {!confirmCancel ? (
-            <button onClick={() => setConfirmCancel(true)} className="btn btn-outline btn-sm">
-              <XCircle size={13} /> Cancel subscription
-            </button>
-          ) : (
-            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, padding: 14, marginTop: 4 }}>
-              <p style={{ fontSize: 13, color: '#7f1d1d', margin: '0 0 10px', fontWeight: 600 }}>
-                Cancel your Pro subscription?
-              </p>
-              <p style={{ fontSize: 12, color: '#991b1b', margin: '0 0 12px' }}>
-                You&apos;ll keep Pro access until <strong>{periodEnd?.toLocaleDateString('en-IN')}</strong>. No more charges after that.
-              </p>
-              {error && <p style={{ fontSize: 12, color: '#dc2626', margin: '0 0 10px' }}>{error}</p>}
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={handleCancel} disabled={cancelling} className="btn btn-sm" style={{ background: '#dc2626', color: '#fff' }}>
-                  {cancelling ? <Loader2 size={12} className="spin" /> : <XCircle size={12} />}
-                  {cancelling ? 'Cancelling…' : 'Yes, cancel'}
-                </button>
-                <button onClick={() => setConfirmCancel(false)} disabled={cancelling} className="btn btn-sm btn-outline">
-                  Keep Pro
-                </button>
-              </div>
-            </div>
-          )}
-        </>
-      )}
     </div>
   );
 }

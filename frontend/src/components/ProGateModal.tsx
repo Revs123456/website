@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { X, Sparkles, Check, ArrowRight } from 'lucide-react';
+import { X, Sparkles } from 'lucide-react';
 
 /**
  * Global modal that intercepts HTTP 402 errors from the API client.
@@ -9,17 +8,21 @@ import { X, Sparkles, Check, ArrowRight } from 'lucide-react';
  *
  * The api.ts userReq/streamSseFromPost helpers dispatch a 'pro:required'
  * CustomEvent on the window when they hit 402. This component subscribes
- * and renders an upsell modal with the feature that was blocked highlighted.
+ * and tells the user the free-tier limit for that feature was reached.
+ *
+ * No Pro plan exists to sell right now, so this is informational only —
+ * no upgrade CTA. If/when a real Pro plan launches, this is the one place
+ * to add it back.
  */
 export default function ProGateModal() {
   const [open, setOpen] = useState(false);
-  const [feature, setFeature] = useState('this Pro feature');
+  const [feature, setFeature] = useState('this feature');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
     const handler = (e: Event) => {
       const detail = (e as CustomEvent).detail || {};
-      setFeature(detail.feature || 'this Pro feature');
+      setFeature(detail.feature || 'this feature');
       setMessage(detail.message || '');
       setOpen(true);
     };
@@ -87,7 +90,7 @@ export default function ProGateModal() {
             <Sparkles size={24} color="#fff" />
           </div>
           <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
-            Upgrade to unlock {feature}
+            Daily limit reached for {feature}
           </h2>
           {message && (
             <p style={{ fontSize: 13, color: '#cbd5e1', margin: '6px 0 0' }}>
@@ -96,38 +99,17 @@ export default function ProGateModal() {
           )}
         </div>
 
-        {/* Benefits list */}
         <div style={{ padding: 24 }}>
-          <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 22px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {[
-              'Unlimited AI Resume Optimizations',
-              'Unlimited Mock Interviews with scoring',
-              'Unlimited Answer Evaluations',
-              'Unlimited RevBot career coaching',
-              'Monthly streak shield (auto-saves a missed day)',
-              'PRO badge on your public profile',
-            ].map(b => (
-              <li key={b} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 13, color: '#374151' }}>
-                <Check size={14} style={{ color: '#16a34a', flexShrink: 0, marginTop: 3 }} />
-                <span>{b}</span>
-              </li>
-            ))}
-          </ul>
+          <p style={{ fontSize: 13, color: '#374151', margin: '0 0 20px', lineHeight: 1.6 }}>
+            You've used up today's free allowance for this feature. It resets tomorrow — come back then to keep going.
+          </p>
 
-          <Link
-            href="/pricing"
+          <button
             onClick={() => setOpen(false)}
             className="btn btn-blue"
             style={{ width: '100%', justifyContent: 'center', padding: '12px 22px' }}
           >
-            See Pro plans <ArrowRight size={15} />
-          </Link>
-          <button
-            onClick={() => setOpen(false)}
-            className="btn btn-ghost"
-            style={{ width: '100%', justifyContent: 'center', marginTop: 6 }}
-          >
-            Maybe later
+            Got it
           </button>
         </div>
       </div>
