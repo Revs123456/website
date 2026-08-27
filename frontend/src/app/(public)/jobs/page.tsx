@@ -2,13 +2,14 @@
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 import { useEffect, useState } from 'react';
-import { Search, MapPin, Briefcase, ExternalLink, Lock } from 'lucide-react';
+import { Search, MapPin, Briefcase, ExternalLink } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useAdminSync } from '@/hooks/useAdminSync';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useUser } from '@/contexts/UserContext';
 import SaveJobButton from '@/components/SaveJobButton';
 import AuthModal from '@/components/AuthModal';
+import SignInGate from '@/components/SignInGate';
 
 const CAT_COLOR: Record<string, { c: string; bg: string }> = {
   Frontend:     { c: '#2563eb', bg: '#eff6ff' },
@@ -107,21 +108,10 @@ export default function JobsPage() {
         {userLoading ? (
           <LoadingSpinner />
         ) : !user ? (
-          <div className="card" style={{ padding: '56px 24px', textAlign: 'center', maxWidth: 460, margin: '0 auto' }}>
-            <div style={{
-              width: 48, height: 48, borderRadius: 14, margin: '0 auto 18px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#eff6ff',
-            }}>
-              <Lock size={20} style={{ color: '#2563eb' }} />
-            </div>
-            <h2 style={{ fontSize: 17, fontWeight: 800, color: '#0f172a', marginBottom: 8 }}>Sign in to view jobs</h2>
-            <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.6, marginBottom: 22 }}>
-              Create a free account to browse curated listings, save jobs, and get a personalised match score on every role.
-            </p>
-            <button onClick={() => setAuthOpen(true)} className="btn btn-blue" style={{ gap: 6, display: 'inline-flex', alignItems: 'center' }}>
-              <Lock size={14} /> Sign in to continue
-            </button>
-          </div>
+          <SignInGate
+            description="Create a free account to browse curated listings, save jobs, and get a personalised match score on every role."
+            onSignIn={() => setAuthOpen(true)}
+          />
         ) : (
         <>
         <div className="filter-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>

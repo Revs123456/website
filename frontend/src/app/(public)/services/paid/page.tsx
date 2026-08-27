@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import BackButton from '@/components/BackButton';
+import GatedServiceLink from '@/components/GatedServiceLink';
 import { ArrowRight, Sparkles, Check, Lock } from 'lucide-react';
 
 const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
@@ -95,12 +95,12 @@ export default async function PaidServicesPage() {
                     )}
                   </div>
                   <div style={{ padding: '0 28px 28px' }}>
-                    <Link
+                    <GatedServiceLink
                       href={`/order?service=${plan.id}`}
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '11px 0', borderRadius: 10, background: popular ? color : 'transparent', color: popular ? '#fff' : color, fontWeight: 700, fontSize: 14, textDecoration: 'none', border: `1.5px solid ${color}`, transition: 'all .2s' }}
                     >
                       Get Started <ArrowRight size={14} />
-                    </Link>
+                    </GatedServiceLink>
                   </div>
                 </div>
               );

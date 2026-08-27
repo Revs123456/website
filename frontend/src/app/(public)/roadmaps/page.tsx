@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react';
 import BackButton from '@/components/BackButton';
 import { Globe, Server, Cloud, Code, Database, Cpu, Shield, Smartphone, Check, Map, type LucideProps } from 'lucide-react';
 import { useAdminSync } from '@/hooks/useAdminSync';
+import { useUser } from '@/contexts/UserContext';
+import AuthModal from '@/components/AuthModal';
+import SignInGate from '@/components/SignInGate';
 
 const ICON_MAP: Record<string, React.ComponentType<LucideProps>> = {
   Globe, Server, Cloud, Code, Database, Cpu, Shield, Smartphone,
@@ -27,6 +30,8 @@ function colorBorder(color: string) {
 }
 
 export default function RoadmapsPage() {
+  const { user, loading: userLoading } = useUser();
+  const [authOpen, setAuthOpen] = useState(false);
   const [roadmaps, setRoadmaps] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -59,7 +64,16 @@ export default function RoadmapsPage() {
       </div>
 
       <div style={{ ...wrap, paddingTop: 40, paddingBottom: 80 }}>
-        {loading ? (
+        {userLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: '#2563eb', animation: 'spin .8s linear infinite' }} />
+          </div>
+        ) : !user ? (
+          <SignInGate
+            description="Create a free account to follow our developer roadmaps."
+            onSignIn={() => setAuthOpen(true)}
+          />
+        ) : loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
             <div style={{ width: 32, height: 32, borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: '#2563eb', animation: 'spin .8s linear infinite' }} />
           </div>
@@ -111,6 +125,8 @@ export default function RoadmapsPage() {
           </div>
         )}
       </div>
+
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} initialMode="signup" />
     </div>
   );
 }

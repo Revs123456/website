@@ -4,6 +4,7 @@ import BackButton from '@/components/BackButton';
 import { Star, Clock, Users, Award, Check, ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
+import GatedServiceLink from '@/components/GatedServiceLink';
 
 const FAQS = [
   { q: 'How long does delivery take?',  a: 'Basic: 3 days · ATS Pro: 2 days · Premium: 24 hours. Rush available on request.' },
@@ -91,13 +92,13 @@ export default function ServicesPage() {
                         ))}
                       </ul>
                     )}
-                    <Link
+                    <GatedServiceLink
                       href={svc.name === '1:1 Career Call' ? '/book' : `/order?service=${svc.id}`}
                       className="btn btn-blue"
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginTop: 'auto' }}
                     >
                       {svc.name === '1:1 Career Call' ? 'Book a Slot' : 'Get Started'} <ArrowRight size={14} />
-                    </Link>
+                    </GatedServiceLink>
                   </div>
                 );
               })}

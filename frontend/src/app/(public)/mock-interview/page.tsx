@@ -3,6 +3,9 @@ import { useState } from 'react';
 import BackButton from '@/components/BackButton';
 import { CheckCircle2, Calendar, Video, Mic, Lightbulb } from 'lucide-react';
 import { useSettings } from '@/contexts/SettingsContext';
+import { useUser } from '@/contexts/UserContext';
+import AuthModal from '@/components/AuthModal';
+import SignInGate from '@/components/SignInGate';
 
 const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
 
@@ -22,6 +25,8 @@ const EMPTY_FORM = {
 
 export default function MockInterviewPage() {
   const s = useSettings();
+  const { user, loading: userLoading } = useUser();
+  const [authOpen, setAuthOpen] = useState(false);
 
   if (s.feature_mock_interview === 'false') {
     return (
@@ -98,6 +103,16 @@ export default function MockInterviewPage() {
       </div>
 
       <div style={{ ...wrap, paddingTop: 48, paddingBottom: 80 }}>
+        {userLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
+            <div style={{ width: 32, height: 32, borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: '#2563eb', animation: 'spin .8s linear infinite' }} />
+          </div>
+        ) : !user ? (
+          <SignInGate
+            description="Create a free account to book a free mock interview session."
+            onSignIn={() => setAuthOpen(true)}
+          />
+        ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 40, alignItems: 'start' }}>
           {/* Benefits */}
           <div>
@@ -305,7 +320,10 @@ export default function MockInterviewPage() {
             )}
           </div>
         </div>
+        )}
       </div>
+
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} initialMode="signup" />
     </div>
   );
 }
