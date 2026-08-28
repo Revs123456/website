@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Star, PenLine, X, Send, Check } from 'lucide-react';
+import { useAdminSync } from '@/hooks/useAdminSync';
 
 const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
 
@@ -35,26 +36,50 @@ function StarPicker({ value, onChange }: { value: number; onChange: (n: number) 
   );
 }
 
-export default function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
+export default function TestimonialsSection({ testimonials: initialTestimonials }: { testimonials: any[] }) {
+  // Seeded from the server-rendered prop for a fast first paint, then kept
+  // live — the prop itself is fetched once at page-render time and can't
+  // update on its own, so without this an admin hiding/showing a testimonial
+  // never reaches anyone already on the homepage until they hard-refresh.
+  const [testimonials, setTestimonials] = useState(initialTestimonials);
   const [showForm, setShowForm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
   const [form, setForm] = useState({ name: '', role: '', quote: '', package: '', rating: 5 });
+
+  useAdminSync(() => {
+    fetch(`${BASE}/testimonials/published`, { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => { if (Array.isArray(data)) setTestimonials(data); })
+      .catch(() => {});
+  });
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (form.rating === 0) return;
     setSending(true);
+    setError('');
     const pick = COLORS[Math.floor(Math.random() * COLORS.length)];
     const initials = form.name.trim().split(' ').map((w: string) => w[0]).join('').toUpperCase().slice(0, 2);
-    await fetch(`${BASE}/testimonials`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, initials, color: pick.color, bg: pick.bg, published: false }),
-    });
-    setSending(false);
-    setSubmitted(true);
-    setForm({ name: '', role: '', quote: '', package: '', rating: 5 });
+    try {
+      // Public submit endpoint — no auth. The old code posted straight to
+      // POST /testimonials, which requires an admin session and always
+      // returned 401 for a real visitor; this "worked" was actually always
+      // silently failing since it never checked the response.
+      const res = await fetch(`${BASE}/testimonials/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, initials, color: pick.color, bg: pick.bg }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setSubmitted(true);
+      setForm({ name: '', role: '', quote: '', package: '', rating: 5 });
+    } catch {
+      setError('Something went wrong — please try again.');
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -68,28 +93,54 @@ export default function TestimonialsSection({ testimonials }: { testimonials: an
         {testimonials.length === 0 ? (
           <p style={{ textAlign: 'center', color: '#94a3b8', fontSize: 13, marginBottom: 32 }}>No testimonials yet. Be the first!</p>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 320px))', gap: 16, marginBottom: 40, justifyContent: 'center' }}>
-            {testimonials.map((t: any) => (
-              <div key={t.id} className="card" style={{ padding: 24 }}>
-                <div style={{ display: 'flex', gap: 2, marginBottom: 16 }}>
-                  {[1, 2, 3, 4, 5].map(n => (
-                    <Star key={n} size={13} fill={n <= (t.rating ?? 5) ? '#f59e0b' : 'none'} style={{ color: n <= (t.rating ?? 5) ? '#f59e0b' : '#cbd5e1' }} />
-                  ))}
-                </div>
-                <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.7, marginBottom: 20 }}>"{t.quote}"</p>
-                <div className="divider" style={{ marginBottom: 16 }} />
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <div style={{ width: 36, height: 36, borderRadius: '50%', background: t.bg || '#eff6ff', color: t.color || '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
-                    {t.initials || t.name?.[0] || '?'}
+          <div
+            className="testimonial-marquee"
+            style={{
+              overflow: 'hidden', marginBottom: 40,
+              maskImage: 'linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent)',
+              WebkitMaskImage: 'linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent)',
+            }}
+          >
+            <div className="testimonial-track" style={{ display: 'flex', gap: 16, width: 'max-content' }}>
+              {/* Rendered twice back-to-back — the animation scrolls exactly one
+                  copy's width (-50%) then snaps to 0, so the loop is seamless. */}
+              {[...testimonials, ...testimonials].map((t: any, i: number) => (
+                <div key={`${t.id}-${i}`} className="card" style={{ padding: 24, width: 300, flexShrink: 0 }}>
+                  <div style={{ display: 'flex', gap: 2, marginBottom: 16 }}>
+                    {[1, 2, 3, 4, 5].map(n => (
+                      <Star key={n} size={13} fill={n <= (t.rating ?? 5) ? '#f59e0b' : 'none'} style={{ color: n <= (t.rating ?? 5) ? '#f59e0b' : '#cbd5e1' }} />
+                    ))}
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{t.name}</p>
-                    <p style={{ fontSize: 11, color: '#94a3b8' }}>{t.role}</p>
+                  <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.7, marginBottom: 20 }}>"{t.quote}"</p>
+                  <div className="divider" style={{ marginBottom: 16 }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: t.bg || '#eff6ff', color: t.color || '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
+                      {t.initials || t.name?.[0] || '?'}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{t.name}</p>
+                      <p style={{ fontSize: 11, color: '#94a3b8' }}>{t.role}</p>
+                    </div>
+                    {t.package && <span className="badge badge-slate">{t.package}</span>}
                   </div>
-                  {t.package && <span className="badge badge-slate">{t.package}</span>}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <style>{`
+              @keyframes testimonial-scroll {
+                from { transform: translateX(0); }
+                to   { transform: translateX(-50%); }
+              }
+              .testimonial-track {
+                animation: testimonial-scroll 45s linear infinite;
+              }
+              .testimonial-marquee:hover .testimonial-track {
+                animation-play-state: paused;
+              }
+              @media (prefers-reduced-motion: reduce) {
+                .testimonial-track { animation: none; }
+              }
+            `}</style>
           </div>
         )}
 
@@ -124,6 +175,11 @@ export default function TestimonialsSection({ testimonials }: { testimonials: an
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                {error && (
+                  <div style={{ padding: '10px 12px', borderRadius: 8, background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', fontSize: 12 }}>
+                    {error}
+                  </div>
+                )}
                 {/* Star rating */}
                 <div>
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#374151', marginBottom: 8 }}>Your rating</label>

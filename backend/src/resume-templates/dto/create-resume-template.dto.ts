@@ -1,4 +1,5 @@
-import { IsString, IsOptional, IsBoolean, MaxLength, IsUrl } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, MaxLength } from 'class-validator';
+import { IsOptionalUrl } from '../../common/decorators/is-optional-url.decorator';
 
 export class CreateResumeTemplateDto {
   @IsString() @MaxLength(200)
@@ -10,10 +11,10 @@ export class CreateResumeTemplateDto {
   @IsOptional() @IsString() @MaxLength(20)
   price?: string;
 
-  @IsOptional() @IsUrl() @MaxLength(500)
+  @IsOptionalUrl() @MaxLength(500)
   download_link?: string;
 
-  @IsOptional() @IsUrl() @MaxLength(500)
+  @IsOptionalUrl() @MaxLength(500)
   preview_image?: string;
 
   @IsOptional() @IsString() @MaxLength(100)

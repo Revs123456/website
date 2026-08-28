@@ -1,7 +1,9 @@
 import { UseGuards, Controller, Get, Post, Patch, Delete, Body, Param, Query } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { TestimonialsService } from './testimonials.service';
 import { CreateTestimonialDto } from './dto/create-testimonial.dto';
+import { SubmitTestimonialDto } from './dto/submit-testimonial.dto';
 
 @Controller('testimonials')
 export class TestimonialsController {
@@ -15,6 +17,13 @@ export class TestimonialsController {
   @Get(':id') findOne(@Param('id') id: string) { return this.service.findOne(id); }
   @UseGuards(JwtAuthGuard)
   @Post() create(@Body() body: CreateTestimonialDto) { return this.service.create(body); }
+
+  // Public — anyone can submit a review without an account. Always saved
+  // unpublished; only an admin approving it in the panel makes it live.
+  @Throttle({ default: { ttl: 60_000, limit: 5 } })
+  @Post('submit') submitPublic(@Body() body: SubmitTestimonialDto) {
+    return this.service.submitPublic(body);
+  }
   @UseGuards(JwtAuthGuard)
   @Patch(':id') update(@Param('id') id: string, @Body() body: any) { return this.service.update(id, body); }
   @UseGuards(JwtAuthGuard)

@@ -1,5 +1,6 @@
-import { IsEmail, IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { IsOptionalUrl } from '../../common/decorators/is-optional-url.decorator';
 
 function sanitize(val: unknown): string {
   if (typeof val !== 'string') return '';
@@ -37,7 +38,7 @@ export class CreateOrderDto {
   @Transform(({ value }) => sanitize(value))
   message?: string;
 
-  @IsOptional() @IsUrl({ protocols: ['https'], require_tld: true }) @MaxLength(500)
+  @IsOptionalUrl({ protocols: ['https'], require_tld: true }) @MaxLength(500)
   resume_file?: string;
 
   // status is intentionally excluded — clients cannot set order status

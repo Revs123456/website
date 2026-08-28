@@ -8,11 +8,9 @@ import { authFetch } from '@/lib/api';
 const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
 
 const DIFFICULTIES = ['Easy', 'Medium', 'Hard'];
-const CATEGORIES = ['DSA', 'System Design', 'HR', 'Frontend', 'Backend', 'Mobile'];
-
 const EMPTY = {
   company: '', role: '', question: '', answer: '',
-  difficulty: 'Easy', category: 'DSA', published: true,
+  difficulty: 'Easy', published: true,
 };
 
 const difficultyColor: Record<string, string> = {
@@ -75,7 +73,6 @@ export default function AdminInterviewQuestionsPage() {
       question: item.question || '',
       answer: item.answer || '',
       difficulty: item.difficulty || 'Easy',
-      category: item.category || 'DSA',
       published: item.published !== false,
     });
     setError('');
@@ -244,19 +241,11 @@ export default function AdminInterviewQuestionsPage() {
                   )}
                 </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                <div>
-                  <label style={lbl}>Difficulty</label>
-                  <select name="difficulty" value={form.difficulty} onChange={change} className="input">
-                    {DIFFICULTIES.map(d => <option key={d}>{d}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label style={lbl}>Category</label>
-                  <select name="category" value={form.category} onChange={change} className="input">
-                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                </div>
+              <div>
+                <label style={lbl}>Difficulty</label>
+                <select name="difficulty" value={form.difficulty} onChange={change} className="input" style={{ maxWidth: 200 }}>
+                  {DIFFICULTIES.map(d => <option key={d}>{d}</option>)}
+                </select>
               </div>
               <div>
                 <label style={lbl}>Question *</label>
@@ -297,7 +286,7 @@ export default function AdminInterviewQuestionsPage() {
             <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['Company', 'Role', 'Category', 'Difficulty', 'Question', 'Published', ''].map(h => (
+                  {['Company', 'Role', 'Difficulty', 'Question', 'Published', ''].map(h => (
                     <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
@@ -307,7 +296,6 @@ export default function AdminInterviewQuestionsPage() {
                   <tr key={item.id} style={{ borderBottom: '1px solid #f8fafc' }}>
                     <td style={{ padding: '14px 16px', color: '#0f172a', fontWeight: 600 }}>{item.company || '—'}</td>
                     <td style={{ padding: '14px 16px', color: '#64748b' }}>{item.role || '—'}</td>
-                    <td style={{ padding: '14px 16px' }}><span className="badge badge-slate">{item.category}</span></td>
                     <td style={{ padding: '14px 16px' }}>
                       <span style={{ display: 'inline-block', padding: '2px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600, background: `${difficultyColor[item.difficulty]}20`, color: difficultyColor[item.difficulty] }}>
                         {item.difficulty}

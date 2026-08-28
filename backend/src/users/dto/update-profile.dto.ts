@@ -1,4 +1,5 @@
-import { IsBoolean, IsOptional, IsString, IsUrl, Length, Matches, MaxLength } from 'class-validator';
+import { IsBoolean, IsOptional, IsString, Length, Matches, MaxLength } from 'class-validator';
+import { IsOptionalUrl } from '../../common/decorators/is-optional-url.decorator';
 
 export class UpdateProfileDto {
   @IsOptional()
@@ -39,18 +40,15 @@ export class UpdateProfileDto {
   @MaxLength(500)
   bio?: string;
 
-  @IsOptional()
-  @IsUrl()
+  @IsOptionalUrl()
   @MaxLength(300)
   avatar_url?: string;
 
-  @IsOptional()
-  @IsUrl()
+  @IsOptionalUrl()
   @MaxLength(300)
   github_url?: string;
 
-  @IsOptional()
-  @IsUrl()
+  @IsOptionalUrl()
   @MaxLength(300)
   linkedin_url?: string;
 

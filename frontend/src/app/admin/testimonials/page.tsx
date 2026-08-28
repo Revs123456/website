@@ -18,11 +18,25 @@ export default function AdminTestimonialsPage() {
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState('');
 
   async function load() {
-    const res = await authFetch(`${BASE}/testimonials`);
-    setItems(await res.json());
-    setLoading(false);
+    setLoading(true);
+    try {
+      const res = await authFetch(`${BASE}/testimonials`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      // A failed/expired auth response still resolves with a JSON body
+      // (e.g. {statusCode:401,...}), not an array — items.map would crash
+      // on that without this check.
+      setItems(Array.isArray(data) ? data : []);
+    } catch {
+      setItems([]);
+      setError('Failed to load testimonials. Try refreshing.');
+      setTimeout(() => setError(''), 6000);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => { load(); }, []);
@@ -35,10 +49,17 @@ export default function AdminTestimonialsPage() {
     setSaving(true);
     const url = editId ? `${BASE}/testimonials/${editId}` : `${BASE}/testimonials`;
     const method = editId ? 'PATCH' : 'POST';
-    await authFetch(url, { method, body: JSON.stringify(form) });
-    setSaving(false);
-    setShowForm(false);
-    load();
+    try {
+      const res = await authFetch(url, { method, body: JSON.stringify(form) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setShowForm(false);
+      load();
+    } catch {
+      setError('Failed to save testimonial. Please try again.');
+      setTimeout(() => setError(''), 6000);
+    } finally {
+      setSaving(false);
+    }
   }
 
   const confirmDelete = async () => {
@@ -50,8 +71,14 @@ export default function AdminTestimonialsPage() {
   };
 
   async function togglePublished(t: any) {
-    await authFetch(`${BASE}/testimonials/${t.id}`, { method: 'PATCH', body: JSON.stringify({ published: !t.published }) });
-    load();
+    try {
+      const res = await authFetch(`${BASE}/testimonials/${t.id}`, { method: 'PATCH', body: JSON.stringify({ published: !t.published }) });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      load();
+    } catch {
+      setError('Failed to update status.');
+      setTimeout(() => setError(''), 6000);
+    }
   }
 
   return (
@@ -64,6 +91,11 @@ export default function AdminTestimonialsPage() {
           onConfirm={confirmDelete}
           onCancel={() => setDeleteTarget(null)}
         />
+      )}
+      {error && (
+        <div style={{ marginBottom: 16, padding: '10px 16px', borderRadius: 8, background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', fontSize: 13, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {error}<button onClick={() => setError('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#dc2626', fontWeight: 700, fontSize: 16, lineHeight: 1 }}>×</button>
+        </div>
       )}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 32 }}>
         <div>

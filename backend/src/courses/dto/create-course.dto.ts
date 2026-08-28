@@ -1,4 +1,5 @@
-import { IsOptional, IsString, IsBoolean, IsNumber, MaxLength, IsUrl } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsNumber, MaxLength } from 'class-validator';
+import { IsOptionalUrl } from '../../common/decorators/is-optional-url.decorator';
 
 export class CreateCourseDto {
   @IsOptional() @IsString() @MaxLength(300) title?: string;
@@ -12,6 +13,6 @@ export class CreateCourseDto {
   @IsOptional() @IsString() @MaxLength(100) price?: string;
   @IsOptional() @IsString() @MaxLength(10000) description?: string;
   @IsOptional() @IsString() @MaxLength(20000) modules?: string;
-  @IsOptional() @IsUrl({ protocols: ['https', 'http'], require_tld: true }) @MaxLength(500) course_link?: string;
+  @IsOptionalUrl({ protocols: ['https', 'http'], require_tld: true }) @MaxLength(500) course_link?: string;
   @IsOptional() @IsBoolean() published?: boolean;
 }

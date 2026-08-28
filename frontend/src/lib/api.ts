@@ -26,9 +26,17 @@ export function clearUserCsrfToken() {
 function getCsrfToken(): string { return _csrfToken; }
 function getUserCsrfToken(): string { return _userCsrfToken; }
 
-export function authFetch(url: string, opts?: RequestInit): Promise<Response> {
+// Every admin page calls this directly (rather than the api.* / req<T>
+// wrapper below), so — unlike req<T> — it had no silent-refresh-on-401
+// logic: once an admin's short-lived access token expired mid-session, every
+// authFetch call started returning a bare 401 with no recovery, which pages
+// then fed straight into `.json()` and `setState()` without checking
+// `res.ok` — e.g. `items.map is not a function` when the "array" was
+// actually `{statusCode:401,...}`. Mirrors req<T>'s refresh-and-retry here
+// so the fix applies to all 11 admin pages that use authFetch at once.
+export async function authFetch(url: string, opts?: RequestInit, isRetry = false): Promise<Response> {
   const isWrite = opts?.method && ['POST', 'PATCH', 'DELETE', 'PUT'].includes(opts.method);
-  return fetch(url, {
+  const res = await fetch(url, {
     ...opts,
     credentials: 'include',
     headers: {
@@ -37,6 +45,35 @@ export function authFetch(url: string, opts?: RequestInit): Promise<Response> {
       ...(opts?.headers || {}),
     },
   });
+
+  if (res.status === 401 && !isRetry) {
+    const refreshRes = await fetch(`${BASE}/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'X-CSRF-Token': getCsrfToken() },
+    }).catch(() => null);
+    if (refreshRes?.ok) {
+      const refreshData = await refreshRes.json().catch(() => ({}));
+      if (refreshData?.csrfToken) storeCsrfToken(refreshData.csrfToken);
+      return authFetch(url, opts, true);
+    }
+    // Refresh failed too — the session is genuinely over, same as req<T>.
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('tch_auth');
+      window.location.href = '/login';
+    }
+  }
+
+  // Same as req<T> below — public pages listen on this via useAdminSync() to
+  // refetch live instead of requiring a manual reload. authFetch-based admin
+  // pages (testimonials, jobs, orders, etc.) never fired this, so an admin
+  // toggling something published/hidden never reached anyone already on the
+  // public page.
+  if (typeof window !== 'undefined' && isWrite && res.ok) {
+    new BroadcastChannel('admin-update').postMessage('refresh');
+  }
+
+  return res;
 }
 
 async function req<T>(path: string, opts?: RequestInit, isRetry = false): Promise<T> {

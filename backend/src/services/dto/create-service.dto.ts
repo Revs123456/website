@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength, IsUrl, IsBoolean, Matches } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength, IsBoolean, Matches } from 'class-validator';
 import { Transform } from 'class-transformer';
+import { IsOptionalUrl } from '../../common/decorators/is-optional-url.decorator';
 
 function strip(val: unknown): string {
   if (typeof val !== 'string') return '';
@@ -29,7 +30,7 @@ export class CreateServiceDto {
   @IsNotEmpty() @IsString() @MaxLength(10000)
   included_features!: string;
 
-  @IsOptional() @IsUrl({ protocols: ['https'], require_tld: true }) @MaxLength(500)
+  @IsOptionalUrl({ protocols: ['https'], require_tld: true }) @MaxLength(500)
   image_url?: string;
 
   @IsOptional() @IsBoolean()

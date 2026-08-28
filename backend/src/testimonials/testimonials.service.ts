@@ -25,6 +25,12 @@ export class TestimonialsService {
     return this.prisma.testimonial.create({ data });
   }
 
+  // Public, unauthenticated submission path — always saved unpublished so
+  // it lands in the admin queue for review rather than going live directly.
+  submitPublic(data: any) {
+    return this.prisma.testimonial.create({ data: { ...data, published: false } });
+  }
+
   async update(id: string, data: any) {
     await this.findOne(id);
     return this.prisma.testimonial.update({ where: { id }, data });
