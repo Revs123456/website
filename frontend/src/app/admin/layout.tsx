@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { authFetch } from '@/lib/api';
-import { Home, Briefcase, GraduationCap, ShoppingBag, LogOut, Zap, FileText, Star, Settings, ShieldCheck, MessageSquare, HelpCircle, DollarSign, Lightbulb, Trophy, Users, Calendar, Layout, Bell, Map, Clock, ScrollText } from 'lucide-react';
+import { Home, Briefcase, GraduationCap, ShoppingBag, LogOut, Zap, FileText, Star, Settings, ShieldCheck, MessageSquare, HelpCircle, DollarSign, Lightbulb, Trophy, Users, Calendar, Layout, Bell, Map, Clock, ScrollText, BarChart3 } from 'lucide-react';
 
 const NAV = [
   { href: '/admin',                      label: 'Dashboard',        icon: Home          },
+  { href: '/admin/analytics',            label: 'Analytics',        icon: BarChart3     },
   { href: '/admin/jobs',                 label: 'Jobs',             icon: Briefcase     },
   { href: '/admin/courses',              label: 'Courses',          icon: GraduationCap },
   { href: '/admin/blogs',                label: 'Blogs',            icon: FileText      },
@@ -31,6 +32,7 @@ const NAV = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [checking, setChecking] = useState(true);
+  const [adminEmail, setAdminEmail] = useState('');
 
   useEffect(() => {
     const stored = localStorage.getItem('tch_auth');
@@ -38,6 +40,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     try {
       const auth = JSON.parse(stored);
       if (auth.role !== 'admin') { router.replace('/login'); return; }
+      setAdminEmail(auth.email || '');
       setChecking(false);
     } catch {
       router.replace('/login');
@@ -78,6 +81,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
         {/* Footer */}
         <div style={{ padding: 12, borderTop: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {adminEmail && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 10,
+              padding: '8px 12px', marginBottom: 4,
+            }}>
+              <div style={{
+                width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
+                background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', color: '#fff',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 10, fontWeight: 700,
+              }}>
+                {adminEmail[0]?.toUpperCase()}
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ fontSize: 9, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', margin: 0 }}>Signed in as</p>
+                <p style={{ fontSize: 12, fontWeight: 600, color: '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={adminEmail}>
+                  {adminEmail}
+                </p>
+              </div>
+            </div>
+          )}
           <Link
             href="/"
             style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', borderRadius: 8, fontSize: 13, color: '#94a3b8', textDecoration: 'none' }}

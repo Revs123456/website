@@ -71,8 +71,7 @@ export class SubscribersService {
   }
 
   async remove(id: string) {
-    await this.prisma.subscriber.delete({ where: { id } });
-    return { deleted: true };
+    return this.prisma.subscriber.delete({ where: { id } });
   }
 
   count() {

@@ -1,5 +1,8 @@
 'use client';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useUser } from '@/contexts/UserContext';
+import { userApi } from '@/lib/api';
+import { getSessionId } from '@/components/AnalyticsTracker';
 import {
   X, Send, Mic, Briefcase, BookOpen, Map,
   Users, TrendingUp, Mail, Mic2,
@@ -240,6 +243,7 @@ let uid = 1;
 
 /* ─── Component ─────────────────────────────────────────── */
 export default function ChatBot() {
+  const { user } = useUser();
   const [open, setOpen]       = useState(false);
   const [mounted, setMounted] = useState(false);
   const [messages, setMessages] = useState<Message[]>([{
@@ -258,11 +262,19 @@ export default function ChatBot() {
     if (open) {
       setMounted(true);
       setUnread(false);
+      // Usage beacon — logged-in visitors only, matching every other
+      // in-app event; anonymous widget usage isn't tracked here (GA4 covers
+      // anonymous traffic generally, just not this specific interaction).
+      if (user) {
+        userApi.logAnalyticsEvent({
+          session_id: getSessionId(), event_type: 'revbot_widget_opened', path: 'chatbot_widget',
+        }).catch(() => {});
+      }
     } else {
       const t = setTimeout(() => setMounted(false), 280);
       return () => clearTimeout(t);
     }
-  }, [open]);
+  }, [open, user]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -287,7 +299,12 @@ export default function ChatBot() {
         text: reply.text, suggestions: reply.suggestions,
       }]);
     }, 800);
-  }, []);
+    if (user) {
+      userApi.logAnalyticsEvent({
+        session_id: getSessionId(), event_type: 'revbot_widget_message', path: 'chatbot_widget',
+      }).catch(() => {});
+    }
+  }, [user]);
 
   const onKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') send(input);

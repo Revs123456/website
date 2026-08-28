@@ -31,7 +31,6 @@ export class ResumeTemplatesService {
   }
 
   async remove(id: string) {
-    await this.prisma.resumeTemplate.delete({ where: { id } });
-    return { deleted: true };
+    return this.prisma.resumeTemplate.delete({ where: { id } });
   }
 }

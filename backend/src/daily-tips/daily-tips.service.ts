@@ -35,7 +35,6 @@ export class DailyTipsService {
   }
 
   async remove(id: string) {
-    await this.prisma.dailyTip.delete({ where: { id } });
-    return { deleted: true };
+    return this.prisma.dailyTip.delete({ where: { id } });
   }
 }

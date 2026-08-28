@@ -27,6 +27,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { SlotsModule } from './slots/slots.module';
 import { MailModule } from './mail/mail.module';
 import { AuditModule } from './audit/audit.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 import { ChatModule } from './chat/chat.module';
 import { OtpModule } from './otp/otp.module';
 import { UsersModule } from './users/users.module';
@@ -66,6 +67,7 @@ import { RequestLogInterceptor } from './common/interceptors/request-log.interce
     PrismaModule,
     MailModule,
     AuditModule,
+    AnalyticsModule,
     JobsModule, CoursesModule, OrdersModule, ServicesModule, AuthModule, BlogsModule, SeedModule, SettingsModule, TestimonialsModule,
     SubscribersModule, InterviewQuestionsModule, SalaryInsightsModule, DailyTipsModule, SuccessStoriesModule, CommunityModule, BookingsModule, ResumeTemplatesModule, RoadmapsModule, PaymentsModule, SlotsModule, ChatModule, OtpModule, UsersModule,
     EngagementModule, ChallengesModule, AiModule, ViralModule,

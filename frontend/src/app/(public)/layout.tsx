@@ -4,6 +4,7 @@ import AutoRefresh from '@/components/AutoRefresh';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
 import MaintenancePage from '@/components/MaintenancePage';
 import Chatbot from '@/components/ChatBot';
+import AnalyticsTracker from '@/components/AnalyticsTracker';
 import ProGateModal from '@/components/ProGateModal';
 import PWARegistrar from '@/components/PWARegistrar';
 import PushOptInBanner from '@/components/PushOptInBanner';
@@ -28,6 +29,7 @@ export default async function PublicLayout({ children }: { children: React.React
     <SettingsProvider settings={settings}>
       <UserProvider>
         <ErrorBoundary>
+          <AnalyticsTracker />
           <AnnouncementBanner />
           <AutoRefresh />
           <Navbar />

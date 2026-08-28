@@ -76,9 +76,9 @@ describe('BookingsService', () => {
   });
 
   describe('remove', () => {
-    it('deletes the booking and reports success', async () => {
+    it('deletes the booking and returns the deleted row', async () => {
       prisma.booking.delete.mockResolvedValue({ id: 'b1' });
-      await expect(service.remove('b1')).resolves.toEqual({ deleted: true });
+      await expect(service.remove('b1')).resolves.toEqual({ id: 'b1' });
       expect(prisma.booking.delete).toHaveBeenCalledWith({ where: { id: 'b1' } });
     });
   });

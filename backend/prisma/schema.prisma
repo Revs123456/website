@@ -391,6 +391,7 @@ model SiteUser {
   community_votes         CommunityVote[]
   community_bookmarks     CommunityBookmark[]
   activity_events         ActivityEvent[]
+  analytics_events        AnalyticsEvent[]
   notifications           Notification[]
   // Phase 7 — Web Push subscriptions
   push_subscriptions      PushSubscription[]
@@ -976,7 +977,47 @@ model AuditLog {
   admin_email String
   method      String
   path        String
+  // Best-effort human-readable identifier of what was affected (a title,
+  // name, question, etc. pulled from the write's response body) — method +
+  // path alone ("DELETE /v1/courses/c89a94c2-...") doesn't tell an admin
+  // which course. Null when the resource type doesn't return one.
+  label       String?
   created_at  DateTime @default(now()) @db.Timestamptz
 
   @@map("audit_log")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ADMIN ANALYTICS — in-app event log for registered users only.
+//
+// Anonymous/public traffic is deliberately NOT tracked here — GA4 is already
+// live in the frontend (see app/layout.tsx) and already captures that; this
+// table would just duplicate it. This table exists specifically for what GA4
+// can't tell us: which *registered* user did what, so we can compute session
+// duration, DAU/WAU/MAU cross-referenced with account data, and content
+// engagement (which job/course a signed-in user actually opened).
+// ═══════════════════════════════════════════════════════════════════════════
+model AnalyticsEvent {
+  id            String   @id @default(uuid()) @db.Uuid
+  site_user_id  String   @db.Uuid
+  // Client-generated UUID, stable for one browser tab's lifetime (sessionStorage).
+  // Groups events into a session without needing server-side session state.
+  session_id    String
+  // 'page_view' | 'revbot_widget_opened' | 'revbot_widget_message'
+  event_type    String
+  path          String
+  // Set only when `path` is a job/course detail page — drives "most viewed" charts.
+  resource_type String?
+  resource_id   String?  @db.Uuid
+  created_at    DateTime @default(now()) @db.Timestamptz
+
+  user          SiteUser @relation(fields: [site_user_id], references: [id], onDelete: Cascade)
+
+  // Powers: DAU/session queries (user, time), sessionization (session, time),
+  // and "most viewed X" (resource_type, resource_id).
+  @@index([site_user_id, created_at])
+  @@index([session_id, created_at])
+  @@index([resource_type, resource_id])
+  @@index([created_at])
+  @@map("analytics_events")
 }

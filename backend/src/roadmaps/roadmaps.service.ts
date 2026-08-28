@@ -32,7 +32,6 @@ export class RoadmapsService {
 
   async remove(id: string) {
     await this.findOne(id);
-    await this.prisma.roadmap.delete({ where: { id } });
-    return { deleted: true };
+    return this.prisma.roadmap.delete({ where: { id } });
   }
 }

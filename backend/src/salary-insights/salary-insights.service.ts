@@ -27,7 +27,6 @@ export class SalaryInsightsService {
   }
 
   async remove(id: string) {
-    await this.prisma.salaryInsight.delete({ where: { id } });
-    return { deleted: true };
+    return this.prisma.salaryInsight.delete({ where: { id } });
   }
 }

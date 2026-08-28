@@ -31,7 +31,6 @@ export class CommunityService {
   }
 
   async remove(id: string) {
-    await this.prisma.communityQuestion.delete({ where: { id } });
-    return { deleted: true };
+    return this.prisma.communityQuestion.delete({ where: { id } });
   }
 }

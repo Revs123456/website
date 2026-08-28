@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class AuditService {
   constructor(private readonly prisma: PrismaService) {}
 
-  log(entry: { admin_email: string; method: string; path: string }): void {
+  log(entry: { admin_email: string; method: string; path: string; label?: string }): void {
     this.prisma.auditLog.create({ data: entry }).catch(err => console.error('[AUDIT] Failed to write audit log:', err));
   }
 

@@ -31,7 +31,6 @@ export class SuccessStoriesService {
   }
 
   async remove(id: string) {
-    await this.prisma.successStory.delete({ where: { id } });
-    return { deleted: true };
+    return this.prisma.successStory.delete({ where: { id } });
   }
 }

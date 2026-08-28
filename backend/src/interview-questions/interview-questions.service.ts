@@ -31,7 +31,8 @@ export class InterviewQuestionsService {
   }
 
   async remove(id: string) {
-    await this.prisma.interviewQuestion.delete({ where: { id } });
-    return { deleted: true };
+    // Return the deleted row (not just a stub) — the audit log interceptor
+    // pulls a human-readable label (name/title/etc.) from this response.
+    return this.prisma.interviewQuestion.delete({ where: { id } });
   }
 }

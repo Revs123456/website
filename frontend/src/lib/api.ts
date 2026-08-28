@@ -189,6 +189,22 @@ export const api = {
     update: (id: string, data: any) => req<any>(`/testimonials/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     delete: (id: string) => req<any>(`/testimonials/${id}`, { method: 'DELETE' }),
   },
+  analytics: {
+    overview: (qs: string) => req<any>(`/analytics/overview?${qs}`),
+    usersOverTime: (qs: string) => req<any[]>(`/analytics/users-over-time?${qs}`),
+    signupsOverTime: (qs: string) => req<any[]>(`/analytics/signups-over-time?${qs}`),
+    sessionsOverTime: (qs: string) => req<any[]>(`/analytics/sessions-over-time?${qs}`),
+    activityByHour: (qs: string) => req<any[]>(`/analytics/activity-by-hour?${qs}`),
+    activityByDayOfWeek: (qs: string) => req<any[]>(`/analytics/activity-by-day-of-week?${qs}`),
+    retention: (qs: string) => req<any>(`/analytics/retention?${qs}`),
+    revbot: (qs: string) => req<any>(`/analytics/revbot?${qs}`),
+    contentEngagement: (qs: string) => req<any>(`/analytics/content-engagement?${qs}`),
+    usersTable: (qs: string) => req<any>(`/analytics/users-table?${qs}`),
+    trafficOverview: (qs: string) => req<any>(`/analytics/traffic/overview?${qs}`),
+    trafficByDay: (qs: string) => req<any>(`/analytics/traffic/by-day?${qs}`),
+    trafficByHour: (qs: string) => req<any>(`/analytics/traffic/by-hour?${qs}`),
+    trafficByDayOfWeek: (qs: string) => req<any>(`/analytics/traffic/by-day-of-week?${qs}`),
+  },
   subscribers: {
     list: (page = 1, limit = 200) => req<any[]>(`/subscribers?page=${page}&limit=${limit}`),
     create: (data: any) => req<any>('/subscribers', { method: 'POST', body: JSON.stringify(data) }),
@@ -603,6 +619,14 @@ export const userApi = {
     userReq<{ exists: boolean }>('/users/check-email', {
       method: 'POST',
       body: JSON.stringify({ email }),
+    }),
+
+  /** In-app analytics event (page view / Rev widget usage). Logged-in users
+   * only — fire-and-forget from the caller's side, never blocks navigation. */
+  logAnalyticsEvent: (data: { session_id: string; event_type: string; path: string; resource_type?: string; resource_id?: string }) =>
+    userReq<void>('/analytics/event', {
+      method: 'POST',
+      body: JSON.stringify(data),
     }),
 
   /** Step 1: ask backend to send an OTP. Always returns the same opaque message

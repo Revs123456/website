@@ -10,6 +10,32 @@ const METHOD_STYLE: Record<string, React.CSSProperties> = {
   DELETE: { background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' },
 };
 
+const ACTION_WORD: Record<string, string> = { POST: 'Created', PATCH: 'Updated', PUT: 'Updated', DELETE: 'Deleted' };
+
+// path segment (after /v1/) -> readable singular noun. Anything not listed
+// falls back to a best-effort humanization of the segment itself.
+const RESOURCE_NAME: Record<string, string> = {
+  jobs: 'Job', courses: 'Course', blogs: 'Blog', roadmaps: 'Roadmap',
+  orders: 'Order', slots: 'Slot', services: 'Service', testimonials: 'Testimonial',
+  'interview-questions': 'Interview Question', 'salary-insights': 'Salary Insight',
+  'daily-tips': 'Daily Tip', 'success-stories': 'Success Story', community: 'Community Question',
+  bookings: 'Booking', 'resume-templates': 'Resume Template', subscribers: 'Subscriber',
+  settings: 'Setting', admins: 'Admin', users: 'User',
+};
+
+function humanizeResource(path: string): string {
+  const segment = path.split('/').filter(Boolean)[1] || '';
+  if (RESOURCE_NAME[segment]) return RESOURCE_NAME[segment];
+  const words = segment.replace(/-/g, ' ').trim();
+  if (!words) return 'Item';
+  const singular = words.endsWith('s') ? words.slice(0, -1) : words;
+  return singular.replace(/\b\w/g, c => c.toUpperCase()) || 'Item';
+}
+
+function describeAction(method: string, path: string): string {
+  return `${ACTION_WORD[method] || method} ${humanizeResource(path)}`;
+}
+
 function fmt(dateStr: string) {
   return new Date(dateStr).toLocaleString('en-IN', {
     day: '2-digit', month: 'short', year: 'numeric',
@@ -60,7 +86,7 @@ export default function AuditLogsPage() {
           <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
-                {['Timestamp', 'Admin', 'Method', 'Endpoint'].map(h => (
+                {['Timestamp', 'Admin', 'Action', 'Details'].map(h => (
                   <th key={h} style={{ textAlign: 'left', padding: '10px 20px', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8' }}>{h}</th>
                 ))}
               </tr>
@@ -75,20 +101,30 @@ export default function AuditLogsPage() {
                     {log.admin_email}
                   </td>
                   <td style={{ padding: '12px 20px' }}>
-                    <span style={{
-                      display: 'inline-block',
-                      padding: '2px 8px',
-                      borderRadius: 4,
-                      fontSize: 11,
-                      fontWeight: 700,
-                      letterSpacing: '0.04em',
-                      ...(METHOD_STYLE[log.method] || { background: '#f1f5f9', color: '#64748b' }),
-                    }}>
-                      {log.method}
-                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{
+                        display: 'inline-block',
+                        padding: '2px 8px',
+                        borderRadius: 4,
+                        fontSize: 10,
+                        fontWeight: 700,
+                        letterSpacing: '0.04em',
+                        flexShrink: 0,
+                        ...(METHOD_STYLE[log.method] || { background: '#f1f5f9', color: '#64748b' }),
+                      }}>
+                        {log.method}
+                      </span>
+                      <span style={{ fontWeight: 600, color: '#0f172a' }}>
+                        {describeAction(log.method, log.path)}
+                      </span>
+                    </div>
                   </td>
-                  <td style={{ padding: '12px 20px', color: '#475569', fontFamily: 'monospace', fontSize: 12 }}>
-                    {log.path}
+                  <td style={{ padding: '12px 20px' }}>
+                    {log.label ? (
+                      <span style={{ color: '#374151', fontWeight: 500 }}>{log.label}</span>
+                    ) : (
+                      <span style={{ color: '#94a3b8', fontFamily: 'monospace', fontSize: 11 }}>{log.path}</span>
+                    )}
                   </td>
                 </tr>
               ))}

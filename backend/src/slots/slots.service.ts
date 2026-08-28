@@ -28,8 +28,7 @@ export class SlotsService {
   async remove(id: string) {
     const slot = await this.prisma.slot.findUnique({ where: { id } });
     if (!slot) throw new NotFoundException('Slot not found');
-    await this.prisma.slot.delete({ where: { id } });
-    return { deleted: true };
+    return this.prisma.slot.delete({ where: { id } });
   }
 
   async book(id: string, data: { name: string; email: string; order_id?: string }) {
