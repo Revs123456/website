@@ -1,0 +1,35 @@
+# Copy to terraform.tfvars and fill in real values, OR pass everything via
+# TF_VAR_* environment variables instead and never write real secrets to
+# disk at all. Either way: terraform.tfvars itself must stay gitignored —
+# see the .gitignore entry this setup adds.
+
+db_password = "CHANGEME-generate-a-strong-random-password"
+
+frontend_repo_url            = "https://github.com/Revs123456/website"
+amplify_github_access_token  = "CHANGEME-github-pat-with-repo-scope"
+
+github_repo_for_oidc = "Revs123456/website"
+
+allowed_origins = "https://your-amplify-domain.amplifyapp.com,https://www.techchampsbyrev.in"
+
+# domain_name = "techchampsbyrev.in"  # uncomment once ready for custom domain / Route53+ACM
+
+# Every key backend/.env currently holds. DIRECT_URL can be the same value
+# as DATABASE_URL here — RDS isn't sitting behind a pgbouncer-style pooler
+# the way Supabase was, so the advisory-lock issue that split them in the
+# first place doesn't apply. Use the rds_endpoint Terraform output once
+# you've applied the DB, before filling this in.
+backend_secrets = {
+  DATABASE_URL        = "postgresql://techchamps_app:<db_password>@<rds_endpoint>/postgres?sslmode=require"
+  DIRECT_URL           = "postgresql://techchamps_app:<db_password>@<rds_endpoint>/postgres?sslmode=require"
+  JWT_SECRET           = "CHANGEME"
+  ADMIN_EMAIL          = "connectwithrev@gmail.com"
+  MAIL_FROM            = "TechChampsByRev <no-reply@techchampsbyrev.in>"
+  RESEND_API_KEY       = "CHANGEME"
+  RAZORPAY_KEY_ID      = "CHANGEME"
+  RAZORPAY_KEY_SECRET  = "CHANGEME"
+  ANTHROPIC_API_KEY    = "CHANGEME"
+  VAPID_PUBLIC_KEY     = "CHANGEME"
+  VAPID_PRIVATE_KEY    = "CHANGEME"
+  PUBLIC_SITE_URL      = "https://www.techchampsbyrev.in"
+}

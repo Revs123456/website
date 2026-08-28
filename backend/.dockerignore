@@ -1,0 +1,17 @@
+node_modules
+dist
+.git
+.gitignore
+
+# Never let a real secret get baked into an image layer — even though the
+# Dockerfile never reads .env at build time, this is a deliberate belt-and-
+# suspenders exclusion given .env has already leaked into a git commit once
+# this session.
+.env
+.env.*
+!.env.example
+
+*.log
+coverage
+.vscode
+.idea

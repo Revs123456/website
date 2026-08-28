@@ -44,3 +44,15 @@ backend/prisma_error.txt
 backend/validate.txt
 .vercel
 .env*
+
+# Terraform — state files hold every resource's full attributes in plaintext
+# REGARDLESS of a variable's `sensitive = true` (that flag only hides CLI
+# output, not the state file itself). Real credentials belong in
+# TF_VAR_* env vars or a local terraform.tfvars, never committed.
+infra/**/.terraform/
+infra/**/*.tfstate
+infra/**/*.tfstate.*
+infra/**/terraform.tfvars
+infra/**/*.tfplan
+# .terraform.lock.hcl is deliberately NOT ignored — commit it, it pins
+# provider version hashes for reproducibility (same idea as package-lock.json)
