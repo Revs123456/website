@@ -1,5 +1,23 @@
 const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
 
+/**
+ * Public file upload (checkout flow — see SERVICES_ARCHITECTURE.md). Not
+ * routed through req<T>/userReq: this is multipart/form-data, so the browser
+ * must set its own Content-Type with a boundary — setting it manually breaks
+ * the request. No credentials/auth here either, matching order creation's
+ * own public+throttled model (checkout has no persistent login session).
+ */
+export async function uploadFile(file: File): Promise<{ id: string; fileName: string; mimeType: string; size: number; url: string }> {
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(`${BASE}/uploads`, { method: 'POST', body: formData });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.message || 'Upload failed');
+  }
+  return res.json();
+}
+
 // CSRF token is returned in the login/refresh response body (not readable from cookie
 // when frontend and API are on different domains). Stored in localStorage so it
 // survives page refreshes.
@@ -162,6 +180,7 @@ export const api = {
   orders: {
     list: (page = 1, limit = 200) => req<any[]>(`/orders?page=${page}&limit=${limit}`),
     get: (id: string) => req<any>(`/orders/${id}`),
+    details: (id: string) => req<any>(`/orders/${id}/details`),
     create: (data: any) => req<any>('/orders', { method: 'POST', body: JSON.stringify(data) }),
     update: (id: string, data: any) => req<any>(`/orders/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
     delete: (id: string) => req<any>(`/orders/${id}`, { method: 'DELETE' }),

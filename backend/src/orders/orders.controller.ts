@@ -29,6 +29,12 @@ export class OrdersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get(':id/details')
+  findOneWithDetails(@Param('id') id: string) {
+    return this.ordersService.findOneWithDetails(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() body: UpdateOrderDto) {
     return this.ordersService.update(id, body);

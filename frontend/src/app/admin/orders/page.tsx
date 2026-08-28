@@ -1,8 +1,17 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Trash2, ShoppingBag, RefreshCw, ChevronDown, MessageSquare } from 'lucide-react';
+import { Trash2, ShoppingBag, RefreshCw, ChevronDown, MessageSquare, Eye, X, Calendar, Clock, FileText, Download } from 'lucide-react';
 import { api } from '@/lib/api';
 import DeleteModal from '@/components/DeleteModal';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001';
+
+function fmt12(t: string) {
+  const [h, m] = t.split(':').map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+
+const detailLbl: React.CSSProperties = { fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 4 };
 
 const STATUS_BADGE: Record<string, string> = {
   Completed:     'badge-green',
@@ -28,6 +37,16 @@ export default function AdminOrdersPage() {
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
+  const [detailOrder, setDetailOrder] = useState<any>(null);
+  const [detail, setDetail] = useState<any>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+
+  const openDetails = (order: any) => {
+    setDetailOrder(order);
+    setDetail(null);
+    setDetailLoading(true);
+    api.orders.details(order.id).then(setDetail).catch(() => {}).finally(() => setDetailLoading(false));
+  };
 
   const load = () => {
     setLoading(true);
@@ -59,6 +78,113 @@ export default function AdminOrdersPage() {
           onConfirm={confirmDelete}
           onCancel={() => setDeleteTarget(null)}
         />
+      )}
+
+      {/* ── Order detail — generic across every service, no per-service UI.
+          Slot / files / custom-field answers all rendered from whatever the
+          order actually has, driven by the service's own field definitions.
+          See SERVICES_ARCHITECTURE.md. ── */}
+      {detailOrder && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 60, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', background: 'rgba(15,23,42,0.4)', overflowY: 'auto', padding: '40px 16px' }}>
+          <div className="card" style={{ width: '100%', maxWidth: 560, padding: 28, position: 'relative' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <h2 style={{ fontWeight: 700, color: '#0f172a', fontSize: 16 }}>Order Details</h2>
+              <button onClick={() => setDetailOrder(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4 }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            {detailLoading ? (
+              <AdminSkeleton rows={4} />
+            ) : !detail ? (
+              <p style={{ fontSize: 13, color: '#94a3b8' }}>Failed to load order details.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                {/* Customer + service + payment */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, fontSize: 13 }}>
+                  <div>
+                    <p style={detailLbl}>Customer</p>
+                    <p style={{ fontWeight: 600, color: '#0f172a' }}>{detail.customer_name || detail.name || '—'}</p>
+                    <p style={{ color: '#64748b', fontSize: 12 }}>{detail.customer_email || detail.email}</p>
+                  </div>
+                  <div>
+                    <p style={detailLbl}>Service</p>
+                    <p style={{ fontWeight: 600, color: '#0f172a' }}>{detail.service_type || '—'}</p>
+                  </div>
+                  <div>
+                    <p style={detailLbl}>Amount</p>
+                    <p style={{ fontWeight: 600, color: '#0f172a' }}>{formatInr(detail.amount)}</p>
+                  </div>
+                  <div>
+                    <p style={detailLbl}>Payment</p>
+                    <span className={`badge ${detail.payment_status === 'paid' ? 'badge-green' : 'badge-amber'}`}>
+                      {detail.payment_status === 'paid' ? 'Paid' : 'Unpaid'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Slot — only rendered when this service actually required one */}
+                {detail.slot && (
+                  <div>
+                    <p style={detailLbl}>Scheduled Slot</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '10px 14px', borderRadius: 8, background: '#eff6ff', border: '1px solid #bfdbfe', fontSize: 13, color: '#1d4ed8', fontWeight: 600 }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><Calendar size={13} /> {new Date(detail.slot.date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><Clock size={13} /> {fmt12(detail.slot.start_time)} – {fmt12(detail.slot.end_time)}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Uploaded files — only rendered when there are any */}
+                {detail.files && detail.files.length > 0 && (
+                  <div>
+                    <p style={detailLbl}>Uploaded Files</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      {detail.files.map((f: any) => (
+                        <a key={f.id} href={`${API_BASE}${f.file_url}`} target="_blank" rel="noopener noreferrer"
+                          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 8, background: '#f8fafc', border: '1px solid #e2e8f0', textDecoration: 'none' }}>
+                          <FileText size={15} style={{ color: '#64748b', flexShrink: 0 }} />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <p style={{ fontSize: 13, fontWeight: 600, color: '#0f172a', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f.file_name}</p>
+                            {f.label && <p style={{ fontSize: 11, color: '#94a3b8' }}>{f.label}</p>}
+                          </div>
+                          <Download size={14} style={{ color: '#2563eb', flexShrink: 0 }} />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Custom field answers — labeled generically from the service's
+                    own field definitions, not hardcoded per service */}
+                {detail.custom_field_defs?.length > 0 && (
+                  <div>
+                    <p style={detailLbl}>Additional Information</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      {detail.custom_field_defs.map((field: any) => {
+                        const val = detail.custom_field_values?.[field.key];
+                        return (
+                          <div key={field.key}>
+                            <p style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8' }}>{field.label}</p>
+                            <p style={{ fontSize: 13, color: '#374151' }}>
+                              {val === undefined || val === null || val === '' ? '—' : field.type === 'checkbox' ? (val ? 'Yes' : 'No') : String(val)}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {detail.message && (
+                  <div>
+                    <p style={detailLbl}>Message</p>
+                    <p style={{ fontSize: 13, color: '#374151', whiteSpace: 'pre-wrap' }}>{detail.message}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       )}
       {error && (
         <div style={{ marginBottom: 16, padding: '10px 16px', borderRadius: 8, background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', fontSize: 13, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -158,13 +284,22 @@ export default function AdminOrdersPage() {
                       </select>
                     </td>
                     <td style={{ padding: '14px 16px' }}>
-                      <button
-                        onClick={() => setDeleteTarget(o)}
-                        style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '5px 8px', cursor: 'pointer', color: '#ef4444', display: 'inline-flex', alignItems: 'center' }}
-                        title="Delete order"
-                      >
-                        <Trash2 size={13} />
-                      </button>
+                      <div style={{ display: 'flex', gap: 6 }}>
+                        <button
+                          onClick={() => openDetails(o)}
+                          style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: 6, padding: '5px 8px', cursor: 'pointer', color: '#2563eb', display: 'inline-flex', alignItems: 'center' }}
+                          title="View details"
+                        >
+                          <Eye size={13} />
+                        </button>
+                        <button
+                          onClick={() => setDeleteTarget(o)}
+                          style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 6, padding: '5px 8px', cursor: 'pointer', color: '#ef4444', display: 'inline-flex', alignItems: 'center' }}
+                          title="Delete order"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}

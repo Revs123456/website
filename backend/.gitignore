@@ -56,3 +56,7 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 /generated/prisma
+
+# Mock file storage — local-disk uploads (see uploads/storage/mock-file-storage.service.ts).
+# Not meant to persist in git; will be replaced by S3 storage, not tracked files.
+/uploads

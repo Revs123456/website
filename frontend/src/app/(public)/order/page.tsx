@@ -2,9 +2,9 @@
 import { Suspense, useState, useEffect } from 'react';
 import BackButton from '@/components/BackButton';
 import { useSearchParams } from 'next/navigation';
-import { Check, User, Mail, Briefcase, MessageSquare, Zap, Shield, Star, CreditCard } from 'lucide-react';
+import { Check, User, Mail, Briefcase, MessageSquare, Zap, Shield, Star, CreditCard, Calendar, Clock, Upload, FileText, Loader2, X as XIcon } from 'lucide-react';
 import Link from 'next/link';
-import { api } from '@/lib/api';
+import { api, uploadFile } from '@/lib/api';
 
 const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
 
@@ -21,6 +21,68 @@ function loadRazorpayScript(): Promise<boolean> {
     script.onerror = () => resolve(false);
     document.body.appendChild(script);
   });
+}
+
+function fmt12(t: string) {
+  const [h, m] = t.split(':').map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+function fmtDateShort(d: string) {
+  return new Date(d + 'T00:00:00').toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' });
+}
+
+/** Inline slot picker — same data/booking model as /book (Slot/Availability),
+ * just embedded in the generic checkout instead of its own dedicated page.
+ * See SERVICES_ARCHITECTURE.md — services.requires_slot drives this. */
+function SlotPicker({ selected, onSelect }: { selected: any; onSelect: (slot: any) => void }) {
+  const [slots, setSlots] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [activeDate, setActiveDate] = useState<string | null>(null);
+
+  useEffect(() => {
+    api.slots.listAvailable()
+      .then((list: any[]) => { setSlots(list); if (list.length) setActiveDate(list[0].date); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const byDate = slots.reduce((acc: Record<string, any[]>, s) => { (acc[s.date] ||= []).push(s); return acc; }, {});
+  const dates = Object.keys(byDate).sort();
+
+  if (loading) return <p style={{ fontSize: 12, color: '#94a3b8' }}>Loading available slots…</p>;
+  if (dates.length === 0) return <p style={{ fontSize: 12, color: '#dc2626' }}>No slots available right now. Please check back later.</p>;
+
+  return (
+    <div>
+      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', marginBottom: 12, paddingBottom: 4 }}>
+        {dates.map(d => (
+          <button
+            key={d} type="button" onClick={() => setActiveDate(d)}
+            style={{
+              padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap', cursor: 'pointer', border: '1px solid',
+              background: activeDate === d ? '#2563eb' : '#fff', color: activeDate === d ? '#fff' : '#475569', borderColor: activeDate === d ? '#2563eb' : '#e2e8f0',
+            }}
+          >
+            {fmtDateShort(d)}
+          </button>
+        ))}
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {(byDate[activeDate || ''] || []).map((s: any) => (
+          <button
+            key={s.id} type="button" onClick={() => onSelect(s)}
+            style={{
+              padding: '8px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer', border: '1px solid',
+              background: selected?.id === s.id ? '#eff6ff' : '#fff', color: selected?.id === s.id ? '#1d4ed8' : '#475569', borderColor: selected?.id === s.id ? '#2563eb' : '#e2e8f0',
+              display: 'flex', alignItems: 'center', gap: 6,
+            }}
+          >
+            <Clock size={12} /> {fmt12(s.start_time)} – {fmt12(s.end_time)}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function validateGmail(value: string): string {
@@ -53,6 +115,38 @@ function Form() {
   const [otpLoading, setOtpLoading] = useState(false);
   const [otpError, setOtpError] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
+
+  // ── Dynamic service requirements — see SERVICES_ARCHITECTURE.md ──
+  const [selectedSlot, setSelectedSlot] = useState<any>(null);
+  const [uploadedFile, setUploadedFile] = useState<{ id: string; fileName: string } | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+  const [customValues, setCustomValues] = useState<Record<string, any>>({});
+
+  // Whichever service was previously selected, its slot/file/custom answers
+  // don't carry over to a different service's (possibly different) requirements.
+  useEffect(() => {
+    setSelectedSlot(null);
+    setUploadedFile(null);
+    setUploadError('');
+    setCustomValues({});
+  }, [data.service_id]);
+
+  async function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError('');
+    try {
+      const res = await uploadFile(file);
+      setUploadedFile({ id: res.id, fileName: res.fileName });
+    } catch (err: any) {
+      setUploadError(err.message || 'Upload failed. Please try a different file.');
+    } finally {
+      setUploading(false);
+      e.target.value = ''; // allow re-selecting the same file if they remove and retry
+    }
+  }
 
   useEffect(() => {
     api.services.listPublished().then(list => {
@@ -138,12 +232,25 @@ function Form() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!otpVerified) { setOtpError('Please verify your email first.'); return; }
+
+    // Dynamic requirement guards — the server re-validates all of this too
+    // (never trust client-side-only checks), this is just so the customer
+    // gets a clear message before a round-trip instead of a generic 400.
+    const selectedSvc = services.find((s: any) => String(s.id) === data.service_id);
+    if (!selectedSvc) { setError('Selected service is no longer available. Please refresh and try again.'); return; }
+    if (selectedSvc.requires_slot && !selectedSlot) { setError('Please select a time slot.'); return; }
+    if (selectedSvc.requires_file_upload && !uploadedFile) { setError(selectedSvc.file_upload_label ? `Please upload: ${selectedSvc.file_upload_label}` : 'Please upload the required file.'); return; }
+    for (const field of (selectedSvc.custom_fields || [])) {
+      const v = customValues[field.key];
+      if (field.required && (v === undefined || v === null || v === '')) {
+        setError(`Please fill in "${field.label}".`);
+        return;
+      }
+    }
+
     setLoading(true);
     setError('');
     try {
-      const selectedSvc = services.find((s: any) => String(s.id) === data.service_id);
-      if (!selectedSvc) throw new Error('Selected service is no longer available. Please refresh and try again.');
-
       const order = await api.orders.create({
         customer_name: data.name,
         customer_email: data.email,
@@ -153,7 +260,9 @@ function Form() {
         service_type: selectedSvc.name,
         experience_level: data.level,
         message: data.message,
-      });
+        upload_id: uploadedFile?.id,
+        custom_field_values: Object.keys(customValues).length ? customValues : undefined,
+      } as any);
 
       const rawPrice = selectedSvc?.price || '0';
       const amount = parseFloat(String(rawPrice).replace(/[^0-9.]/g, '')) || 0;
@@ -193,6 +302,19 @@ function Form() {
               const body = await verifyRes.json().catch(() => ({}));
               throw new Error(body.message || 'Payment verification failed');
             }
+
+            // Slot booking happens *after* payment clears, same as /book —
+            // never hold a slot against a payment that might still fail.
+            if (selectedSvc.requires_slot && selectedSlot) {
+              try {
+                await api.slots.book(selectedSlot.id, { name: data.name, email: data.email, order_id: order.id });
+              } catch (slotErr: any) {
+                setError('Payment received, but that slot was just taken. Please contact support with your order confirmation to reschedule.');
+                setLoading(false);
+                return;
+              }
+            }
+
             setDone(true);
           } catch (verifyErr: any) {
             setError(verifyErr.message || 'Payment received but verification failed. Please contact support.');
@@ -365,6 +487,93 @@ function Form() {
             </div>
           </div>
 
+          {/* ── Dynamic requirements — driven entirely by the selected service's
+              config, no per-service code. See SERVICES_ARCHITECTURE.md. ── */}
+          {selectedService?.requires_slot && (
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#94a3b8', marginBottom: 8 }}>
+                <Calendar size={11} /> Pick a time slot
+              </label>
+              <div style={{ padding: 14, borderRadius: 10, background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <SlotPicker selected={selectedSlot} onSelect={setSelectedSlot} />
+              </div>
+              {selectedSlot && (
+                <p style={{ fontSize: 12, color: '#16a34a', marginTop: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Check size={12} /> {fmtDateShort(selectedSlot.date)}, {fmt12(selectedSlot.start_time)} – {fmt12(selectedSlot.end_time)}
+                </p>
+              )}
+            </div>
+          )}
+
+          {selectedService?.requires_file_upload && (
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#94a3b8', marginBottom: 8 }}>
+                <Upload size={11} /> {selectedService.file_upload_label || 'Upload a file'}
+              </label>
+              {uploadedFile ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 10, background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+                  <FileText size={16} style={{ color: '#16a34a', flexShrink: 0 }} />
+                  <span style={{ fontSize: 13, color: '#15803d', fontWeight: 600, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{uploadedFile.fileName}</span>
+                  <button type="button" onClick={() => setUploadedFile(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', display: 'flex' }}>
+                    <XIcon size={14} />
+                  </button>
+                </div>
+              ) : (
+                <label style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '18px 14px',
+                  borderRadius: 10, border: '1.5px dashed #cbd5e1', cursor: uploading ? 'default' : 'pointer',
+                  color: '#64748b', fontSize: 13, fontWeight: 600, background: '#f8fafc',
+                }}>
+                  {uploading ? <><Loader2 size={15} style={{ animation: 'spin .8s linear infinite' }} /> Uploading…</> : <><Upload size={15} /> Click to upload (PDF, DOC, image — max 10MB)</>}
+                  <input type="file" onChange={handleFileSelect} disabled={uploading} style={{ display: 'none' }} accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.webp,.zip" />
+                </label>
+              )}
+              {uploadError && <p style={{ fontSize: 11, color: '#ef4444', marginTop: 6 }}>{uploadError}</p>}
+            </div>
+          )}
+
+          {(selectedService?.custom_fields || []).map((field: any) => (
+            <div key={field.key}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#94a3b8', marginBottom: 8 }}>
+                {field.label}{field.required && ' *'}
+              </label>
+              {field.type === 'textarea' ? (
+                <textarea
+                  required={field.required} rows={3} className="input" style={{ resize: 'none' }}
+                  placeholder={field.placeholder} value={customValues[field.key] || ''}
+                  onChange={e => setCustomValues(v => ({ ...v, [field.key]: e.target.value }))}
+                  tabIndex={otpVerified ? 0 : -1}
+                />
+              ) : field.type === 'select' ? (
+                <select
+                  required={field.required} className="input" value={customValues[field.key] || ''}
+                  onChange={e => setCustomValues(v => ({ ...v, [field.key]: e.target.value }))}
+                  tabIndex={otpVerified ? 0 : -1}
+                >
+                  <option value="" disabled>{field.placeholder || 'Select…'}</option>
+                  {(field.options || []).map((opt: string) => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              ) : field.type === 'checkbox' ? (
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#374151', cursor: 'pointer' }}>
+                  <input
+                    type="checkbox" checked={!!customValues[field.key]}
+                    onChange={e => setCustomValues(v => ({ ...v, [field.key]: e.target.checked }))}
+                    tabIndex={otpVerified ? 0 : -1}
+                  />
+                  {field.placeholder || 'Yes'}
+                </label>
+              ) : (
+                <input
+                  type={field.type === 'number' ? 'number' : field.type === 'date' ? 'date' : 'text'}
+                  required={field.required} className="input" placeholder={field.placeholder}
+                  value={customValues[field.key] ?? ''}
+                  onChange={e => setCustomValues(v => ({ ...v, [field.key]: field.type === 'number' ? (e.target.value === '' ? '' : Number(e.target.value)) : e.target.value }))}
+                  tabIndex={otpVerified ? 0 : -1}
+                />
+              )}
+            </div>
+          ))}
+
           <div>
             <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' as const, letterSpacing: '0.05em', color: '#94a3b8', marginBottom: 8 }}>
               <MessageSquare size={11} /> Special requests (optional)
@@ -384,7 +593,7 @@ function Form() {
 
         <button
           type="submit"
-          disabled={loading || !otpVerified || services.length === 0}
+          disabled={loading || !otpVerified || services.length === 0 || uploading}
           className="btn btn-blue"
           style={{ padding: '13px', opacity: (loading || !otpVerified) ? 0.6 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
         >

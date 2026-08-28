@@ -107,6 +107,18 @@ model Service {
   created_at        DateTime @default(now()) @db.Timestamptz
   updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz
 
+  // ── Dynamic service configuration ──────────────────────────────────────
+  // Drives the public checkout flow and admin order-detail view without any
+  // per-service code — see SERVICES_ARCHITECTURE.md. requires_slot reuses
+  // the existing Slot/Availability system (Slot.order_id already links a
+  // booked slot back to an Order); requires_file_upload reuses the generic
+  // uploads module; custom_fields covers everything else.
+  requires_slot        Boolean @default(false)
+  requires_file_upload Boolean @default(false)
+  file_upload_label    String?
+  // CustomFieldDef[] — [{ key, label, type, required, options?, placeholder? }]
+  custom_fields        Json    @default("[]")
+
   @@index([published])
   @@index([is_popular])
   @@map("services")
@@ -296,6 +308,12 @@ model Order {
   razorpay_payment_id String?
   amount              Float?
   created_at          DateTime @default(now()) @db.Timestamptz
+
+  // Answers to the selected service's custom_fields, validated server-side
+  // against that schema at creation time — see SERVICES_ARCHITECTURE.md.
+  // { [fieldKey]: value }
+  custom_field_values Json?
+  files               OrderFile[]
 
   @@map("orders")
 }
@@ -1020,4 +1038,53 @@ model AnalyticsEvent {
   @@index([resource_type, resource_id])
   @@index([created_at])
   @@map("analytics_events")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DYNAMIC SERVICES — generic file uploads.
+//
+// Two-model split on purpose:
+//   - UploadedFile is the storage registry — created the moment a file lands
+//     in storage, before any Order exists to attach it to. Looking an id up
+//     here server-side (rather than trusting client-supplied file metadata)
+//     is what makes order creation's file handling safe against a forged
+//     file_name/url/size in the request body.
+//   - OrderFile is a snapshot attached to a specific Order once one exists —
+//     same snapshot-on-write convention JobApplication already uses for
+//     company/role, so a file's record on an order survives even if the
+//     underlying upload were ever cleaned up.
+// See storage/file-storage.interface.ts for the storage abstraction itself
+// (Mock now, S3 later — this schema doesn't change either way).
+// ═══════════════════════════════════════════════════════════════════════════
+model UploadedFile {
+  id                 String   @id @default(uuid()) @db.Uuid
+  file_name          String
+  mime_type          String
+  file_size          Int
+  // Storage-backend-specific locator (mock: relative path on local disk;
+  // S3 later: object key). Never exposed to the client directly.
+  storage_key        String
+  // Set once attached to an Order — prevents the same upload being reused
+  // across multiple orders.
+  attached_order_id  String?  @db.Uuid
+  created_at         DateTime @default(now()) @db.Timestamptz
+
+  @@index([attached_order_id])
+  @@map("uploaded_files")
+}
+
+model OrderFile {
+  id          String   @id @default(uuid()) @db.Uuid
+  order_id    String   @db.Uuid
+  file_name   String
+  file_url    String
+  mime_type   String?
+  file_size   Int?
+  label       String?
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  order       Order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  @@index([order_id])
+  @@map("order_files")
 }

@@ -1,6 +1,7 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength, IsBoolean, Matches } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsArray, IsNotEmpty, IsOptional, IsString, MaxLength, IsBoolean, Matches, ValidateNested } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { IsOptionalUrl } from '../../common/decorators/is-optional-url.decorator';
+import { CustomFieldDefDto } from './custom-field-def.dto';
 
 function strip(val: unknown): string {
   if (typeof val !== 'string') return '';
@@ -38,4 +39,17 @@ export class CreateServiceDto {
 
   @IsOptional() @IsBoolean()
   published?: boolean;
+
+  // ── Dynamic service configuration — see SERVICES_ARCHITECTURE.md ──
+  @IsOptional() @IsBoolean()
+  requires_slot?: boolean;
+
+  @IsOptional() @IsBoolean()
+  requires_file_upload?: boolean;
+
+  @IsOptional() @IsString() @MaxLength(200)
+  file_upload_label?: string;
+
+  @IsOptional() @IsArray() @ValidateNested({ each: true }) @Type(() => CustomFieldDefDto)
+  custom_fields?: CustomFieldDefDto[];
 }

@@ -1,4 +1,4 @@
-import { IsEmail, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsObject, IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { IsOptionalUrl } from '../../common/decorators/is-optional-url.decorator';
 
@@ -40,6 +40,19 @@ export class CreateOrderDto {
 
   @IsOptionalUrl({ protocols: ['https'], require_tld: true }) @MaxLength(500)
   resume_file?: string;
+
+  // ── Dynamic service requirements — see SERVICES_ARCHITECTURE.md ──
+  // References an UploadedFile created via POST /v1/uploads. Looked up and
+  // validated server-side in OrdersService, never trusted as-is.
+  @IsOptional() @IsUUID()
+  upload_id?: string;
+
+  // Loosely typed here on purpose — validated against the selected
+  // service's own custom_fields schema in OrdersService.validateCustomFieldValues,
+  // since the required shape depends on which service was selected, not a
+  // fixed shape this DTO alone could express.
+  @IsOptional() @IsObject()
+  custom_field_values?: Record<string, unknown>;
 
   // status is intentionally excluded — clients cannot set order status
 }

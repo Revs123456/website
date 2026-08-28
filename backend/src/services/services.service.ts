@@ -17,6 +17,10 @@ export class ServicesService {
         image_url: dto.image_url,
         is_popular: dto.is_popular ?? false,
         published: dto.published ?? true,
+        requires_slot: dto.requires_slot ?? false,
+        requires_file_upload: dto.requires_file_upload ?? false,
+        file_upload_label: dto.file_upload_label,
+        custom_fields: (dto.custom_fields ?? []) as any,
       },
     });
   }
@@ -75,6 +79,10 @@ export class ServicesService {
         ...(dto.image_url !== undefined && { image_url: dto.image_url }),
         ...(dto.is_popular !== undefined && { is_popular: dto.is_popular }),
         ...(dto.published !== undefined && { published: dto.published }),
+        ...(dto.requires_slot !== undefined && { requires_slot: dto.requires_slot }),
+        ...(dto.requires_file_upload !== undefined && { requires_file_upload: dto.requires_file_upload }),
+        ...(dto.file_upload_label !== undefined && { file_upload_label: dto.file_upload_label }),
+        ...(dto.custom_fields !== undefined && { custom_fields: dto.custom_fields as any }),
       },
     });
   }
