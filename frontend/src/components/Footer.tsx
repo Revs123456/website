@@ -118,20 +118,20 @@ export default function Footer({ settings }: { settings?: PublicSettings }) {
                   title={label}
                   style={{
                     width: 34, height: 34, borderRadius: 8,
-                    border: '1px solid #e2e8f0', background: '#f8fafc',
+                    border: `1px solid ${color}30`, background: color + '12',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: '#94a3b8', transition: 'color .15s, background .15s, border-color .15s',
+                    color, transition: 'background .15s, border-color .15s, transform .15s',
                     textDecoration: 'none',
                   }}
                   onMouseEnter={e => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = color;
-                    (e.currentTarget as HTMLAnchorElement).style.background = '#fff';
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = color + '60';
+                    (e.currentTarget as HTMLAnchorElement).style.background = color + '22';
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = color + '70';
+                    (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-1px)';
                   }}
                   onMouseLeave={e => {
-                    (e.currentTarget as HTMLAnchorElement).style.color = '#94a3b8';
-                    (e.currentTarget as HTMLAnchorElement).style.background = '#f8fafc';
-                    (e.currentTarget as HTMLAnchorElement).style.borderColor = '#e2e8f0';
+                    (e.currentTarget as HTMLAnchorElement).style.background = color + '12';
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = color + '30';
+                    (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(0)';
                   }}
                 >
                   {icon}
@@ -143,7 +143,7 @@ export default function Footer({ settings }: { settings?: PublicSettings }) {
           {/* Nav cols */}
           {cols.map(({ title, links }) => (
             <div key={title}>
-              <p style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8', marginBottom: 16 }}>{title}</p>
+              <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#2563eb', marginBottom: 16 }}>{title}</p>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {links.map(({ l, h }) => (
                   <li key={l}>

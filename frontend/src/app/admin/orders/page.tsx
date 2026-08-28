@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Trash2, ShoppingBag, RefreshCw, ChevronDown } from 'lucide-react';
+import { Trash2, ShoppingBag, RefreshCw, ChevronDown, MessageSquare } from 'lucide-react';
 import { api } from '@/lib/api';
 import DeleteModal from '@/components/DeleteModal';
 
@@ -12,6 +12,12 @@ const STATUS_BADGE: Record<string, string> = {
   Pending:       'badge-amber',
   pending:       'badge-amber',
 };
+
+function formatInr(amount: any): string {
+  const n = Number(amount);
+  if (!amount || Number.isNaN(n)) return '—';
+  return '₹' + n.toLocaleString('en-IN');
+}
 
 import AdminSkeleton from '@/components/AdminSkeleton';
 function LoadingSpinner() { return <AdminSkeleton />; }
@@ -80,6 +86,8 @@ export default function AdminOrdersPage() {
           { label: 'Pending',     val: orders.filter(o => (o.status || 'pending').toLowerCase().includes('pend')).length, color: '#d97706' },
           { label: 'In Progress', val: orders.filter(o => (o.status || '').toLowerCase().includes('progress')).length,  color: '#2563eb' },
           { label: 'Completed',   val: orders.filter(o => (o.status || '').toLowerCase().includes('complet')).length,   color: '#059669' },
+          { label: 'Paid',        val: orders.filter(o => o.payment_status === 'paid').length,                          color: '#059669' },
+          { label: 'Revenue (paid)', val: formatInr(orders.filter(o => o.payment_status === 'paid').reduce((sum, o) => sum + (Number(o.amount) || 0), 0)), color: '#0f172a' },
         ].map(({ label, val, color }) => (
           <div key={label} className="card" style={{ padding: '16px 20px' }}>
             <p style={{ fontSize: 11, color: '#94a3b8', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 600 }}>{label}</p>
@@ -99,7 +107,7 @@ export default function AdminOrdersPage() {
             <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['#', 'Customer', 'Email', 'Service', 'Experience', 'Date', 'Status', 'Actions'].map(h => (
+                  {['Customer', 'Service', 'Experience', 'Amount', 'Payment', 'Date', 'Status', 'Actions'].map(h => (
                     <th key={h} style={{ textAlign: 'left', padding: '12px 16px', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#94a3b8', whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
@@ -107,18 +115,32 @@ export default function AdminOrdersPage() {
               <tbody>
                 {orders.map((o: any, i: number) => (
                   <tr key={o.id || i} style={{ borderBottom: '1px solid #f8fafc' }}>
-                    <td style={{ padding: '14px 16px', color: '#94a3b8', fontSize: 11 }}>#{o.id || i + 1}</td>
-                    <td style={{ padding: '14px 16px', fontWeight: 600, color: '#0f172a' }}>
-                      {o.customer_name || o.name || '—'}
-                    </td>
-                    <td style={{ padding: '14px 16px', color: '#64748b' }}>
-                      {o.customer_email || o.email || '—'}
+                    <td style={{ padding: '14px 16px' }}>
+                      <div style={{ fontWeight: 600, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {o.customer_name || o.name || '—'}
+                        {o.message && (
+                          <span title={o.message} style={{ display: 'inline-flex', flexShrink: 0 }}>
+                            <MessageSquare size={12} style={{ color: '#94a3b8' }} />
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 1 }}>
+                        {o.customer_email || o.email || '—'}
+                      </div>
                     </td>
                     <td style={{ padding: '14px 16px', color: '#475569' }}>
-                      {o.service?.name || o.service_name || (o.service_id ? `Plan #${o.service_id}` : '—')}
+                      {o.service_type || (o.service_id ? `Plan #${String(o.service_id).slice(0, 8)}` : '—')}
                     </td>
                     <td style={{ padding: '14px 16px', color: '#94a3b8' }}>
                       {o.experience_level || o.level || '—'}
+                    </td>
+                    <td style={{ padding: '14px 16px', fontWeight: 600, color: '#0f172a', whiteSpace: 'nowrap' }}>
+                      {formatInr(o.amount)}
+                    </td>
+                    <td style={{ padding: '14px 16px' }}>
+                      <span className={`badge ${o.payment_status === 'paid' ? 'badge-green' : 'badge-amber'}`}>
+                        {o.payment_status === 'paid' ? 'Paid' : 'Unpaid'}
+                      </span>
                     </td>
                     <td style={{ padding: '14px 16px', color: '#94a3b8', whiteSpace: 'nowrap' }}>
                       {o.created_at ? new Date(o.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' }) : '—'}

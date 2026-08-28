@@ -34,6 +34,15 @@ export default function AdminInterviewQuestionsPage() {
   const [error, setError] = useState('');
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [deleting, setDeleting] = useState(false);
+  const [roleFilter, setRoleFilter] = useState('All');
+  const [addingRole, setAddingRole] = useState(false);
+
+  // Existing role values, for the filter dropdown and the add/edit form's
+  // autocomplete — role is free text (companies phrase it differently), but
+  // reusing an existing value instead of typing a near-duplicate is what
+  // actually makes "filter by role" work well.
+  const roles = Array.from(new Set(items.map(i => i.role).filter(Boolean))).sort();
+  const visibleItems = roleFilter === 'All' ? items : items.filter(i => i.role === roleFilter);
 
   async function load() {
     setLoading(true);
@@ -54,6 +63,7 @@ export default function AdminInterviewQuestionsPage() {
     setEditing(null);
     setForm(EMPTY);
     setError('');
+    setAddingRole(false);
     setShowForm(true);
   };
 
@@ -69,6 +79,10 @@ export default function AdminInterviewQuestionsPage() {
       published: item.published !== false,
     });
     setError('');
+    // Existing question's role won't be in `roles` yet on a very first load
+    // race, but it always will be by the time this runs (items is already
+    // loaded) — still, fall back to the free-text field rather than lose it.
+    setAddingRole(!!item.role && !roles.includes(item.role));
     setShowForm(true);
   };
 
@@ -142,12 +156,36 @@ export default function AdminInterviewQuestionsPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a' }}>Interview Questions</h1>
-          <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 2 }}>{items.length} questions</p>
+          <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 2 }}>
+            {visibleItems.length} of {items.length} questions{roleFilter !== 'All' ? ` — ${roleFilter}` : ''}
+          </p>
         </div>
         <button className="btn btn-blue btn-sm" onClick={openAdd} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
           <Plus size={14} /> Add Question
         </button>
       </div>
+
+      {/* Role filter — questions used to all sit in one flat list regardless
+          of role; this is what actually lets an admin work role-by-role. */}
+      {roles.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+          {['All', ...roles].map(r => (
+            <button
+              key={r}
+              onClick={() => setRoleFilter(r)}
+              style={{
+                padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600,
+                cursor: 'pointer', border: '1px solid',
+                background: roleFilter === r ? '#2563eb' : '#fff',
+                color:      roleFilter === r ? '#fff'    : '#475569',
+                borderColor: roleFilter === r ? '#2563eb' : '#e2e8f0',
+              }}
+            >
+              {r}{r !== 'All' ? ` (${items.filter(i => i.role === r).length})` : ''}
+            </button>
+          ))}
+        </div>
+      )}
 
       {showForm && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', background: 'rgba(15,23,42,0.4)', overflowY: 'auto', padding: '40px 16px' }}>
@@ -169,7 +207,41 @@ export default function AdminInterviewQuestionsPage() {
                 </div>
                 <div>
                   <label style={lbl}>Role</label>
-                  <input name="role" value={form.role} onChange={change} className="input" placeholder="Software Engineer" />
+                  {addingRole ? (
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <input
+                        name="role"
+                        value={form.role}
+                        onChange={change}
+                        className="input"
+                        placeholder="e.g. Data Scientist"
+                        autoFocus
+                      />
+                      {roles.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => { setAddingRole(false); setForm((f: any) => ({ ...f, role: roles[0] })); }}
+                          className="btn btn-outline btn-sm"
+                          style={{ flexShrink: 0, whiteSpace: 'nowrap' }}
+                        >
+                          Choose existing
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <select
+                      className="input"
+                      value={form.role}
+                      onChange={e => {
+                        if (e.target.value === '__new__') { setAddingRole(true); setForm((f: any) => ({ ...f, role: '' })); }
+                        else setForm((f: any) => ({ ...f, role: e.target.value }));
+                      }}
+                    >
+                      <option value="" disabled>Select a role…</option>
+                      {roles.map(r => <option key={r} value={r}>{r}</option>)}
+                      <option value="__new__">+ Add new role…</option>
+                    </select>
+                  )}
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
@@ -215,6 +287,11 @@ export default function AdminInterviewQuestionsPage() {
             <HelpCircle size={32} style={{ margin: '0 auto 12px', opacity: 0.3, display: 'block' }} />
             <p>No questions yet. Add your first interview question.</p>
           </div>
+        ) : visibleItems.length === 0 ? (
+          <div style={{ padding: '60px 24px', textAlign: 'center', color: '#94a3b8' }}>
+            <HelpCircle size={32} style={{ margin: '0 auto 12px', opacity: 0.3, display: 'block' }} />
+            <p>No questions for &quot;{roleFilter}&quot; yet.</p>
+          </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
@@ -226,7 +303,7 @@ export default function AdminInterviewQuestionsPage() {
                 </tr>
               </thead>
               <tbody>
-                {items.map(item => (
+                {visibleItems.map(item => (
                   <tr key={item.id} style={{ borderBottom: '1px solid #f8fafc' }}>
                     <td style={{ padding: '14px 16px', color: '#0f172a', fontWeight: 600 }}>{item.company || '—'}</td>
                     <td style={{ padding: '14px 16px', color: '#64748b' }}>{item.role || '—'}</td>

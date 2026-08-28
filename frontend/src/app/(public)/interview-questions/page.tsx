@@ -119,6 +119,7 @@ export default function InterviewQuestionsPage() {
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading]     = useState(true);
   const [cat, setCat]             = useState('All');
+  const [role, setRole]           = useState('All');
 
   const load = () => {
     fetch(`${BASE}/interview-questions/published`, { cache: 'no-store' })
@@ -131,7 +132,14 @@ export default function InterviewQuestionsPage() {
   useEffect(() => { load(); }, []);
   useAdminSync(load);
 
-  const list = cat === 'All' ? questions : questions.filter(q => q.category === cat);
+  // Role is the thing people actually search by when prepping for an
+  // interview ("I'm interviewing for a Backend role") — category (DSA vs
+  // System Design vs HR) is a second, independent axis on top of that.
+  const roles = ['All', ...Array.from(new Set(questions.map(q => q.role).filter(Boolean))).sort()];
+  const list = questions.filter(q =>
+    (cat === 'All' || q.category === cat) &&
+    (role === 'All' || q.role === role)
+  );
 
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
@@ -152,6 +160,24 @@ export default function InterviewQuestionsPage() {
       </div>
 
       <div style={{ ...wrap, paddingTop: 32, paddingBottom: 80 }}>
+        {/* Role filter — the main way people actually want to browse: "show me
+            what Backend/Frontend/whatever interviews look like" */}
+        {roles.length > 1 && (
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8', marginBottom: 8 }}>
+              Role
+            </label>
+            <select
+              className="input"
+              style={{ width: 'auto', minWidth: 220 }}
+              value={role}
+              onChange={e => setRole(e.target.value)}
+            >
+              {roles.map(r => <option key={r} value={r}>{r === 'All' ? 'All roles' : r}</option>)}
+            </select>
+          </div>
+        )}
+
         {/* Category filter */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 28 }}>
           {CATEGORIES.map(c => (
@@ -174,14 +200,15 @@ export default function InterviewQuestionsPage() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
           <p style={{ fontSize: 13, color: '#94a3b8' }}>
             <strong style={{ color: '#0f172a' }}>{list.length}</strong> questions
+            {role !== 'All' && ` for ${role}`}
             {cat !== 'All' && ` in ${cat}`}
           </p>
-          {cat !== 'All' && (
+          {(cat !== 'All' || role !== 'All') && (
             <button
               style={{ fontSize: 12, color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer' }}
-              onClick={() => setCat('All')}
+              onClick={() => { setCat('All'); setRole('All'); }}
             >
-              Clear filter
+              Clear filters
             </button>
           )}
         </div>

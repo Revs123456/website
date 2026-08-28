@@ -71,20 +71,12 @@ export default async function Home() {
               {/* Real counts, not admin-typed vanity numbers — the platform's pitch
                   is "free, useful tools" now, so proof-of-outcome carries more weight
                   than it did when Pro/pricing existed. */}
-              {(testimonials.length > 0 || successStoryCount > 0) && (
+              {successStoryCount > 0 && (
                 <div className="anim-fade-up d-2" style={{ display: 'flex', gap: 14, fontSize: 12, fontWeight: 600, color: '#64748b' }}>
-                  {testimonials.length > 0 && (
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                      <Star size={12} style={{ color: '#d97706', fill: '#d97706' }} />
-                      {testimonials.length} real testimonials
-                    </span>
-                  )}
-                  {successStoryCount > 0 && (
-                    <Link href="/success-stories" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#64748b', textDecoration: 'none' }}>
-                      <Trophy size={12} style={{ color: '#16a34a' }} />
-                      {successStoryCount} placement stories
-                    </Link>
-                  )}
+                  <Link href="/success-stories" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#64748b', textDecoration: 'none' }}>
+                    <Trophy size={12} style={{ color: '#16a34a' }} />
+                    {successStoryCount} placement stories
+                  </Link>
                 </div>
               )}
               </div>
