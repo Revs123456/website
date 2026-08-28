@@ -13,7 +13,7 @@ import SignInGate from '@/components/SignInGate';
 
 const CAT_COLOR: Record<string, { c: string; bg: string }> = {
   Frontend:     { c: '#2563eb', bg: '#eff6ff' },
-  Backend:      { c: '#7c3aed', bg: '#f5f3ff' },
+  Backend:      { c: 'var(--brand-violet)', bg: '#f5f3ff' },
   DevOps:       { c: '#0891b2', bg: '#ecfeff' },
   'Full-Stack': { c: '#059669', bg: '#ecfdf5' },
   'AI/ML':      { c: '#d97706', bg: '#fffbeb' },

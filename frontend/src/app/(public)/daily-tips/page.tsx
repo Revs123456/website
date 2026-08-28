@@ -8,7 +8,7 @@ const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
 
 const CAT_COLOR: Record<string, { c: string; bg: string; border: string }> = {
   Career:    { c: '#2563eb', bg: '#eff6ff',  border: '#bfdbfe' },
-  DSA:       { c: '#7c3aed', bg: '#f5f3ff',  border: '#ddd6fe' },
+  DSA:       { c: 'var(--brand-violet)', bg: '#f5f3ff',  border: '#ddd6fe' },
   Resume:    { c: '#0891b2', bg: '#ecfeff',  border: '#a5f3fc' },
   Interview: { c: '#d97706', bg: '#fffbeb',  border: '#fde68a' },
   Frontend:  { c: '#059669', bg: '#ecfdf5',  border: '#bbf7d0' },

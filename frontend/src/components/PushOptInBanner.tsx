@@ -27,6 +27,14 @@ export default function PushOptInBanner() {
   const [busy, setBusy] = useState(false);
   const [vapidKey, setVapidKey] = useState<string | null>(null);
 
+  // Other fixed-position UI (the chat FAB/window) reads this CSS var to shift
+  // itself up while this banner occupies the bottom-right corner, instead of
+  // the two silently overlapping.
+  useEffect(() => {
+    document.documentElement.style.setProperty('--push-banner-offset', show ? '90px' : '0px');
+    return () => { document.documentElement.style.setProperty('--push-banner-offset', '0px'); };
+  }, [show]);
+
   useEffect(() => {
     if (!user) return;
     if (typeof window === 'undefined') return;

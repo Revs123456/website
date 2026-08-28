@@ -64,7 +64,7 @@ export default function MockInterviewResultPage() {
       {/* Hero score card */}
       <div
         style={{
-          background: 'linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,#7c3aed 100%)',
+          background: 'linear-gradient(135deg,#0f172a 0%,#1e3a8a 50%,var(--brand-violet) 100%)',
           color: '#fff', borderRadius: 20, padding: 36, textAlign: 'center',
           position: 'relative', overflow: 'hidden', marginBottom: 22,
           boxShadow: '0 24px 60px rgba(15,23,42,0.2)',

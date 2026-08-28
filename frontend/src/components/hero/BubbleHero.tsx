@@ -205,7 +205,7 @@ function BubbleContent({ type, videoSrc }: { type: string; videoSrc?: string }) 
   );
 
   if (type === 'iridescent') return (
-    <div style={{ ...fill, background: 'conic-gradient(from 180deg, #6366f1, #06b6d4, #8b5cf6, #3b82f6, #6366f1)', opacity: 0.9 }}>
+    <div style={{ ...fill, background: 'conic-gradient(from 180deg, var(--brand-indigo), #06b6d4, var(--brand-violet-light), #3b82f6, var(--brand-indigo))', opacity: 0.9 }}>
       <div style={{ ...fill, background: 'radial-gradient(circle at 40% 35%, rgba(255,255,255,0.25), transparent 60%)' }} />
     </div>
   );

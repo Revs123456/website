@@ -30,10 +30,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 const CAT_COLOR: Record<string, { c: string; bg: string }> = {
   'Career Advice':  { c: '#2563eb', bg: '#eff6ff' },
   'Resume Tips':    { c: '#059669', bg: '#ecfdf5' },
-  'Interview Prep': { c: '#7c3aed', bg: '#f5f3ff' },
+  'Interview Prep': { c: 'var(--brand-violet)', bg: '#f5f3ff' },
   'Job Search':     { c: '#d97706', bg: '#fffbeb' },
   Frontend:         { c: '#2563eb', bg: '#eff6ff' },
-  Backend:          { c: '#7c3aed', bg: '#f5f3ff' },
+  Backend:          { c: 'var(--brand-violet)', bg: '#f5f3ff' },
   DevOps:           { c: '#0891b2', bg: '#ecfeff' },
   'Full-Stack':     { c: '#059669', bg: '#ecfdf5' },
   'AI/ML':          { c: '#d97706', bg: '#fffbeb' },

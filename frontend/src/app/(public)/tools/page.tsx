@@ -29,7 +29,7 @@ const TOOLS = [
     href: '/tools/revbot',
     icon: <Bot size={22} />,
     color: '#0891b2', bg: '#ecfeff',
-    label: 'RevBot Career Coach',
+    label: 'Rev Career Coach',
     blurb: 'Your AI career coach. Asks about your career, points you to the right tools, gives Indian-context advice.',
     badge: 'AI',
   },

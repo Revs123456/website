@@ -3,7 +3,7 @@ import Footer from '@/components/Footer';
 import AutoRefresh from '@/components/AutoRefresh';
 import AnnouncementBanner from '@/components/AnnouncementBanner';
 import MaintenancePage from '@/components/MaintenancePage';
-import Chatbot from '@/components/chatbot/Chatbot';
+import Chatbot from '@/components/ChatBot';
 import ProGateModal from '@/components/ProGateModal';
 import PWARegistrar from '@/components/PWARegistrar';
 import PushOptInBanner from '@/components/PushOptInBanner';

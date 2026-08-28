@@ -72,7 +72,7 @@ export default function DashboardPage() {
           link="/applications"
         />
         <StatCard
-          icon={<Bell size={18} style={{ color: '#7c3aed' }} />}
+          icon={<Bell size={18} style={{ color: 'var(--brand-violet)' }} />}
           label="Notifications"
           value={data.counters.unread_notifications}
           link="/notifications"
@@ -172,7 +172,7 @@ export default function DashboardPage() {
             </h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <QuickLink href="/roadmaps" icon={<Map size={16} style={{ color: '#2563eb' }} />} label="Roadmaps" desc="Follow a step-by-step learning path" />
-              <QuickLink href="/courses" icon={<BookOpen size={16} style={{ color: '#7c3aed' }} />} label="Courses" desc="Curated courses by role & level" />
+              <QuickLink href="/courses" icon={<BookOpen size={16} style={{ color: 'var(--brand-violet)' }} />} label="Courses" desc="Curated courses by role & level" />
               <QuickLink href="/jobs" icon={<Briefcase size={16} style={{ color: '#b45309' }} />} label="Jobs" desc="Browse curated openings" />
               <QuickLink href="/community" icon={<MessageSquare size={16} style={{ color: '#059669' }} />} label="Community" desc="Ask questions, help others" />
             </div>

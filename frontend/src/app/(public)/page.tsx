@@ -20,6 +20,13 @@ export default async function Home() {
   let testimonials: any[] = [];
   try { testimonials = await api.testimonials.listPublished(); } catch {}
 
+  // Real, verifiable counts (not admin-typed vanity numbers) for the trust
+  // badge — the platform's value prop shifted from "premium features" to
+  // "free, useful tools" once Pro/pricing was removed, so proof-of-outcome
+  // matters more here than it used to.
+  let successStoryCount = 0;
+  try { successStoryCount = (await api.successStories.listPublished()).length; } catch {}
+
   return (
     <div style={{ background: '#f8fafc' }}>
       <HomeRedirectGuard />
@@ -40,8 +47,8 @@ export default async function Home() {
 
             {/* Left: text content */}
             <div style={{ flex: '1 1 340px', minWidth: 0 }}>
-              {/* Trust badge with avatars */}
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
+              {/* Trust badges */}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginBottom: 28 }}>
               <div className="anim-fade-up d-1" style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 18px 8px 10px', borderRadius: 99, background: 'rgba(255,255,255,0.82)', border: '1px solid rgba(196,210,255,0.6)', backdropFilter: 'blur(12px)', boxShadow: '0 2px 16px rgba(99,102,241,0.08)' }}>
                 <div style={{ display: 'flex', marginRight: 2 }}>
                   {[
@@ -52,10 +59,34 @@ export default async function Home() {
                     <img key={i} src={src} alt="user avatar" width={26} height={26} style={{ width: 26, height: 26, borderRadius: '50%', border: '2px solid #fff', marginLeft: i > 0 ? -8 : 0, objectFit: 'cover', display: 'block' }} />
                   ))}
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 600, color: '#4338ca' }}>
-                  Trusted by <LiveStat statKey="stat_community" fallback={stats.stat_community || '60K+'} /> developers &amp; students
+                <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--brand-indigo-dark)' }}>
+                  Trusted by{' '}
+                  <span style={{ fontWeight: 800, color: '#db2777' }}>
+                    <LiveStat statKey="stat_community" fallback={stats.stat_community || '60K+'} countUp />
+                  </span>
+                  {' '}developers &amp; students
                 </span>
               </div>
+
+              {/* Real counts, not admin-typed vanity numbers — the platform's pitch
+                  is "free, useful tools" now, so proof-of-outcome carries more weight
+                  than it did when Pro/pricing existed. */}
+              {(testimonials.length > 0 || successStoryCount > 0) && (
+                <div className="anim-fade-up d-2" style={{ display: 'flex', gap: 14, fontSize: 12, fontWeight: 600, color: '#64748b' }}>
+                  {testimonials.length > 0 && (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                      <Star size={12} style={{ color: '#d97706', fill: '#d97706' }} />
+                      {testimonials.length} real testimonials
+                    </span>
+                  )}
+                  {successStoryCount > 0 && (
+                    <Link href="/success-stories" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, color: '#64748b', textDecoration: 'none' }}>
+                      <Trophy size={12} style={{ color: '#16a34a' }} />
+                      {successStoryCount} placement stories
+                    </Link>
+                  )}
+                </div>
+              )}
               </div>
 
               {/* Headline */}
@@ -78,7 +109,7 @@ export default async function Home() {
               <div className="anim-fade-up d-5 hero-stats" style={{ display: 'flex', flexWrap: 'wrap', gap: 32, paddingTop: 32, borderTop: '1px solid rgba(226,232,240,0.6)', justifyContent: 'center' }}>
                 {[
                   { statKey: 'stat_community',    fallback: stats.stat_community    || '60K+',   l: 'Users',         icon: Users,      c: '#2563eb', bg: '#eff6ff' },
-                  { statKey: 'stat_resumes',      fallback: stats.stat_resumes      || '1,200+', l: 'Resumes Built', icon: FileCheck,  c: '#7c3aed', bg: '#f5f3ff' },
+                  { statKey: 'stat_resumes',      fallback: stats.stat_resumes      || '1,200+', l: 'Resumes Built', icon: FileCheck,  c: 'var(--brand-violet)', bg: '#f5f3ff' },
                   { statKey: 'stat_hired',        fallback: stats.stat_hired        || '500+',   l: 'Jobs Secured',  icon: Briefcase,  c: '#059669', bg: '#ecfdf5' },
                   { statKey: 'stat_satisfaction', fallback: stats.stat_satisfaction || '98%',    l: 'Satisfaction',  icon: Star,       c: '#d97706', bg: '#fffbeb' },
                 ].map(({ statKey, fallback, l, icon: Icon, c, bg }) => (
@@ -127,7 +158,7 @@ export default async function Home() {
           <div className="feature-grid">
             {[
               { icon: Briefcase, c: '#2563eb', bg: '#eff6ff', border: '#bfdbfe', title: 'Tech Job Board',   desc: 'Fresh remote & onsite opportunities from top companies, filtered for developers at every level.', href: '/jobs',     tags: ['Remote', 'Fresher-friendly', 'Daily updates'], delay: 0 },
-              { icon: BookOpen,  c: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe', title: 'Curated Courses', desc: 'Hand-picked from Udemy, Coursera, and Pluralsight — rated and organised by skill level.',          href: '/courses',  tags: ['Frontend', 'Backend', 'AI/ML'], delay: 100 },
+              { icon: BookOpen,  c: 'var(--brand-violet)', bg: '#f5f3ff', border: '#ddd6fe', title: 'Curated Courses', desc: 'Hand-picked from Udemy, Coursera, and Pluralsight — rated and organised by skill level.',          href: '/courses',  tags: ['Frontend', 'Backend', 'AI/ML'], delay: 100 },
               { icon: Map,       c: '#0891b2', bg: '#ecfeff', border: '#a5f3fc', title: 'Career Roadmaps', desc: 'Step-by-step learning paths to go from zero to job-ready in your chosen tech stack.',              href: '/roadmaps', tags: ['Frontend', 'Backend', 'DevOps'], delay: 200 },
               { icon: Star,      c: '#d97706', bg: '#fffbeb', border: '#fde68a', title: 'Resume Services', desc: 'Expert ATS-optimised resumes, LinkedIn profiles, and 1-on-1 career coaching.',                     href: '/services', tags: ['From ₹499', 'ATS >90%', '48hr delivery'], delay: 300 },
             ].map(({ icon: Icon, c, bg, border, title, desc, href, tags, delay }) => (
@@ -196,7 +227,7 @@ export default async function Home() {
           <div className="stats-grid" style={{ gap: 32 }}>
             {[
               { icon: Users,      statKey: 'stat_community',    fallback: stats.stat_community    || '60K+',   label: 'Instagram community', c: '#2563eb', bg: '#eff6ff' },
-              { icon: FileCheck,  statKey: 'stat_resumes',      fallback: stats.stat_resumes      || '1,200+', label: 'Resumes optimised',   c: '#7c3aed', bg: '#f5f3ff' },
+              { icon: FileCheck,  statKey: 'stat_resumes',      fallback: stats.stat_resumes      || '1,200+', label: 'Resumes optimised',   c: 'var(--brand-violet)', bg: '#f5f3ff' },
               { icon: TrendingUp, statKey: 'stat_hired',        fallback: stats.stat_hired        || '500+',   label: 'Jobs landed',         c: '#059669', bg: '#ecfdf5' },
               { icon: Star,       statKey: 'stat_satisfaction', fallback: stats.stat_satisfaction || '98%',    label: 'Client satisfaction', c: '#d97706', bg: '#fffbeb' },
             ].map(({ icon: Icon, statKey, fallback, label, c, bg }, i) => (
@@ -229,7 +260,7 @@ export default async function Home() {
             <div className="grid-2col">
               {[
                 { icon: Zap,    c: '#2563eb', bg: '#eff6ff', t: '48hr Delivery',     d: 'Optimised resume within 2 business days.' },
-                { icon: Shield, c: '#7c3aed', bg: '#f5f3ff', t: 'ATS Guaranteed',    d: 'Every resume scores 90%+ on major ATS.' },
+                { icon: Shield, c: 'var(--brand-violet)', bg: '#f5f3ff', t: 'ATS Guaranteed',    d: 'Every resume scores 90%+ on major ATS.' },
                 { icon: Globe,  c: '#0891b2', bg: '#ecfeff', t: 'Remote-First Jobs', d: 'Curated remote roles from global companies.' },
                 { icon: TrendingUp, c: '#059669', bg: '#ecfdf5', t: 'Hiring Insights', d: 'Real data on what recruiters look for and which skills land offers.' },
               ].map(({ icon: Icon, c, bg, t, d }, i) => (
@@ -258,7 +289,7 @@ export default async function Home() {
           </div></ScrollReveal>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 200px), 1fr))', gap: 16 }}>
             {[
-              { icon: HelpCircle,  c: '#7c3aed', bg: '#f5f3ff', title: 'Interview Question Bank', desc: 'Real questions from Google, Amazon, Flipkart and more.',               href: '/interview-questions'  },
+              { icon: HelpCircle,  c: 'var(--brand-violet)', bg: '#f5f3ff', title: 'Interview Question Bank', desc: 'Real questions from Google, Amazon, Flipkart and more.',               href: '/interview-questions'  },
               { icon: DollarSign,  c: '#059669', bg: '#ecfdf5', title: 'Salary Insights',         desc: 'Know your market value before negotiating your next offer.',           href: '/salary-insights'      },
               { icon: Trophy,      c: '#d97706', bg: '#fffbeb', title: 'Success Stories',          desc: 'Read real journeys from developers who transformed their careers.',     href: '/success-stories'      },
               { icon: FileText,    c: '#0891b2', bg: '#ecfeff', title: 'Resume Templates',         desc: 'ATS-friendly templates built specifically for Indian tech jobs.',        href: '/templates'            },

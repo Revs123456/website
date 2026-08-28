@@ -205,7 +205,7 @@ function Avatar({ initials, size = 30 }: { initials: string; size?: number }) {
   return (
     <div style={{
       width: size, height: size, borderRadius: '50%',
-      background: 'linear-gradient(135deg,#2563eb,#7c3aed)', color: '#fff',
+      background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', color: '#fff',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontSize: size < 28 ? 11 : 12, fontWeight: 700, letterSpacing: '-0.02em',
       flexShrink: 0,

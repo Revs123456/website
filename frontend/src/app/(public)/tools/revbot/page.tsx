@@ -93,7 +93,7 @@ export default function RevBotPage() {
             className="input"
             value={input}
             onChange={e => setInput(e.target.value.slice(0, 4000))}
-            placeholder={user ? "Ask about interviews, salaries, learning paths, roles…" : "Sign in to chat with RevBot"}
+            placeholder={user ? "Ask about interviews, salaries, learning paths, roles…" : "Sign in to chat with Rev"}
             disabled={streaming || !user}
             rows={2}
             onKeyDown={e => {
@@ -129,14 +129,14 @@ function Header() {
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         <div style={{
           width: 40, height: 40, borderRadius: 10,
-          background: 'linear-gradient(135deg,#2563eb,#7c3aed)', color: '#fff',
+          background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', color: '#fff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <Bot size={20} />
         </div>
         <div>
           <h1 style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', margin: 0 }}>
-            RevBot
+            Rev
           </h1>
           <p style={{ fontSize: 12, color: '#64748b', margin: '2px 0 0' }}>
             Your AI career coach — knows the platform, knows your profile
@@ -150,7 +150,7 @@ function Header() {
 function SuggestedPrompts({ onPick, disabled }: { onPick: (text: string) => void; disabled: boolean }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px', gap: 20 }}>
-      <div style={{ width: 56, height: 56, borderRadius: 16, background: 'linear-gradient(135deg,#2563eb,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ width: 56, height: 56, borderRadius: 16, background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Sparkles size={26} color="#fff" />
       </div>
       <div style={{ textAlign: 'center', maxWidth: 420 }}>
@@ -182,7 +182,7 @@ function Bubble({ msg, isLast }: { msg: Msg; isLast: boolean }) {
     <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', flexDirection: isUser ? 'row-reverse' : 'row' }}>
       <div style={{
         width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-        background: isUser ? 'linear-gradient(135deg,#2563eb,#7c3aed)' : '#f1f5f9',
+        background: isUser ? 'linear-gradient(135deg,#2563eb,var(--brand-violet))' : '#f1f5f9',
         color: isUser ? '#fff' : '#475569',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 12, fontWeight: 700,

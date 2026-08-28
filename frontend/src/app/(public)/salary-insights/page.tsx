@@ -22,7 +22,7 @@ const EXP_COLOR: Record<string, { c: string; bg: string }> = {
   Fresher:    { c: '#059669', bg: '#ecfdf5' },
   '0-1 yrs':  { c: '#059669', bg: '#ecfdf5' },
   '1-3 yrs':  { c: '#2563eb', bg: '#eff6ff' },
-  '3-5 yrs':  { c: '#7c3aed', bg: '#f5f3ff' },
+  '3-5 yrs':  { c: 'var(--brand-violet)', bg: '#f5f3ff' },
   '5-8 yrs':  { c: '#d97706', bg: '#fffbeb' },
   '8+ yrs':   { c: '#dc2626', bg: '#fef2f2' },
 };

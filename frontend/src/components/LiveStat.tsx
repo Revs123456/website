@@ -48,7 +48,7 @@ export default function LiveStat({
     const parsed = parse(target);
     if (!parsed) { setDisplay(target); return; }
     const { num, prefix, suffix } = parsed;
-    const duration = 1600;
+    const duration = 2800;
     const start = performance.now();
     const tick = (now: number) => {
       const p = Math.min((now - start) / duration, 1);

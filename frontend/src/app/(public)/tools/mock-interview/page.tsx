@@ -261,7 +261,7 @@ function Bubble({ turn, isLast }: { turn: Turn; isLast: boolean }) {
     <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', flexDirection: isUser ? 'row-reverse' : 'row' }}>
       <div style={{
         width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-        background: isUser ? 'linear-gradient(135deg,#2563eb,#7c3aed)' : '#f1f5f9',
+        background: isUser ? 'linear-gradient(135deg,#2563eb,var(--brand-violet))' : '#f1f5f9',
         color: isUser ? '#fff' : '#475569',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 12, fontWeight: 700,

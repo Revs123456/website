@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 const CAT_COLOR: Record<string, { c: string; bg: string }> = {
   Frontend:     { c: '#2563eb', bg: '#eff6ff' },
-  Backend:      { c: '#7c3aed', bg: '#f5f3ff' },
+  Backend:      { c: 'var(--brand-violet)', bg: '#f5f3ff' },
   DevOps:       { c: '#0891b2', bg: '#ecfeff' },
   'Full-Stack': { c: '#059669', bg: '#ecfdf5' },
   'AI/ML':      { c: '#d97706', bg: '#fffbeb' },
@@ -116,7 +116,7 @@ export default async function JobDetail({ params }: { params: Promise<{ id: stri
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
             {[
               { icon: MapPin,     label: 'Location',   val: job.location,   ic: '#2563eb' },
-              { icon: Briefcase,  label: 'Experience', val: job.experience, ic: '#7c3aed' },
+              { icon: Briefcase,  label: 'Experience', val: job.experience, ic: 'var(--brand-violet)' },
               { icon: DollarSign, label: 'Salary',     val: job.salary,     ic: '#059669' },
               { icon: Clock,      label: 'Posted',     val: job.created_at ? new Date(job.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'N/A', ic: '#d97706' },
             ].map(({ icon: Icon, label, val, ic }) => (

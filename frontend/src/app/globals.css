@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* ── Brand palette ──────────────────────────────────────────
+ * The "brand purple" had drifted into 5 near-duplicate hex values used
+ * interchangeably across components (#6366f1, #4f46e5, #4338ca, #7c3aed,
+ * #8b5cf6) — these are the canonical tokens going forward. Reach for one of
+ * these instead of a new hex literal.
+ */
+:root {
+  --brand-indigo: #6366f1;       /* primary — buttons, icons, default accents */
+  --brand-violet: #7c3aed;       /* secondary — gradient end-stop, hover states */
+  --brand-violet-light: #8b5cf6; /* lighter accent step for multi-stop gradients */
+  --brand-indigo-dark: #4338ca;  /* darker shade for text on light backgrounds */
+  --brand-gradient: linear-gradient(135deg, var(--brand-indigo), var(--brand-violet));
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body {
@@ -46,7 +60,7 @@ body {
   background-clip: text;
 }
 .grad-indigo {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: var(--brand-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -147,7 +161,7 @@ body {
 .badge-amber  { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
 .badge-red    { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
 .badge-slate  { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
-.badge-indigo { background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; }
+.badge-indigo { background: #eef2ff; color: var(--brand-indigo-dark); border: 1px solid #c7d2fe; }
 
 /* ── Tags ── */
 .tag {

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import BackButton from '@/components/BackButton';
-import { Globe, Server, Cloud, Code, Database, Cpu, Shield, Smartphone, Check, Map, type LucideProps } from 'lucide-react';
+import { Globe, Server, Cloud, Code, Database, Cpu, Shield, Smartphone, Check, Map, Search, type LucideProps } from 'lucide-react';
 import { useAdminSync } from '@/hooks/useAdminSync';
 import { useUser } from '@/contexts/UserContext';
 import AuthModal from '@/components/AuthModal';
@@ -34,6 +34,7 @@ export default function RoadmapsPage() {
   const [authOpen, setAuthOpen] = useState(false);
   const [roadmaps, setRoadmaps] = useState<any[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const [q, setQ] = useState('');
 
   const load = () => {
     const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
@@ -51,6 +52,10 @@ export default function RoadmapsPage() {
   useAdminSync(load);
 
   const maps = roadmaps ?? FALLBACK;
+  const filtered = !q ? maps : maps.filter((rm: any) =>
+    rm.title?.toLowerCase().includes(q.toLowerCase()) ||
+    rm.description?.toLowerCase().includes(q.toLowerCase())
+  );
 
   return (
     <div style={{ background: '#f8fafc', minHeight: '100vh' }}>
@@ -78,8 +83,35 @@ export default function RoadmapsPage() {
             <div style={{ width: 32, height: 32, borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: '#2563eb', animation: 'spin .8s linear infinite' }} />
           </div>
         ) : (
+          <>
+          {/* Search — only worth showing once there's enough to search through */}
+          {maps.length > 4 && (
+            <div style={{ position: 'relative' as const, maxWidth: 420, marginBottom: 28 }}>
+              <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', pointerEvents: 'none' }} />
+              <input
+                className="input"
+                style={{ paddingLeft: 36 }}
+                placeholder="Search roadmaps…"
+                value={q}
+                onChange={e => setQ(e.target.value)}
+              />
+            </div>
+          )}
+
+          {filtered.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '80px 0', color: '#94a3b8' }}>
+              <Map size={40} style={{ margin: '0 auto 16px', opacity: 0.3, display: 'block' }} />
+              <p style={{ fontSize: 15, fontWeight: 600 }}>No roadmaps match &quot;{q}&quot;</p>
+              <button
+                style={{ fontSize: 12, color: '#2563eb', background: 'none', border: 'none', cursor: 'pointer', marginTop: 8 }}
+                onClick={() => setQ('')}
+              >
+                Clear search
+              </button>
+            </div>
+          ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
-            {maps.map((rm: any) => {
+            {filtered.map((rm: any) => {
               const color = rm.color || '#2563eb';
               const bg = colorBg(color);
               const border = colorBorder(color);
@@ -123,6 +155,8 @@ export default function RoadmapsPage() {
               );
             })}
           </div>
+          )}
+          </>
         )}
       </div>
 

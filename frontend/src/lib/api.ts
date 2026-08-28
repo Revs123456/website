@@ -554,7 +554,7 @@ function inferFeatureFromPath(path: string): string {
   if (path.startsWith('/optimizer'))      return 'Resume Optimizer';
   if (path.startsWith('/evaluator'))      return 'Answer Evaluator';
   if (path.startsWith('/mock-interview')) return 'Mock Interview';
-  if (path.startsWith('/revbot'))         return 'RevBot Career Coach';
+  if (path.startsWith('/revbot'))         return 'Rev Career Coach';
   return 'this Pro feature';
 }
 

@@ -48,7 +48,7 @@
     {
       "name": "AI Tools",
       "short_name": "Tools",
-      "description": "Resume roast, mock interview, RevBot",
+      "description": "Resume roast, mock interview, Rev",
       "url": "/tools",
       "icons": [{ "src": "/tc.png", "sizes": "192x192" }]
     }

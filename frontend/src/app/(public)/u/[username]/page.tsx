@@ -94,14 +94,14 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       <div className="card" style={{ padding: 28, marginBottom: 20, position: 'relative', overflow: 'hidden' }}>
         {/* Pro shimmer accent */}
         {profile.is_pro && (
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg,#7c3aed,#2563eb,#7c3aed)' }} />
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: 'linear-gradient(90deg,var(--brand-violet),#2563eb,var(--brand-violet))' }} />
         )}
 
         <div style={{ display: 'flex', gap: 22, flexWrap: 'wrap', alignItems: 'flex-start' }}>
           {/* Avatar */}
           <div style={{
             width: 88, height: 88, borderRadius: 22, flexShrink: 0,
-            background: 'linear-gradient(135deg,#2563eb,#7c3aed)', color: '#fff',
+            background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', color: '#fff',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 32, fontWeight: 800, letterSpacing: '-0.03em',
           }}>

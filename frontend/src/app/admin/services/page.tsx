@@ -222,7 +222,7 @@ export default function AdminServicesPage() {
           {/* Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16, marginBottom: 24 }}>
             {parsedServices.map((svc, idx) => {
-              const colors = ['#64748b', '#2563eb', '#7c3aed'];
+              const colors = ['#64748b', '#2563eb', 'var(--brand-violet)'];
               const color = colors[idx % colors.length];
               const features = svc._features;
               return (

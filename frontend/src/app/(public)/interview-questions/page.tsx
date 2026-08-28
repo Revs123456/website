@@ -17,7 +17,7 @@ const DIFF_BADGE: Record<string, { cls: string; color: string }> = {
 
 const CAT_COLOR: Record<string, { c: string; bg: string }> = {
   DSA:            { c: '#2563eb', bg: '#eff6ff' },
-  'System Design':{ c: '#7c3aed', bg: '#f5f3ff' },
+  'System Design':{ c: 'var(--brand-violet)', bg: '#f5f3ff' },
   HR:             { c: '#059669', bg: '#ecfdf5' },
   Frontend:       { c: '#0891b2', bg: '#ecfeff' },
   Backend:        { c: '#d97706', bg: '#fffbeb' },

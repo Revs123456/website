@@ -79,7 +79,7 @@ export default function ProGateModal() {
 
         {/* Gradient header */}
         <div style={{
-          background: 'linear-gradient(135deg,#0f172a 0%,#312e81 50%,#7c3aed 100%)',
+          background: 'linear-gradient(135deg,#0f172a 0%,#312e81 50%,var(--brand-violet) 100%)',
           color: '#fff', padding: '28px 28px 24px', textAlign: 'center',
         }}>
           <div style={{

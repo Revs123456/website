@@ -54,7 +54,7 @@ function Header({ user }: { user: SiteUser }) {
     <div className="card" style={{ padding: 24, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
       <div style={{
         width: 64, height: 64, borderRadius: 16, flexShrink: 0,
-        background: 'linear-gradient(135deg,#2563eb,#7c3aed)', color: '#fff',
+        background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', color: '#fff',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em',
       }}>
@@ -385,7 +385,7 @@ function ReferralPanel({ user }: { user: SiteUser }) {
       <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
         <div style={{
           width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-          background: 'linear-gradient(135deg,#2563eb,#7c3aed)', color: '#fff',
+          background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', color: '#fff',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <Gift size={22} />

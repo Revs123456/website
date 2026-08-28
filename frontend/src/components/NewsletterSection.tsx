@@ -39,7 +39,7 @@ export default function NewsletterSection() {
   }
 
   return (
-    <section style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, #7c3aed 100%)', padding: '80px 0' }}>
+    <section style={{ background: 'linear-gradient(135deg, #1e3a8a 0%, var(--brand-violet) 100%)', padding: '80px 0' }}>
       <div style={{ maxWidth: 640, margin: '0 auto', padding: '0 24px', textAlign: 'center' }}>
         <div style={{ width: 56, height: 56, borderRadius: 16, background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
           <Bell size={24} style={{ color: '#fff' }} />

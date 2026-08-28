@@ -112,7 +112,7 @@ export default function ServicesPage() {
             { icon: Award, val: '1,200+', label: 'Resumes delivered', c: '#2563eb' },
             { icon: Star,  val: '98%',    label: 'Satisfied clients',  c: '#f59e0b' },
             { icon: Clock, val: '48hrs',  label: 'Average delivery',   c: '#059669' },
-            { icon: Users, val: '500+',   label: 'Jobs landed',        c: '#7c3aed' },
+            { icon: Users, val: '500+',   label: 'Jobs landed',        c: 'var(--brand-violet)' },
           ].map(({ icon: Icon, val, label, c }) => (
             <div key={label} className="card" style={{ padding: 20, textAlign: 'center' }}>
               <Icon size={18} style={{ color: c, margin: '0 auto 8px', display: 'block' }} />

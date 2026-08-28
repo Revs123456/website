@@ -129,7 +129,7 @@ export default function RoastResultPage() {
 
       {/* CTA — quiz/profile cross-link */}
       <div className="card" style={{ padding: 22, textAlign: 'center', marginTop: 20, background: 'linear-gradient(135deg,#eff6ff,#f5f3ff)', borderColor: '#bfdbfe' }}>
-        <Sparkles size={20} style={{ color: '#7c3aed', marginBottom: 8 }} />
+        <Sparkles size={20} style={{ color: 'var(--brand-violet)', marginBottom: 8 }} />
         <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', margin: '0 0 6px' }}>
           Want to know which tech career fits you?
         </h3>

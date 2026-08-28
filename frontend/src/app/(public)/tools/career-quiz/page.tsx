@@ -71,7 +71,7 @@ export default function CareerQuizPage() {
         <span style={{ fontSize: 12, color: '#64748b' }}>{progressPct}%</span>
       </div>
       <div style={{ height: 6, background: '#f1f5f9', borderRadius: 99, overflow: 'hidden', marginBottom: 24 }}>
-        <div style={{ width: `${progressPct}%`, height: '100%', background: 'linear-gradient(90deg,#2563eb,#7c3aed)', transition: 'width .4s ease' }} />
+        <div style={{ width: `${progressPct}%`, height: '100%', background: 'linear-gradient(90deg,#2563eb,var(--brand-violet))', transition: 'width .4s ease' }} />
       </div>
 
       {/* Question */}

@@ -184,7 +184,7 @@ function BubbleContent({ id, videoSrc }: { id: string; videoSrc?: string }) {
       <div style={{ width: 64, height: 82, background: 'rgba(255,255,255,0.85)', border: '1px solid rgba(180,196,255,0.5)', borderRadius: 8, padding: '10px 9px', display: 'flex', flexDirection: 'column', gap: 4.5, boxShadow: '0 4px 16px rgba(99,102,241,0.12)' }}>
         {/* Avatar circle + name */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 2 }}>
-          <div style={{ width: 14, height: 14, borderRadius: '50%', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', flexShrink: 0 }} />
+          <div style={{ width: 14, height: 14, borderRadius: '50%', background: 'linear-gradient(135deg, var(--brand-indigo), var(--brand-violet-light))', flexShrink: 0 }} />
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
             <div style={{ height: 3, width: '80%', background: 'rgba(30,41,59,0.7)', borderRadius: 2 }} />
             <div style={{ height: 2, width: '55%', background: 'rgba(99,102,241,0.5)', borderRadius: 2 }} />

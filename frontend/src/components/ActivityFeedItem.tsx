@@ -66,7 +66,7 @@ function renderEvent(type: string, md: any, userName: string): {
   switch (type) {
     case 'level_up':
       return {
-        icon: <Award size={16} style={{ color: '#7c3aed' }} />,
+        icon: <Award size={16} style={{ color: 'var(--brand-violet)' }} />,
         message: <>reached <strong>{md.level_name}</strong> (Lv {md.new_level})</>,
       };
     case 'badge_earned':
@@ -87,7 +87,7 @@ function renderEvent(type: string, md: any, userName: string): {
       };
     case 'pro_subscribed':
       return {
-        icon: <Crown size={16} style={{ color: '#7c3aed' }} />,
+        icon: <Crown size={16} style={{ color: 'var(--brand-violet)' }} />,
         message: <>went Pro 🎉</>,
       };
     case 'placement_reported':

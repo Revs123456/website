@@ -148,7 +148,7 @@ export default function AdminUsersPage() {
             <div>
               {admins.map((admin, i) => (
                 <div key={admin.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 20px', borderBottom: i < admins.length - 1 ? '1px solid #f8fafc' : 'none' }}>
-                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#2563eb,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                     <Shield size={14} style={{ color: '#fff' }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>

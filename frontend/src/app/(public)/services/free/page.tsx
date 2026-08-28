@@ -17,7 +17,7 @@ const FREE_SERVICES = [
   },
   {
     icon: BookOpen,
-    color: '#7c3aed',
+    color: 'var(--brand-violet)',
     bg: '#f5f3ff',
     border: '#ddd6fe',
     title: 'Course Recommendations',
@@ -53,7 +53,7 @@ const FREE_SERVICES = [
   },
   {
     icon: HelpCircle,
-    color: '#6366f1',
+    color: 'var(--brand-indigo)',
     bg: '#eef2ff',
     border: '#c7d2fe',
     title: 'Interview Q&A Bank',

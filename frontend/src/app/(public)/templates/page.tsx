@@ -21,7 +21,7 @@ const wrap = { maxWidth: 1152, margin: '0 auto', padding: '0 24px' } as const;
 
 const TAG_COLOR: Record<string, { c: string; bg: string }> = {
   ATS:          { c: '#2563eb', bg: '#eff6ff' },
-  Creative:     { c: '#7c3aed', bg: '#f5f3ff' },
+  Creative:     { c: 'var(--brand-violet)', bg: '#f5f3ff' },
   Minimal:      { c: '#64748b', bg: '#f8fafc' },
   Executive:    { c: '#d97706', bg: '#fffbeb' },
   Fresher:      { c: '#059669', bg: '#ecfdf5' },
@@ -113,7 +113,7 @@ export default async function TemplatesPage() {
                         alignItems: 'center', justifyContent: 'center',
                         boxShadow: '0 1px 4px rgba(0,0,0,0.1)',
                       }}>
-                        <Lock size={13} style={{ color: '#7c3aed' }} />
+                        <Lock size={13} style={{ color: 'var(--brand-violet)' }} />
                       </div>
                     )}
                   </div>

@@ -216,7 +216,7 @@ export default function AuthModal({
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 22 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#2563eb,#7c3aed)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 12, margin: '0 auto 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))' }}>
             {step === 'otp' ? <CheckCircle2 size={22} color="#fff" /> : <Mail size={22} color="#fff" />}
           </div>
           <h2 id="auth-modal-title" style={{ fontSize: 19, fontWeight: 800, color: '#0f172a', margin: 0 }}>

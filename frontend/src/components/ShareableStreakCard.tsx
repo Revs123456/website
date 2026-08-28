@@ -63,7 +63,7 @@ export default function ShareableStreakCard({
       {/* Visual card — what users would screenshot if they want to */}
       <div
         style={{
-          background: 'linear-gradient(135deg,#0f172a 0%,#312e81 50%,#7c3aed 100%)',
+          background: 'linear-gradient(135deg,#0f172a 0%,#312e81 50%,var(--brand-violet) 100%)',
           color: '#fff', borderRadius: 14, padding: 22,
           textAlign: 'left', position: 'relative', overflow: 'hidden',
           boxShadow: '0 12px 32px rgba(15,23,42,0.15)',

@@ -266,7 +266,7 @@ function CelebrationState({ result, userName, streakNow }: {
       <div style={{ fontSize: 56, lineHeight: 1, marginBottom: 12 }}>🎉</div>
       <h2 style={{ fontSize: 24, fontWeight: 800, color: '#0f172a', margin: '0 0 8px' }}>
         +{result.xp.awarded} XP
-        {result.xp.leveled_up && <span style={{ color: '#7c3aed', display: 'block', fontSize: 18, marginTop: 4 }}>🚀 Leveled up to {result.xp.new_level}!</span>}
+        {result.xp.leveled_up && <span style={{ color: 'var(--brand-violet)', display: 'block', fontSize: 18, marginTop: 4 }}>🚀 Leveled up to {result.xp.new_level}!</span>}
       </h2>
       <p style={{ fontSize: 14, color: '#475569', margin: '0 0 18px' }}>
         Streak: <strong style={{ color: '#b45309' }}>🔥 {result.streak.current} day{result.streak.current === 1 ? '' : 's'}</strong>

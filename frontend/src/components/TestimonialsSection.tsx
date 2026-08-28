@@ -6,7 +6,7 @@ const BASE = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4001'}/v1`;
 
 const COLORS = [
   { color: '#2563eb', bg: '#eff6ff' },
-  { color: '#7c3aed', bg: '#f5f3ff' },
+  { color: 'var(--brand-violet)', bg: '#f5f3ff' },
   { color: '#0891b2', bg: '#ecfeff' },
   { color: '#059669', bg: '#ecfdf5' },
   { color: '#d97706', bg: '#fffbeb' },

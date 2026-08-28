@@ -10,7 +10,7 @@ import SignInGate from '@/components/SignInGate';
 
 const CAT_COLOR: Record<string, { c: string; bg: string }> = {
   Frontend:     { c: '#2563eb', bg: '#eff6ff' },
-  Backend:      { c: '#7c3aed', bg: '#f5f3ff' },
+  Backend:      { c: 'var(--brand-violet)', bg: '#f5f3ff' },
   DevOps:       { c: '#0891b2', bg: '#ecfeff' },
   'Full-Stack': { c: '#059669', bg: '#ecfdf5' },
   'AI/ML':      { c: '#d97706', bg: '#fffbeb' },
@@ -181,12 +181,12 @@ export default function CoursesPage() {
       <div style={{ ...wrap, paddingTop: 32, paddingBottom: 80 }}>
         {userLoading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: '#7c3aed', animation: 'spin .8s linear infinite' }} />
+            <div style={{ width: 32, height: 32, borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: 'var(--brand-violet)', animation: 'spin .8s linear infinite' }} />
           </div>
         ) : !user ? (
           <SignInGate
             description="Create a free account to browse our curated course catalogue."
-            accent="#7c3aed"
+            accent="var(--brand-violet)"
             accentBg="#f5f3ff"
             onSignIn={() => setAuthOpen(true)}
           />
@@ -227,7 +227,7 @@ export default function CoursesPage() {
 
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0' }}>
-            <div style={{ width: 32, height: 32, borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: '#7c3aed', animation: 'spin .8s linear infinite' }} />
+            <div style={{ width: 32, height: 32, borderRadius: '50%', border: '3px solid #e2e8f0', borderTopColor: 'var(--brand-violet)', animation: 'spin .8s linear infinite' }} />
           </div>
         ) : filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '80px 0', color: '#94a3b8' }}>

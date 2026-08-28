@@ -88,7 +88,7 @@ export default function PWARegistrar() {
     >
       <div style={{
         width: 40, height: 40, borderRadius: 10, flexShrink: 0,
-        background: 'linear-gradient(135deg,#2563eb,#7c3aed)', color: '#fff',
+        background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', color: '#fff',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         <Download size={20} />

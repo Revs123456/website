@@ -434,7 +434,7 @@ export default function AdminAvailabilityPage() {
                           <div key={s.id} style={{
                             fontSize: 9, fontWeight: 700, borderRadius: 3, padding: '1px 4px', lineHeight: 1.6, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                             background: s.is_booked ? '#f5f3ff' : s.is_active ? '#f0fdf4' : '#f8fafc',
-                            color: s.is_booked ? '#7c3aed' : s.is_active ? '#059669' : '#94a3b8',
+                            color: s.is_booked ? 'var(--brand-violet)' : s.is_active ? '#059669' : '#94a3b8',
                           }}>
                             {fmt12(s.start_time)}
                           </div>
@@ -456,7 +456,7 @@ export default function AdminAvailabilityPage() {
                 <span style={{ width: 8, height: 8, borderRadius: 2, background: '#059669', display: 'inline-block' }} /> Available
               </span>
               <span style={{ fontSize: 11, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
-                <span style={{ width: 8, height: 8, borderRadius: 2, background: '#7c3aed', display: 'inline-block' }} /> Booked
+                <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--brand-violet)', display: 'inline-block' }} /> Booked
               </span>
               <span style={{ fontSize: 11, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}>
                 <span style={{ width: 8, height: 8, borderRadius: 2, background: '#94a3b8', display: 'inline-block' }} /> Inactive
@@ -494,7 +494,7 @@ export default function AdminAvailabilityPage() {
                       <span style={{
                         fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 99,
                         background: slot.is_booked ? '#ede9fe' : '#dcfce7',
-                        color: slot.is_booked ? '#7c3aed' : '#059669',
+                        color: slot.is_booked ? 'var(--brand-violet)' : '#059669',
                       }}>
                         {slot.is_booked ? 'Booked' : 'Available'}
                       </span>
@@ -583,7 +583,7 @@ export default function AdminAvailabilityPage() {
                           <span style={{
                             fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 99,
                             background: slot.is_booked ? '#f5f3ff' : '#f0fdf4',
-                            color: slot.is_booked ? '#7c3aed' : '#059669',
+                            color: slot.is_booked ? 'var(--brand-violet)' : '#059669',
                             border: `1px solid ${slot.is_booked ? '#ddd6fe' : '#bbf7d0'}`,
                           }}>
                             {slot.is_booked ? 'Booked' : 'Available'}

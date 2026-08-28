@@ -55,7 +55,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }}>
         {/* Logo */}
         <div style={{ height: 56, display: 'flex', alignItems: 'center', gap: 10, padding: '0 20px', borderBottom: '1px solid #e2e8f0' }}>
-          <div style={{ width: 26, height: 26, borderRadius: 8, background: 'linear-gradient(135deg,#2563eb,#7c3aed)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ width: 26, height: 26, borderRadius: 8, background: 'linear-gradient(135deg,#2563eb,var(--brand-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Zap size={13} style={{ color: '#fff' }} />
           </div>
           <span style={{ fontSize: 13, fontWeight: 700, color: '#0f172a' }}>Admin Panel</span>

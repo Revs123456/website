@@ -43,7 +43,7 @@ export class SeedService implements OnModuleInit {
           'Unlimited AI Resume Optimizations',
           'Unlimited Mock Interviews',
           'Unlimited Answer Evaluations',
-          'Unlimited RevBot Career Coach',
+          'Unlimited Rev Career Coach',
           'Monthly streak shield (auto-saves one missed day)',
           'Priority email support',
           'PRO badge on your public profile',
